@@ -1,0 +1,41 @@
+/api/v1/poliza/eliminar_vehiculos:
+  delete:
+    tags:
+      - Polizas
+    description: Eliminar vehículos de una póliza
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              poliza:
+                type: integer
+                description: Número de la póliza
+              tipoPoliza:
+                type: integer
+                description: Tipo de póliza
+              placas:
+                type: array
+                items:
+                  type: string
+                description: Lista de placas de los vehículos a eliminar
+            required:
+              - poliza
+              - tipoPoliza
+              - placas
+    responses:
+      '200':
+        description: Vehículos eliminados con éxito
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mensaje:
+                  type: string
+                estado:
+                  type: integer

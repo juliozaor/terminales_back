@@ -1,0 +1,48 @@
+/api/v1/autenticacion/inicio-sesion: 
+  post:
+    tags:
+      - Autenticación
+    description: inicio de sesión
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+              type: object
+              required:
+                - usuario
+                - contrasena
+              properties:
+                  usuario:
+                    type: integer
+                  contrasena:
+                    type: string                  
+    produces:
+      - application/json
+    responses:
+      200:
+        description: Petición exitosa
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                usuario:
+                  $ref: "#/components/schemas/usuarioLogin"
+                token:
+                  $ref: "#/components/schemas/token"
+                rol:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: '101'
+                    nombre:
+                      type: string
+                      example: 'Administrador'
+                    modulos:
+                      type: array
+                      items:
+                        $ref: "#/components/schemas/modulo"
+                claveTemporal:
+                  $ref: "#/components/schemas/claveTemporal"

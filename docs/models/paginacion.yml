@@ -1,0 +1,11 @@
+definitions:
+  paginacion:
+    type: object
+    properties:
+      totalRegistros:
+        type: integer
+      paginaActual:
+        type: integer
+      totalPaginas:
+        type: integer
+      

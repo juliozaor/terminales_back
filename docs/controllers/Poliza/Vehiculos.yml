@@ -1,0 +1,48 @@
+/api/v1/poliza/vehiculos:
+  get:
+    tags:
+      - Polizas
+    security:
+      - bearerAuth: []
+    description: Obtener vehículos asociados a una póliza    
+    parameters:
+      - name: pagina
+        in: query
+        description: Número de página
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: limite
+        in: query
+        description: Límite de resultados por página
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: vigiladoId
+        in: query
+        description: ID del vigilado
+        required: false
+        schema:
+          type: string
+      - name: termino
+        in: query
+        description: Término de búsqueda
+        required: false
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Petición exitosa
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                placas:
+                  type: array
+                  items:
+                   $ref: "#/components/schemas/VehiculoResponse"
+                paginacion:
+                  $ref: "#/components/schemas/paginacion"

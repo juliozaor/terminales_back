@@ -1,0 +1,8 @@
+components:
+  schemas:
+      modulo:
+        $ref: "#/definitions/Modulo"
+        example:
+            id: 101,
+            nombre: Inicio,
+            ruta: /general

@@ -1,0 +1,22 @@
+components:
+  schemas:
+    AseguradoraInput:
+      type: object
+      required:
+        - nit
+        - nombre
+        - direccion
+        - telefono
+      properties:
+        nit:
+          type: integer
+          description: NIT de la aseguradora
+        nombre:
+          type: string
+          description: Nombre de la aseguradora
+        direccion:
+          type: string
+          description: Dirección de la aseguradora
+        telefono:
+          type: integer
+          description: Número de teléfono de la aseguradora

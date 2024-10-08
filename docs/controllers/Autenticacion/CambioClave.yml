@@ -1,0 +1,51 @@
+/api/v1/autenticacion/cambiar-clave: 
+  post:
+    tags:
+      - Autenticación
+    description: cambiar contraseña
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+              type: object
+              required:
+                - identificacion
+                - clave
+                - nuevaClave
+              properties:
+                  identificacion:
+                    type: integer
+                  clave:
+                    type: string 
+                  nuevaClave:
+                    type: string                  
+    produces:
+      - application/json
+    responses:
+      200:
+        description: Petición exitosa
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mensaje:
+                  type: string
+                estado:
+                  type: integer
+              example:
+                mensaje: Su contraseña ha sido cambiada exitosamente
+                estado: 200
+      400:
+        description: Petición fallida
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+              example:
+                message: Credenciales incorrectas, por favor intente recuperar contraseña con su correo registrado en Vigia
+                

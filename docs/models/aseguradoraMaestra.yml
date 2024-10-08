@@ -1,0 +1,13 @@
+definitions:
+  aseguradoraMaestra:
+    type: object
+    properties:
+      id:
+        type: number
+      nit:
+        type: string
+      nombre:
+        type: string
+      estado:
+        type: boolean
+      

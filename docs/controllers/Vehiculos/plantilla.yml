@@ -1,0 +1,22 @@
+/api/v1/vehiculos/plantillas/{nombreArchivo}:
+  get:
+    tags:
+      - Vehiculos
+    description: Descargar una plantilla de vehículos en formato Base64 (vehiculos.xlsx)
+    parameters:
+      - name: nombreArchivo
+        in: path
+        description: Nombre del archivo a descargar
+        required: true
+        schema:
+          type: string
+    produces:
+      - application/octet-stream
+    responses:
+      200:
+        description: Archivo descargado exitosamente
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary

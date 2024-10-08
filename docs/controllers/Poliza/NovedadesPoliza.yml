@@ -1,0 +1,49 @@
+/api/v1/poliza/novedades_poliza:
+  get:
+    tags:
+      - Polizas
+    description: Obtener las novedades de una póliza
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: query
+        name: poliza
+        required: true
+        schema:
+          type: string
+        description: Número de la póliza
+      - in: query
+        name: tipoPoliza
+        required: true
+        schema:
+          type: integer
+        description: Tipo de póliza
+    responses:
+      '200':
+        description: Novedades de la póliza obtenidas exitosamente
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  tipoPoliza:
+                    type: integer
+                    description: Tipo de póliza
+                  poliza:
+                    type: string
+                    description: Número de la póliza
+                  placa:
+                    type: string
+                    description: Placa del vehículo
+                  fechaActualizacion:
+                    type: string
+                    format: date-time
+                    description: Fecha de la última actualización
+                  estado:
+                    type: string
+                    description: Estado de la novedad
+                  observacion:
+                    type: string
+                    description: Observación de la novedad

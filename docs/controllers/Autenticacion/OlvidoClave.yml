@@ -1,0 +1,45 @@
+/api/v1/envio-email: 
+  post:
+    tags:
+      - Autenticación
+    description: olvido la contraseña
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+              type: object
+              required:
+                - usuario
+                - correo
+              properties:
+                  usuario:
+                    type: integer
+                  correo:
+                    type: string                  
+    produces:
+      - application/json
+    responses:
+      200:
+        description: Petición exitosa
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mensaje:
+                  type: string
+              example:
+                mensaje: Mensaje enviado correctamente
+      400:
+        description: Petición fallida
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+              example:
+                message: usuario no encontrado y/o correo incorrecto
+                

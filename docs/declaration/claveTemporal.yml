@@ -1,0 +1,8 @@
+components:
+  schemas:
+      claveTemporal:
+        type: bool
+        description: validar si el usuario esta bloqueado
+        example:
+            false
+            

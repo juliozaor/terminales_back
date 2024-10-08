@@ -1,0 +1,31 @@
+components:
+  schemas:
+    CapacidadInput:
+      type: object
+      properties:
+        numero:
+          type: integer
+          description: Número de la capacidad
+        vigencia:
+          type: string
+          format: date
+          description: Fecha de vigencia de la capacidad
+        modalidadId:
+          type: integer
+          description: ID de la modalidad asociada a la capacidad
+        nombre:
+          type: string
+          description: Nombre del archivo de la capacidad
+        nombreOriginal:
+          type: string
+          description: Nombre original del archivo de la capacidad
+        ruta:
+          type: string
+          description: Ruta del archivo de la capacidad en el sistema
+      required:
+        - numero
+        - vigencia
+        - modalidadId
+        - nombre
+        - nombreOriginal
+        - ruta

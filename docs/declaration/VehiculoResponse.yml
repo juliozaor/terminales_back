@@ -1,0 +1,23 @@
+components:
+  schemas:
+    VehiculoResponse:
+      type: object
+      properties:
+        nit:
+          type: string
+          description: NIT de la póliza asociada al vehículo
+        razon_social:
+          type: string
+          description: Razón social de la póliza asociada al vehículo
+        tipo:
+          type: string
+          description: Tipo de póliza asociada al vehículo
+        numero_poliza:
+          type: string
+          description: Número de la póliza asociada al vehículo
+        placa:
+          type: string
+          description: Placa del vehículo
+        pasajeros:
+          type: integer
+          description: Número de pasajeros del vehículo

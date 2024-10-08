@@ -1,0 +1,16 @@
+components:
+  schemas:
+      Usuario:
+        $ref: "#/definitions/Usuario"
+        example:
+            id: dc18f0da-6c3b-4dcb-b551-23bb3be299f7
+            nombre: Jose
+            usuario: 200200200
+            clave: ed3424dfsf
+            telefono: 3000000000
+            correo: correo@hotmail.com
+            fecha_nacimiento: 2022-11-20 13:00:26
+            cargo: vigilado
+            apellido: herrera
+            identificacion: 200200200
+            id_rol: 003

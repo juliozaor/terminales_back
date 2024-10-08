@@ -1,0 +1,26 @@
+/api/v1/poliza:
+  post:
+    tags:
+      - Polizas
+    security:
+      - bearerAuth: []
+    description: Guardar una nueva póliza
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/PolizaInput"
+    produces:
+      - application/json
+    responses:
+      201:
+        description: Póliza guardada exitosamente
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mensaje:
+                  type: string
+                  description: Mensaje de la respuesta

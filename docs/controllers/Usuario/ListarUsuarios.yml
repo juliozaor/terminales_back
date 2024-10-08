@@ -1,0 +1,40 @@
+/api/v1/usuarios/listar?termino={termino}&rol={rol}&pagina={pagina}&limite={limite}: 
+  get:
+    tags:
+      - Usuario
+    security:
+      - bearerAuth: []
+    description: Listar usuarios
+    parameters:
+      - name: termino
+        in: path
+        type: string
+        required: false
+      - name: rol
+        in: path
+        type: string 
+        required: false
+      - name: pagina
+        in: path
+        type: int
+        required: false
+      - name: limite
+        in: path
+        type: int 
+        required: false                    
+    produces:
+      - application/json
+    responses:
+      200:
+        description: Petición exitosa
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                usuarios:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Usuario"
+                paginacion:
+                  $ref: "#/components/schemas/paginacion"

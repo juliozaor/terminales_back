@@ -1,0 +1,17 @@
+definitions:
+  Rol:
+    type: object
+    properties:
+      _id:
+        type: string
+      _nombre:
+        type: string
+      _root:
+        type: bool
+      _estado:
+        type: bool
+      _creacion:
+        type: string
+      _actualizacion:
+        type: string
+      

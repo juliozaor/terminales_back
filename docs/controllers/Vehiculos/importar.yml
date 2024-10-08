@@ -1,0 +1,60 @@
+/api/v1/vehiculos/importar:
+  post:
+    tags:
+      - Vehiculos
+    description: Importar un archivo Excel con placas y pasajeros
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              archivo:
+                type: string
+                format: binary
+              poliza:
+                type: string
+    responses:
+      '200':
+        description: Respuesta exitosa
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mensaje:
+                  type: string
+      '400':
+        description: Respuesta con errores
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                errores:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/ErrorImportacion"
+                archivo:
+                  type: string
+                  description: Archivo en formato Base64
+  components:
+    schemas:
+      ErrorImportacion:
+        type: object
+        properties:
+          columna:
+            type: string
+            description: Columna del error
+          fila:
+            type: string
+            description: Fila del error
+          error:
+            type: string
+            description: Descripción del error
+          valor:
+            type: string
+            description: Valor asociado al error

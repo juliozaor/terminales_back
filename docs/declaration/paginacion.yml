@@ -1,0 +1,8 @@
+components:
+  schemas:
+      paginacion:
+        $ref: "#/definitions/paginacion"
+        example:
+            totalRegistros: 2
+            paginaActual: 1
+            totalPaginas: 2

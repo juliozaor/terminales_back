@@ -1,0 +1,11 @@
+definitions:
+  Modulo:
+    type: object
+    properties:
+      id:
+        type: string
+      nombre:
+        type: string
+      ruta:
+        type: string
+      

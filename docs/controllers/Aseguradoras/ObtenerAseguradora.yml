@@ -1,0 +1,23 @@
+/api/v1/aseguradoras/{id}:
+  get:
+    tags:
+      - Aseguradoras
+    security:
+      - bearerAuth: []
+    description: Obtener una aseguradora por su ID
+    parameters:
+      - name: id
+        in: path
+        description: ID de la aseguradora a obtener
+        required: true
+        schema:
+          type: integer
+    produces:
+      - application/json
+    responses:
+      200:
+        description: Petición exitosa
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Aseguradora"

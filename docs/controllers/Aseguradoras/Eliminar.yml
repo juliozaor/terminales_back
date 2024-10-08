@@ -1,0 +1,19 @@
+/api/v1/aseguradoras/{id}:
+  delete:
+    tags:
+      - Aseguradoras
+    security:
+      - bearerAuth: []
+    description: Eliminar una aseguradora por su ID
+    parameters:
+      - name: id
+        in: path
+        description: ID de la aseguradora a eliminar
+        required: true
+        schema:
+          type: integer
+    responses:
+      204:
+        description: Aseguradora eliminada exitosamente
+      404:
+        description: No se encontró la aseguradora con el ID especificado

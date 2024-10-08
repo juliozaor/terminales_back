@@ -1,0 +1,11 @@
+components:
+  schemas:
+      Aseguradora:
+        $ref: "#/definitions/aseguradora"
+        example:
+          id: 1,
+          nit: 100100,
+          nombre: Aseguradora 1,
+          direccion: call 27 J,
+          telefono: null,
+          estado: true

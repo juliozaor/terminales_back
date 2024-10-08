@@ -1,0 +1,25 @@
+components:
+  schemas:
+    AseguradoraUpdate:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          description: ID de la aseguradora a actualizar
+        nit:
+          type: string
+          description: NIT de la aseguradora
+        nombre:
+          type: string
+          description: Nombre de la aseguradora
+        direccion:
+          type: string
+          description: Dirección de la aseguradora
+        telefono:
+          type: integer
+          description: Número de teléfono de la aseguradora (opcional)
+        estado:
+          type: boolean
+          description: Estado de la aseguradora (opcional)

@@ -1,0 +1,28 @@
+/api/v1/poliza/capacidades:
+  post:
+    tags:
+      - Polizas
+    description: Guardar capacidades de una póliza
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              capacidades:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CapacidadInput"
+    responses:
+      '200':
+        description: Capacidades guardadas correctamente
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mensaje:
+                  type: string

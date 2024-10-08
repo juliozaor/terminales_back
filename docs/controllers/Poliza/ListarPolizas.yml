@@ -1,0 +1,96 @@
+/api/v1/poliza/listar_polizas:
+  get:
+    tags:
+      - Polizas
+    security:
+      - bearerAuth: []
+    description: Listar pólizas con filtros opcionales
+    parameters:
+      - name: pagina
+        in: query
+        description: Número de página para paginación
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: limite
+        in: query
+        description: Número máximo de resultados por página
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: poliza
+        in: query
+        description: Número de póliza para filtrar
+        required: false
+        schema:
+          type: string
+      - name: tipoPoliza
+        in: query
+        description: Tipo de póliza para filtrar
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: fechaInicio
+        in: query
+        description: Fecha de inicio para filtrar las pólizas
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: fechaFin
+        in: query
+        description: Fecha de fin para filtrar las pólizas
+        required: false
+        schema:
+          type: string
+          format: date
+    responses:
+      '200':
+        description: Lista de pólizas obtenida exitosamente
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                polizas:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/PolizaResponse"
+                paginacion:
+                  $ref: "#/components/schemas/paginacion"
+                totalVehiculos:
+                  type: string
+                  description: Total de vehículos
+                totalVehiculosContractual:
+                  type: string
+                  description: Total de vehículos contractual
+                totalVehiculosExtraContractual:
+                  type: string
+                  description: Total de vehículos extra contractual
+components:
+  schemas:
+    PolizaResponse:
+      type: object
+      properties:
+        tipoPoliza:
+          type: string
+        poliza:
+          type: string
+        fechaCargue:
+          type: string
+          format: date-time
+        fechaInicio:
+          type: string
+          format: date-time
+        fechaFin:
+          type: string
+          format: date-time
+        aseguradora:
+          type: string
+        estadoPoliza:
+          type: string
+        cantidadVehiculos:
+          type: string

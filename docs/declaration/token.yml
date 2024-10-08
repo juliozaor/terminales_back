@@ -1,0 +1,8 @@
+components:
+  schemas:
+      token:
+        type: string
+        description: token de autenticación
+        example:
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkb2N1bWVudG8iOiI5MDA0NjExOTYiLCJpZFJvbCI6IjAwMyIsImlhdCI6MTcxMDI4MDY2NiwiZXhwIjoxNzEwMzY3MDY2fQ.ANhxg9ym3WQUug0Y5IZWj_ZQOYRGdw5HODMAdFRxx9A
+            

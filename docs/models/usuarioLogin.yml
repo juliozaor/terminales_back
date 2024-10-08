@@ -1,0 +1,24 @@
+definitions:
+  usuarioLogin:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+        description: Identificador del usuario
+      usuario:
+        type: string
+        description: Nombre de usuario
+      nombre:
+        type: string
+        description: Nombre del usuario
+      apellido:
+        type: string
+        description: Apellido del usuario
+      telefono:
+        type: string
+        description: Teléfono del usuario
+      correo:
+        type: string
+        description: Correo del usuario
+      

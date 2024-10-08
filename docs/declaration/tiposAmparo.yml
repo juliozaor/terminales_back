@@ -1,0 +1,9 @@
+components:
+  schemas:
+      tiposAmparo:
+        $ref: "#/definitions/tiposAmparo"
+        example:
+            id: 1
+            nombre: AMPAROS BÁSICOS
+            orden: 1
+            estado: true

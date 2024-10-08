@@ -1,0 +1,26 @@
+definitions:
+  Usuario:
+    type: object
+    properties:
+      id:
+        type: string
+      nombre:
+        type: string
+      usuario:
+        type: string
+      clave:
+        type: string
+      telefono:
+        type: string
+      correo:
+        type: string
+      fecha_nacimiento:
+        type: string
+      cargo:
+        type: string
+      apellido:
+        type: string
+      identificacion:
+        type: integer
+      id_rol:
+        type: string

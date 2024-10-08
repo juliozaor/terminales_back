@@ -1,0 +1,22 @@
+/api/v1/aseguradoras:
+  put:
+    tags:
+      - Aseguradoras
+    security:
+      - bearerAuth: []
+    description: Actualizar una aseguradora existente
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/AseguradoraUpdate"
+    produces:
+      - application/json
+    responses:
+      200:
+        description: Aseguradora actualizada exitosamente
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AseguradoraAll"

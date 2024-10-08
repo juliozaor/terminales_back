@@ -1,0 +1,13 @@
+definitions:
+  tiposAmparo:
+    type: object
+    properties:
+      id:
+        type: integer
+      nombre:
+        type: string
+      orden:
+        type: integer
+      estado:
+        type: bool
+      

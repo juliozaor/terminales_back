@@ -1,0 +1,65 @@
+/api/v1/poliza/listar_vehiculos:
+  get:
+    tags:
+      - Polizas
+    security:
+      - bearerAuth: []
+    description: Listar vehículos asociados a una póliza
+    parameters:
+      - name: poliza
+        in: query
+        description: Número de póliza para filtrar los vehículos
+        required: true
+        schema:
+          type: string
+      - name: tipoPoliza
+        in: query
+        description: Tipo de póliza para filtrar los vehículos
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: placa
+        in: query
+        description: Número de placa para filtrar los vehículos
+        required: false
+        schema:
+          type: string
+      - name: pagina
+        in: query
+        description: Número de página para paginación
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: limite
+        in: query
+        description: Número máximo de resultados por página
+        required: false
+        schema:
+          type: integer
+          format: int32
+    responses:
+      '200':
+        description: Lista de vehículos obtenida exitosamente
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                vehiculos:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/VehiculoResponse"
+                paginacion:
+                  $ref: "#/components/schemas/paginacion"
+components:
+  schemas:
+    VehiculoResponse:
+      type: object
+      properties:
+        placa:
+          type: string
+        pasajeros:
+          type: integer
+          format: int32

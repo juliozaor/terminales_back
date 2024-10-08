@@ -1,0 +1,11 @@
+components:
+  schemas:
+      usuarioLogin:
+        $ref: "#/definitions/usuarioLogin"
+        example:
+            id: fda32ceec-37d5b-40wff-b3d08-feb8a71
+            usuario: 12221313
+            nombre: USUARIO LOGUEADO.
+            apellido: 
+            telefono: null
+            correo: correo@gmail.com

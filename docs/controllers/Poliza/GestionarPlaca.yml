@@ -1,0 +1,116 @@
+/api/v1/poliza/gestionar-placa:
+  get:
+    tags:
+      - Polizas
+    description: Obtener la información de una placa específica, incluyendo los detalles de póliza y novedades asociadas.
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: query
+        name: placa
+        required: true
+        schema:
+          type: string
+        description: Placa del vehículo
+    responses:
+      '200':
+        description: Información de la placa obtenida exitosamente
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                contractual:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    poliza:
+                      type: string
+                    estadoPoliza:
+                      type: string
+                    fechaCargue:
+                      type: string
+                      format: date-time
+                    fechaInicio:
+                      type: string
+                      format: date-time
+                    fechaFin:
+                      type: string
+                      format: date-time
+                    vinculada:
+                      type: boolean
+                    observacion:
+                      type: string
+                    existe:
+                      type: boolean
+                    mensaje:
+                      type: string
+                extraContractual:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    poliza:
+                      type: string
+                    estadoPoliza:
+                      type: string
+                    fechaCargue:
+                      type: string
+                      format: date-time
+                    fechaInicio:
+                      type: string
+                      format: date-time
+                    fechaFin:
+                      type: string
+                      format: date-time
+                    vinculada:
+                      type: boolean
+                    observacion:
+                      type: string
+                    existe:
+                      type: boolean
+                    mensaje:
+                      type: string
+                novedades:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      tipoPoliza:
+                        type: integer
+                      poliza:
+                        type: string
+                      placa:
+                        type: string
+                      fechaActualizacion:
+                        type: string
+                        format: date-time
+                      estado:
+                        type: string
+                      observacion:
+                        type: string
+                historial:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      tipoPoliza:
+                        type: string
+                      poliza:
+                        type: string
+                      placa:
+                        type: string
+                      estadoPoliza:
+                        type: string
+                      fechaCargue:
+                        type: string
+                        format: date-time
+                      fechaInicio:
+                        type: string
+                        format: date-time
+                      fechaFin:
+                        type: string
+                        format: date-time
+                      aseguradora:
+                        type: string

@@ -1,0 +1,56 @@
+/api/v1/poliza/agregar_vehiculos:
+  post:
+    tags:
+      - Polizas
+    description: Agregar vehículos a una póliza
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              poliza:
+                type: integer
+                description: Número de la póliza
+              tipoPoliza:
+                type: integer
+                description: Tipo de póliza
+              vehiculos:
+                type: array
+                items:
+                  $ref: "#/components/schemas/VehiculoInput"
+            required:
+              - poliza
+              - tipoPoliza
+              - vehiculos
+    responses:
+      '200':
+        description: Vehículos agregados con éxito
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mensaje:
+                  type: string
+                estado:
+                  type: integer
+
+
+components:
+  schemas:
+    VehiculoInput:
+      type: object
+      properties:
+        placa:
+          type: string
+          description: Placa del vehículo
+        pasajeros:
+          type: integer
+          description: Número de pasajeros del vehículo
+      required:
+        - placa
+        - pasajeros

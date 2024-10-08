@@ -1,0 +1,18 @@
+/api/v1/maestras/modalidades: 
+  get:
+    tags:
+      - Maestras
+    security:
+      - bearerAuth: []
+    description: Obtener el listado de modalidades
+    produces:
+      - application/json
+    responses:
+      200:
+        description: Petición exitosa
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/Modalidad"

@@ -1,0 +1,11 @@
+definitions:
+  modalidad:
+    type: object
+    properties:
+      id:
+        type: number
+      nombre:
+        type: string
+      estado:
+        type: boolean
+      

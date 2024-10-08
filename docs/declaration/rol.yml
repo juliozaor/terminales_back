@@ -1,0 +1,11 @@
+components:
+  schemas:
+      Rol:
+        $ref: "#/definitions/Rol"
+        example:
+            _id: 003,
+            _nombre: vigilado,
+            _root: true,
+            _estado: false,
+            _creacion: 2024-03-19T17:32:28.342-05:00,
+            _actualizacion: 2024-03-19T17:32:28.342-05:00,

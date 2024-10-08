@@ -1,0 +1,54 @@
+/api/v1/usuarios/usuario/{documento}: 
+  get:
+    tags:
+      - Usuario
+    security:
+      - bearerAuth: []
+    description: Consultar un usuario
+    parameters:
+      - name: documento
+        in: path
+        type: int                  
+    produces:
+      - application/json
+    responses:
+      200:
+        description: Petición exitosa
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: dc18f0da-6c3b-4dcb-b551-23bb3be299f7
+                nombre:
+                  type: string
+                  example: Jose
+                usuario:
+                  type: string
+                  example: 200200200
+                clave:
+                  type: string
+                  example: ed3424dfsf
+                telefono:
+                  type: string
+                  example: 3000000000
+                correo:
+                  type: string
+                  example: correo@hotmail.com
+                fecha_nacimiento:
+                  type: string
+                  example: 2022-11-20 13:00:26
+                cargo:
+                  type: string
+                  example: vigilado
+                apellido:
+                  type: string
+                  example: herrera
+                identificacion:
+                  type: integer
+                  example: 200200200
+                id_rol:
+                  type: string
+                  example: 003

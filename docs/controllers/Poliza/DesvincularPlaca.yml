@@ -1,0 +1,34 @@
+/api/v1/poliza/desvincular-placa:
+  patch:
+    tags:
+      - Polizas
+    description: Desvincular una placa de una póliza.
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: query
+        name: id
+        required: true
+        schema:
+          type: integer
+        description: ID de la placa que se desea desvincular.
+      - in: query
+        name: motivo
+        required: true
+        schema:
+          type: string
+        description: Motivo de la desvinculación de la placa.
+    responses:
+      '200':
+        description: Placa desvinculada exitosamente
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mensaje:
+                  type: string
+                  description: Mensaje de confirmación de la desvinculación
+                estado:
+                  type: integer
+                  description: Código de estado HTTP

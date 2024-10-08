@@ -1,0 +1,22 @@
+/api/v1/aseguradoras:
+  post:
+    tags:
+      - Aseguradoras
+    security:
+      - bearerAuth: []
+    description: Crear una nueva aseguradora
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/AseguradoraInput"
+    produces:
+      - application/json
+    responses:
+      201:
+        description: Aseguradora creada exitosamente
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AseguradoraAll"

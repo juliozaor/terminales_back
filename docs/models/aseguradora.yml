@@ -1,0 +1,17 @@
+definitions:
+  aseguradora:
+    type: object
+    properties:
+      id:
+        type: number
+      nit:
+        type: string
+      nombre:
+        type: string
+      direccion:
+        type: string
+      telefono:
+        type: number
+      estado:
+        type: boolean
+      

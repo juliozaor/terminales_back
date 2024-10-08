@@ -1,0 +1,6 @@
+components:
+  schemas:
+      id:
+        type: int
+        example:
+          id: 1

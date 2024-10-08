@@ -1,0 +1,21 @@
+/api/v1/rol: 
+  get:
+    tags:
+      - Rol
+    security:
+      - bearerAuth: []
+    description: Listar roles                  
+    produces:
+      - application/json
+    responses:
+      200:
+        description: Petición exitosa
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rols:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Rol"
