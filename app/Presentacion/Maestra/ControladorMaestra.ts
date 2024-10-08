@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import TblCentroPoblados from "App/Infraestructura/Datos/Entidad/CentroPoblado";
+import TblClaseVehiculos from "App/Infraestructura/Datos/Entidad/ClaseVehiculos";
 import TblDepartamentos from "App/Infraestructura/Datos/Entidad/Departamentos";
 import TblModalidades from "App/Infraestructura/Datos/Entidad/Modalidades";
 import TblMunicipios from "App/Infraestructura/Datos/Entidad/Municipios";
+import TblNodos from "App/Infraestructura/Datos/Entidad/Nodos";
+import TblTipoDespachos from "App/Infraestructura/Datos/Entidad/TipoDespacho";
 export default class ControladorMaestra {
 
   public async departamentos({ request }: HttpContextContract) {
@@ -47,13 +50,61 @@ export default class ControladorMaestra {
       const respuestaCentrosPoblados = centrosPoblados.map((centroPoblado) => {
         return {
           id: centroPoblado.id,
-          codigoMunicipio: centroPoblado.codigoMunicipio,
+          codigoCentroPoblado: centroPoblado.codigoCentroPoblado,
           nombre: centroPoblado.nombre,
         };
       });
       return { respuestaCentrosPoblados };
     } catch (error) {
       return { message: 'Centros Poblados no encontrados' };
+    }
+  }
+
+  public async tipoLlegada({ request }: HttpContextContract) {
+    const tipoDespacho = await TblTipoDespachos.all();
+
+    try {
+      const respuestaTipoLLegada = tipoDespacho.map((tipoDespacho) => {
+        return {
+          id: tipoDespacho.id,
+          descripcion: tipoDespacho.descripcion,
+        };
+      });
+      return { respuestaTipoLLegada };
+    } catch (error) {
+      return { message: 'No se pudieron obtener los tipos de llegada' };
+    }
+  }
+
+  public async tipovehiculo({ request }: HttpContextContract) {
+    const tiposvehiculos = await TblClaseVehiculos.all();
+
+    try {
+      const respuestaTiposvehiculos = tiposvehiculos.map((tipovehiculo) => {
+        return {
+          id: tipovehiculo.id,
+          descripcion: tipovehiculo.descripcion,
+        };
+      });
+      return { respuestaTiposvehiculos };
+    } catch (error) {
+      return { message: 'No se pudieron obtener los tipos de vehiculos' };
+    }
+  }
+
+  public async nodos({ request }: HttpContextContract) {
+    const nodos = await TblNodos.all();
+
+    try {
+      const respuestaDirecciones = nodos.map((nodo) => {
+        return {
+          id: nodo.id,
+          descripcion: nodo.descripcion,
+        };
+      });
+      return { respuestaDirecciones };
+    } catch (error) {
+      return { message: 'No se pudieron obtener las direcciones' };
     }
   }
 }
