@@ -5,9 +5,8 @@ export default class extends BaseSchema {
 
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
-      table.increments('rcr_id')
+      table.increments('rcr_codigo_unico_ruta')
       table.integer('rcr_codigo_ruta')
-      table.integer('rcr_id_ruta')
       table.timestamp('rcr_creacion', { useTz: true })
       table.timestamp('rcr_actualizacion', { useTz: true })
     })

@@ -9,7 +9,7 @@ export default class TblHorarios extends BaseModel {
 
   @column({ columnName: 'hrs_codigo_ruta' }) public codigoRuta: number
 
-  @column({ columnName: 'hrs_hora_salida' }) public horaSalida: DateTime
+  @column({ columnName: 'hrs_hora_salida' }) public horaSalida: string
 
   @column({ columnName: 'hrs_estado' }) public estado: boolean
 

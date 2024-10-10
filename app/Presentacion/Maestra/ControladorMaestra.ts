@@ -6,6 +6,7 @@ import TblDepartamentos from "App/Infraestructura/Datos/Entidad/Departamentos";
 import TblModalidades from "App/Infraestructura/Datos/Entidad/Modalidades";
 import TblMunicipios from "App/Infraestructura/Datos/Entidad/Municipios";
 import TblNodos from "App/Infraestructura/Datos/Entidad/Nodos";
+import TblRutaEmpresas from "App/Infraestructura/Datos/Entidad/RutaEmpresa";
 import TblTipoDespachos from "App/Infraestructura/Datos/Entidad/TipoDespacho";
 export default class ControladorMaestra {
 
@@ -93,10 +94,10 @@ export default class ControladorMaestra {
   }
 
   public async nodos({ request }: HttpContextContract) {
-    const nodos = await TblNodos.all();
-
+    const codigoTipollegada = request.input('codigoTipollegada');
     try {
-      const respuestaDirecciones = nodos.map((nodo) => {
+      const direcciones = await TblNodos.query().where('tnd_despacho_id', codigoTipollegada );
+      const respuestaDirecciones = direcciones.map((nodo) => {
         return {
           id: nodo.id,
           descripcion: nodo.descripcion,
@@ -105,6 +106,16 @@ export default class ControladorMaestra {
       return { respuestaDirecciones };
     } catch (error) {
       return { message: 'No se pudieron obtener las direcciones' };
+    }
+  }
+
+  public async numeroTotalRutasPorUsuario({ request }: HttpContextContract) {
+    const idUsuario = request.input('idUsuario');
+    try {
+      const direcciones = await TblRutaEmpresas.query().where('tre_id_usuario', idUsuario );
+      return { totalRegistros: direcciones.length };
+    } catch (error) {
+      return { message: 'No se pudieron obtener las direcciones de ese usuario' };
     }
   }
 }

@@ -7,7 +7,7 @@ export default class TblRutaEmpresaVias extends BaseModel {
 
   @column({ columnName: 'rev_id_ruta' }) public codigoRuta: number
 
-  @column({ columnName: 'rev_codigo_via' }) public codigoVia: number
+  @column({ columnName: 'rev_codigo_via' }) public codigoVia: string
 
   @column({ columnName: 'rev_via' }) public via: string
 

@@ -11,7 +11,7 @@ export default class TblRutasHabilitadas extends BaseModel {
 
   @column({ columnName: 'trh_resolucion_actual' }) public resolucionActual: string
 
-  @column({ columnName: 'trh_fecha' }) public fecha: DateTime
+  @column({ columnName: 'trh_fecha' }) public fecha: string
 
   @column({ columnName: 'trh_direccion_territorial' }) public direccionTerritorial: string
 
