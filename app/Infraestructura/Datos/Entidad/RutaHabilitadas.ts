@@ -1,11 +1,11 @@
 import { BaseModel, column} from '@ioc:Adonis/Lucid/Orm';
 import { DateTime } from 'luxon';
 
-export default class TblRutasHabilitadas extends BaseModel {
+export default class TblRutaHabilitadas extends BaseModel {
 
   @column({ isPrimary: true, columnName: 'trh_id' }) public id: number
 
-  @column({ columnName: 'trh_id_ruta' }) public idRuta: number
+  @column({ columnName: 'trh_codigo_unico_ruta' }) public idRuta: number
 
   @column({ columnName: 'trh_resolucion' }) public resolucion: string
 

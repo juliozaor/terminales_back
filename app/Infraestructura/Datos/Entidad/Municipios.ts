@@ -1,5 +1,6 @@
-import { BaseModel, column} from '@ioc:Adonis/Lucid/Orm';
+import { BaseModel, belongsTo, BelongsTo, column} from '@ioc:Adonis/Lucid/Orm';
 import { DateTime } from 'luxon';
+import TblDepartamentos from './Departamentos';
 
 export default class TblMunicipios extends BaseModel {
 
@@ -14,4 +15,10 @@ export default class TblMunicipios extends BaseModel {
   @column.dateTime({ autoCreate: true , columnName: 'tms_creacion'}) public createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true, columnName: 'tms_actualizacion' }) public updatedAt: DateTime
+
+  @belongsTo (() => TblDepartamentos, {
+    localKey: 'codigoDepartamento',
+    foreignKey: 'codigoDepartamento',
+  })
+  public departamento: BelongsTo<typeof TblDepartamentos>
 }

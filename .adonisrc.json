@@ -33,7 +33,8 @@
     "./start/Rutas/ruta_soportes",
     "./start/Rutas/ruta_estados",
     "./start/Rutas/ruta_informes",
-    "./start/Rutas/ruta_usuario"
+    "./start/Rutas/ruta_usuario",
+    "./start/Rutas/ruta_terminales"
   ],
   "providers": [
     "./providers/AppProvider",
@@ -75,7 +76,7 @@
       "pattern": "**/*.edge",
       "reloadServer": true
     }
-  ], 
+  ],
   "build": {
     "copy": [
       {

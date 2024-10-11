@@ -14,7 +14,7 @@ export default class extends BaseSchema {
       table.string('trh_documento')
       table.string('trh_nombre_original')
       table.string('trh_ruta_archivo')
-      table.integer('corresponde', 1).defaultTo(1)
+      table.integer('corresponde', 1)
       table.timestamp('trh_creacion', { useTz: true })
       table.timestamp('trh_actualizacion', { useTz: true })
     })
