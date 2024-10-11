@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/quotes */
 /* eslint-disable @typescript-eslint/naming-convention */
 import Route from '@ioc:Adonis/Core/Route'
-const accion_path = '../../../app/Presentacion/terminales/ControladorTerminales'
+const accion_path = '../../../app/Presentacion/Terminales/ControladorTerminales'
 
 
 Route.group(() => {
