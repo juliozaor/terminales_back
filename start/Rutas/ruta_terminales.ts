@@ -7,4 +7,6 @@ const accion_path = '../../../app/Presentacion/Terminales/ControladorTerminales'
 Route.group(() => {
   Route.get('/visualizar-rutas', accion_path + '.visualizarRutas')
   Route.get('total-rutas', accion_path + '.numeroTotalRutasPorUsuario')
+  Route.get('/visualizar-paradas', accion_path + '.visualizarParadasPorRuta')
+  Route.get('/visualizar-clases', accion_path + '.visualizarClasesPorRuta')
 }).prefix('api/v1/terminales').middleware('autenticacionJwt')

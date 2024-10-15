@@ -17,6 +17,19 @@ export default class ControladorTerminales {
       return response.status(200).send(rutas);
   }
 
+  public async visualizarParadasPorRuta({ response, request }: HttpContextContract) {
+    const { id } = await request.obtenerPayloadJWT()
+      const paradas = await this.service.visualizarParadasPorRuta(request.all(), parseInt(id))
+      return response.status(200).send(paradas);
+  }
+
+
+  public async visualizarClasesPorRuta({ response, request }: HttpContextContract) {
+    const { id } = await request.obtenerPayloadJWT()
+      const Clases = await this.service.visualizarClasesPorRuta(request.all(), parseInt(id))
+      return response.status(200).send(Clases);
+  }
+
   public async numeroTotalRutasPorUsuario({ response, request }: HttpContextContract) {
     const { id } = await request.obtenerPayloadJWT()
       const totalRutas = await this.service.numeroTotalRutasPorUsuario(parseInt(id))
