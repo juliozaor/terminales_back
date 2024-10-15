@@ -108,14 +108,4 @@ export default class ControladorMaestra {
       return { message: 'No se pudieron obtener las direcciones' };
     }
   }
-
-  public async numeroTotalRutasPorUsuario({ request }: HttpContextContract) {
-    const idUsuario = request.input('idUsuario');
-    try {
-      const direcciones = await TblRutaEmpresas.query().where('tre_id_usuario', idUsuario );
-      return { totalRegistros: direcciones.length };
-    } catch (error) {
-      return { message: 'No se pudieron obtener las direcciones de ese usuario' };
-    }
-  }
 }

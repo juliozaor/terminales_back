@@ -17,6 +17,12 @@ export default class ControladorTerminales {
       return response.status(200).send(rutas);
   }
 
+  public async numeroTotalRutasPorUsuario({ response, request }: HttpContextContract) {
+    const { id } = await request.obtenerPayloadJWT()
+      const totalRutas = await this.service.numeroTotalRutasPorUsuario(parseInt(id))
+      return response.status(200).send(totalRutas);
+  }
+
   // public async obtenerAseguradora ({response, params}:HttpContextContract){
   //   const id = params.id
   //   if(!id){

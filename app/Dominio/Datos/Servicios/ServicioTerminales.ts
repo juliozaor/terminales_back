@@ -9,6 +9,10 @@ export class ServicioTerminales{
     return this.repositorio.visualizarRutas(param, id)
   }
 
+  async numeroTotalRutasPorUsuario(id: number): Promise<any>{
+    return this.repositorio.numeroTotalRutasPorUsuario(id)
+  }
+
   // async obtenerAseguradora(id:number): Promise<Aseguradora>{
   //   return this.repositorio.obtenerAseguradora(id)
   // }
