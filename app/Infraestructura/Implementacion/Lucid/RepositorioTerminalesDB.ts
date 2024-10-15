@@ -114,10 +114,10 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
 
       const totalCountResult = await Database.rawQuery(totalCountQuery);
       const totalRecords = totalCountResult.rows[0].total;
-      return totalRecords;
+      return { TotalRegistros: totalRecords };
 
     } catch (error) {
-      return { message: 'No se pudieron obtener las direcciones de ese usuario' };
+      return { message: 'No se pudieron obtener las rutas de ese usuario' };
     }
   }
 
