@@ -225,6 +225,15 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
   }
 
 
+  // async guardarRutas(param: any): Promise<{ rutas: RespuestaClases[] }> {
+  //   try {
+
+  //   } catch (error) {
+  //     throw new Error(error);
+  //   }
+  // }
+
+
 
   // const query = await TblRutaEmpresas.query().preload('codigoUnicoRuta', sqlcodigo => {
   //   sqlcodigo.preload('ruta', sqlruta => {

@@ -2,6 +2,7 @@
 import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import TblCentroPoblados from "App/Infraestructura/Datos/Entidad/CentroPoblado";
 import TblClaseVehiculos from "App/Infraestructura/Datos/Entidad/ClaseVehiculos";
+import TblCodigoClasePorGrupos from "App/Infraestructura/Datos/Entidad/CodigoClaseGrupos";
 import TblDepartamentos from "App/Infraestructura/Datos/Entidad/Departamentos";
 import TblModalidades from "App/Infraestructura/Datos/Entidad/Modalidades";
 import TblMunicipios from "App/Infraestructura/Datos/Entidad/Municipios";
@@ -78,16 +79,32 @@ export default class ControladorMaestra {
   }
 
   public async tipovehiculo({ request }: HttpContextContract) {
-    const tiposvehiculos = await TblClaseVehiculos.all();
-
+    const idClasePorGrupo = request.input('idClasePorGrupo');
+    const tiposvehiculos = await TblClaseVehiculos.query().where('tcv_clase_por_grupo_id', idClasePorGrupo);
     try {
       const respuestaTiposvehiculos = tiposvehiculos.map((tipovehiculo) => {
         return {
           id: tipovehiculo.id,
           descripcion: tipovehiculo.descripcion,
+          idClasePorGrupo: tipovehiculo.idClasePorGrupo
         };
       });
       return { respuestaTiposvehiculos };
+    } catch (error) {
+      return { message: 'No se pudieron obtener los tipos de vehiculos' };
+    }
+  }
+
+  public async clasePorGrupo({ request }: HttpContextContract) {
+    const clasesPorGrupos = await TblCodigoClasePorGrupos.all();
+    try {
+      const respuestaclasesPorGrupos = clasesPorGrupos.map((clasePorGrupo) => {
+        return {
+          id: clasePorGrupo.id,
+          descripcion: clasePorGrupo.descripcion
+        };
+      });
+      return { respuestaclasesPorGrupos };
     } catch (error) {
       return { message: 'No se pudieron obtener los tipos de vehiculos' };
     }

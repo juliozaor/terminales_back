@@ -23,17 +23,8 @@ export class ServicioTerminales{
     return this.repositorio.numeroTotalRutasPorUsuario(id)
   }
 
-  // async obtenerAseguradora(id:number): Promise<Aseguradora>{
-  //   return this.repositorio.obtenerAseguradora(id)
-  // }
-  // async crearAseguradora(aseguradora: Aseguradora): Promise<Aseguradora>{
-  //   return this.repositorio.crearAseguradora(aseguradora)
-  // }
-  // async actualizarAseguradoraAll(aseguradora:Aseguradora): Promise<Aseguradora>{
-  //   return this.repositorio.actualizarAseguradoraAll(aseguradora)
-  // }
-  // async eliminarAseguradora(id:number): Promise<{message: string}>{
-  //   return this.repositorio.eliminarAseguradora(id)
+  // async guardarRutas(param: any) {
+  //   return this.repositorio.guardarRutas(param)
   // }
 
 }

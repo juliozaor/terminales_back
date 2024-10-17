@@ -36,6 +36,10 @@ export default class ControladorTerminales {
       return response.status(200).send(totalRutas);
   }
 
+  // public async guardarRutas({ response, request }: HttpContextContract) {
+
+  // }
+
   // public async obtenerAseguradora ({response, params}:HttpContextContract){
   //   const id = params.id
   //   if(!id){
