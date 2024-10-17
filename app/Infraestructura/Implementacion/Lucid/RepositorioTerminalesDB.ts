@@ -305,15 +305,36 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
     }
   }
 
-  async guardarDireccion(nodo: Nodo): Promise<Nodo> {
+  async guardarDireccion(nodo: Nodo): Promise<any> {
     const nodoDb = new TblNodos()
     try {
-      nodoDb.establecerNodoDb(nodo)
-      await nodoDb.save()
-      return nodoDb
+      const existe = await TblNodos.query().where({
+        idDespacho: nodo.despachoId,
+        descripcion: nodo.descripcion,
+        direccion: nodo.direccion,
+        codigoCp: nodo.codigoCentroPoblado
+      }).first()
+
+      if (!existe) {
+        nodoDb.establecerNodoDb(nodo)
+        await nodoDb.save()
+        // return nodoDb
+      }
     } catch (error) {
       throw new Error(error);
     }
+    const nodosRespuesta = await TblNodos.query().where({
+      idDespacho: nodo.despachoId,
+      codigoCp: nodo.codigoCentroPoblado
+    })
+
+    const respuestaDirecciones = nodosRespuesta.map((nodoR) => {
+      return {
+        id: nodoR.id,
+        descripcion: nodoR.descripcion,
+      };
+    });
+    return { respuestaDirecciones };
   }
 
 

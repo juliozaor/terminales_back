@@ -112,8 +112,13 @@ export default class ControladorMaestra {
 
   public async nodos({ request }: HttpContextContract) {
     const codigoTipollegada = request.input('codigoTipollegada');
+    const codigoCentroPoblado = request.input('codigoCp');
     try {
-      const direcciones = await TblNodos.query().where('tnd_despacho_id', codigoTipollegada );
+      const direcciones =  await TblNodos.query().where({
+        idDespacho: codigoTipollegada,
+        codigoCp: codigoCentroPoblado
+      })
+
       const respuestaDirecciones = direcciones.map((nodo) => {
         return {
           id: nodo.id,

@@ -42,10 +42,10 @@ export default class ControladorTerminales {
       if (!direccionIn || Object.keys(direccionIn).length === 0) {
         return response.badRequest({ message: 'El objeto de dirección no puede estar vacío.' });
       }
-      const requiredFields = ['despachoId', 'descripcion', 'codigoCentroPoblado'];
-      const missingFields = requiredFields.filter(field => !direccionIn[field]);
-      if (missingFields.length > 0) {
-        return response.badRequest({ message: `Faltan campos requeridos: ${missingFields.join(', ')}` });
+      const camposRequeridos = ['despachoId', 'descripcion', 'codigoCentroPoblado'];
+      const camposFaltantes = camposRequeridos.filter(field => !direccionIn[field]);
+      if (camposFaltantes.length > 0) {
+        return response.badRequest({ message: `Faltan campos requeridos: ${camposFaltantes.join(', ')}` });
       }
       const direccion = await this.service.guardarDireccion(direccionIn)
       return response.created(direccion)
