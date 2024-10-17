@@ -6,6 +6,8 @@ import TblRutaEmpresas from 'App/Infraestructura/Datos/Entidad/RutaEmpresa';
 import Database from '@ioc:Adonis/Lucid/Database';
 import { RespuestaParadas } from 'App/Dominio/Dto/RespuestaParadas';
 import { RespuestaClases } from 'App/Dominio/Dto/RespuestaClases';
+import { Nodo } from 'App/Dominio/Datos/Entidades/Nodo';
+import TblNodos from 'App/Infraestructura/Datos/Entidad/Nodos';
 
 export class RepositorioTerminalesDB implements RepositorioTerminales {
 
@@ -35,7 +37,8 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       let consulta;
       if (!pagina && !limite) {
         consulta = await Database.rawQuery(`SELECT
-          tre.tre_codigo_unico_ruta as id_ruta,
+          tr.trt_codigo_ruta as id_ruta,
+          tre.tre_codigo_unico_ruta as id_unico_ruta,
           td.tdp_nombre as departamento_origen,
           td.tdp_codigo_departamento as departamento_origen_codigo,
           tm.tms_nombre as municipio_origen,
@@ -79,7 +82,8 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
           WHERE tre.tre_id_usuario = ${id}`);
       } else {
         consulta = await Database.rawQuery(`SELECT
-          tre.tre_codigo_unico_ruta as id_ruta,
+          tr.trt_codigo_ruta as id_ruta,
+          tre.tre_codigo_unico_ruta as id_unico_ruta,
           td.tdp_nombre as departamento_origen,
           td.tdp_codigo_departamento as departamento_origen_codigo,
           tm.tms_nombre as municipio_origen,
@@ -186,29 +190,48 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
 
       const totalCountResult = await Database.rawQuery(totalCountQuery);
       const totalRecords = totalCountResult.rows[0].total;
+      let consulta;
+      if (!pagina && !limite) {
+        consulta = await Database.rawQuery(`SELECT
+          tp.tps_id as parada_id,
+          td.tdp_codigo_departamento as codigo_departamento,
+          tm.tms_codigo_municipio as codigo_municipio,
+          tp.tps_codigo_cp as codigo_cp,
+          tn.tnd_despacho_id as tipo_llegada_id,
+          tn.tnd_id as direccion_id
+            FROM
+            tbl_ruta_empresas tre
+          LEFT JOIN tbl_ruta_codigo_rutas trcr ON trcr.rcr_codigo_unico_ruta = tre.tre_codigo_unico_ruta
+          left join tbl_nodos_despachos tnd on tnd.tnd_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
+          left join tbl_paradas tp on tp.tps_id = tnd_paradas_id
+          left join tbl_centro_poblados tcp on tcp.tcp_codigo_centro_poblado = tp.tps_codigo_cp
+          left join tbl_municipios tm on tm.tms_codigo_municipio = tcp.tcp_codigo_municipio
+          left join tbl_departamentos td on td.tdp_codigo_departamento = tm.tms_departamento_codigo
+          left join tbl_nodos tn on tn.tnd_id = tp.tps_nodo_id
+          WHERE tre.tre_id_usuario = ${id} and tre.tre_codigo_unico_ruta = ${rutaId}`);
+      } else {
+        consulta = await Database.rawQuery(`SELECT
+          tp.tps_id as parada_id,
+          td.tdp_codigo_departamento as codigo_departamento,
+          tm.tms_codigo_municipio as codigo_municipio,
+          tp.tps_codigo_cp as codigo_cp,
+          tn.tnd_despacho_id as tipo_llegada_id,
+          tn.tnd_id as direccion_id
+            FROM
+            tbl_ruta_empresas tre
+          LEFT JOIN tbl_ruta_codigo_rutas trcr ON trcr.rcr_codigo_unico_ruta = tre.tre_codigo_unico_ruta
+          left join tbl_nodos_despachos tnd on tnd.tnd_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
+          left join tbl_paradas tp on tp.tps_id = tnd_paradas_id
+          left join tbl_centro_poblados tcp on tcp.tcp_codigo_centro_poblado = tp.tps_codigo_cp
+          left join tbl_municipios tm on tm.tms_codigo_municipio = tcp.tcp_codigo_municipio
+          left join tbl_departamentos td on td.tdp_codigo_departamento = tm.tms_departamento_codigo
+          left join tbl_nodos tn on tn.tnd_id = tp.tps_nodo_id
+          WHERE tre.tre_id_usuario = ${id} and tre.tre_codigo_unico_ruta = ${rutaId}
+            LIMIT ${limite} OFFSET ${(pagina - 1) * limite}`);
+      }
 
-
-      const consulta = await Database.rawQuery(`SELECT
-		tp.tps_id as parada_id,
-		td.tdp_codigo_departamento as codigo_departamento,
-		tm.tms_codigo_municipio as codigo_municipio,
-		tp.tps_codigo_cp as codigo_cp,
-		tn.tnd_despacho_id as tipo_llegada_id,
-		tn.tnd_id as direccion_id
-      FROM
-      tbl_ruta_empresas tre
-    LEFT JOIN tbl_ruta_codigo_rutas trcr ON trcr.rcr_codigo_unico_ruta = tre.tre_codigo_unico_ruta
-    left join tbl_nodos_despachos tnd on tnd.tnd_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
-    left join tbl_paradas tp on tp.tps_id = tnd_paradas_id
-    left join tbl_centro_poblados tcp on tcp.tcp_codigo_centro_poblado = tp.tps_codigo_cp
-    left join tbl_municipios tm on tm.tms_codigo_municipio = tcp.tcp_codigo_municipio
-    left join tbl_departamentos td on td.tdp_codigo_departamento = tm.tms_departamento_codigo
-    left join tbl_nodos tn on tn.tnd_id = tp.tps_nodo_id
-    WHERE tre.tre_id_usuario = ${id} and tre.tre_codigo_unico_ruta = ${rutaId}
-      LIMIT ${limite} OFFSET ${(pagina - 1) * limite}`);
 
       const paradas: RespuestaParadas[] = consulta.rows ?? [];
-
 
       const totalPages = Math.ceil(totalRecords / limite);
       const paginacion = {
@@ -238,20 +261,33 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
 
       const totalCountResult = await Database.rawQuery(totalCountQuery);
       const totalRecords = totalCountResult.rows[0].total;
-
-
-      const consulta = await Database.rawQuery(`SELECT
-      tccpg.cpg_descripcion as clase,
-      tcv.tcv_id as tipo_vehiculo_id,
-      tcv.tcv_estado as estado
-      FROM
-        tbl_ruta_empresas tre
-      LEFT JOIN tbl_ruta_codigo_rutas trcr ON trcr.rcr_codigo_unico_ruta = tre.tre_codigo_unico_ruta
-      left join tbl_ruta_vehiculos trv on trv.trv_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
-      left join tbl_clase_vehiculos tcv on tcv.tcv_id = trv.trv_clase_vehiculo_id
-      left join tbl_codigo_clase_por_grupos tccpg on tccpg.cpg_id = tcv.tcv_clase_por_grupo_id
-      WHERE tre.tre_id_usuario = ${id} and tre.tre_codigo_unico_ruta = ${rutaId}
-      LIMIT ${limite} OFFSET ${(pagina - 1) * limite}`);
+      let consulta;
+      if (!pagina && !limite) {
+        consulta = await Database.rawQuery(`SELECT
+          tccpg.cpg_descripcion as clase,
+          tcv.tcv_id as tipo_vehiculo_id,
+          tcv.tcv_estado as estado
+          FROM
+            tbl_ruta_empresas tre
+          LEFT JOIN tbl_ruta_codigo_rutas trcr ON trcr.rcr_codigo_unico_ruta = tre.tre_codigo_unico_ruta
+          left join tbl_ruta_vehiculos trv on trv.trv_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
+          left join tbl_clase_vehiculos tcv on tcv.tcv_id = trv.trv_clase_vehiculo_id
+          left join tbl_codigo_clase_por_grupos tccpg on tccpg.cpg_id = tcv.tcv_clase_por_grupo_id
+          WHERE tre.tre_id_usuario = ${id} and tre.tre_codigo_unico_ruta = ${rutaId}`);
+      } else {
+        consulta = await Database.rawQuery(`SELECT
+          tccpg.cpg_descripcion as clase,
+          tcv.tcv_id as tipo_vehiculo_id,
+          tcv.tcv_estado as estado
+          FROM
+            tbl_ruta_empresas tre
+          LEFT JOIN tbl_ruta_codigo_rutas trcr ON trcr.rcr_codigo_unico_ruta = tre.tre_codigo_unico_ruta
+          left join tbl_ruta_vehiculos trv on trv.trv_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
+          left join tbl_clase_vehiculos tcv on tcv.tcv_id = trv.trv_clase_vehiculo_id
+          left join tbl_codigo_clase_por_grupos tccpg on tccpg.cpg_id = tcv.tcv_clase_por_grupo_id
+          WHERE tre.tre_id_usuario = ${id} and tre.tre_codigo_unico_ruta = ${rutaId}
+          LIMIT ${limite} OFFSET ${(pagina - 1) * limite}`);
+      }
 
       const clases: RespuestaClases[] = consulta.rows ?? [];
 
@@ -264,6 +300,17 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       };
 
       return { clases, paginacion };
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async guardarDireccion(nodo: Nodo): Promise<Nodo> {
+    const nodoDb = new TblNodos()
+    try {
+      nodoDb.establecerNodoDb(nodo)
+      await nodoDb.save()
+      return nodoDb
     } catch (error) {
       throw new Error(error);
     }

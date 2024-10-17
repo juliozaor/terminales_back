@@ -9,4 +9,5 @@ Route.group(() => {
   Route.get('total-rutas', accion_path + '.numeroTotalRutasPorUsuario')
   Route.get('/visualizar-paradas', accion_path + '.visualizarParadasPorRuta')
   Route.get('/visualizar-clases', accion_path + '.visualizarClasesPorRuta')
+  Route.post('/crear-direccion', accion_path + '.guardarDireccion')
 }).prefix('api/v1/terminales').middleware('autenticacionJwt')

@@ -23,8 +23,8 @@ export class ServicioTerminales{
     return this.repositorio.numeroTotalRutasPorUsuario(id)
   }
 
-  // async guardarRutas(param: any) {
-  //   return this.repositorio.guardarRutas(param)
-  // }
+  async guardarDireccion(param: any) {
+    return this.repositorio.guardarDireccion(param)
+  }
 
 }

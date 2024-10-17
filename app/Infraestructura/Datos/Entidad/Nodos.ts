@@ -1,6 +1,7 @@
 import { BaseModel, belongsTo, BelongsTo, column} from '@ioc:Adonis/Lucid/Orm';
 import { DateTime } from 'luxon';
 import TblTipoDespachos from './TipoDespacho';
+import { Nodo } from 'App/Dominio/Datos/Entidades/Nodo';
 
 export default class TblNodos extends BaseModel {
 
@@ -12,13 +13,23 @@ export default class TblNodos extends BaseModel {
 
   @column({ columnName: 'tnd_direccion' }) public direccion: string
 
-  @column({ columnName: 'tnd_codigo_cp' }) public codigoCp: number
+  @column({ columnName: 'tnd_codigo_cp' }) public codigoCp: string
 
   @column({ columnName: 'tnd_estado' }) public estado: boolean
 
   @column.dateTime({ autoCreate: true , columnName: 'tnd_creacion'}) public createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true, columnName: 'tnd_actualizacion' }) public updatedAt: DateTime
+
+
+  public establecerNodoDb (nodo: Nodo) {
+    this.id = nodo.id!
+    this.idDespacho = nodo.despachoId!
+    this.descripcion = nodo.descripcion!
+    this.direccion = nodo.direccion!
+    this.codigoCp = nodo.codigoCentroPoblado!
+    this.estado = nodo.estado!
+  }
 
   @belongsTo (() => TblTipoDespachos, {
     localKey: 'id',

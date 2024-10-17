@@ -36,6 +36,24 @@ export default class ControladorTerminales {
       return response.status(200).send(totalRutas);
   }
 
+  public async guardarDireccion({ response, request }: HttpContextContract) {
+    try {
+      const direccionIn: any = request.all()
+      if (!direccionIn || Object.keys(direccionIn).length === 0) {
+        return response.badRequest({ message: 'El objeto de dirección no puede estar vacío.' });
+      }
+      const requiredFields = ['despachoId', 'descripcion', 'codigoCentroPoblado'];
+      const missingFields = requiredFields.filter(field => !direccionIn[field]);
+      if (missingFields.length > 0) {
+        return response.badRequest({ message: `Faltan campos requeridos: ${missingFields.join(', ')}` });
+      }
+      const direccion = await this.service.guardarDireccion(direccionIn)
+      return response.created(direccion)
+    } catch (error) {
+      return response.badRequest(error.messages)
+    }
+    }
+
   // public async guardarRutas({ response, request }: HttpContextContract) {
 
   // }
