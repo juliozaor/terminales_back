@@ -1,4 +1,5 @@
 import { BaseModel, column} from '@ioc:Adonis/Lucid/Orm';
+import { RutaHabilitada } from 'App/Dominio/Datos/Entidades/RutaHabilitada';
 import { DateTime } from 'luxon';
 
 export default class TblRutaHabilitadas extends BaseModel {
@@ -26,4 +27,16 @@ export default class TblRutaHabilitadas extends BaseModel {
   @column.dateTime({ autoCreate: true , columnName: 'trh_creacion'}) public createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true, columnName: 'trh_actualizacion' }) public updatedAt: DateTime
+
+  public establecerRutaHabilitada(rutaHabilitada: RutaHabilitada) {
+    this.idRuta = rutaHabilitada.idRuta!
+    this.resolucion = rutaHabilitada.resolucion!
+    this.resolucionActual = rutaHabilitada.resolucionActual!
+    this.fecha = rutaHabilitada.fecha!
+    this.direccionTerritorial = rutaHabilitada.direccionTerritorial!
+    this.documento = rutaHabilitada.documento!
+    this.nombreOriginal = rutaHabilitada.nombreOriginal!
+    this.rutaArchivo = rutaHabilitada.rutaArchivo!
+    this.corresponde = rutaHabilitada.corresponde!
+  }
 }

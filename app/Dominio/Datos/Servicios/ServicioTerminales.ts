@@ -27,4 +27,8 @@ export class ServicioTerminales{
     return this.repositorio.guardarDireccion(param)
   }
 
+  async guardarRuta(param: any, id: number) {
+    return this.repositorio.guardarRuta(param, id)
+  }
+
 }

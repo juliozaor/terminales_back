@@ -4,6 +4,7 @@ import TblRutas from './Rutas';
 import TblNodosDespachos from './NodosDespachos';
 import TblRutaEmpresaVias from './RutaEmpresaVia';
 import TblRutaHabilitadas from './RutaHabilitadas';
+import { RutaCodigoRuta } from 'App/Dominio/Datos/Entidades/RutaCodigoRuta';
 
 export default class TblRutaCodigoRutas extends BaseModel {
 
@@ -14,6 +15,11 @@ export default class TblRutaCodigoRutas extends BaseModel {
   @column.dateTime({ autoCreate: true , columnName: 'rcr_creacion'}) public createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true, columnName: 'rcr_actualizacion' }) public updatedAt: DateTime
+
+  public establecerRutaCodigoRuta (rutaCodigoRuta: RutaCodigoRuta) {
+    this.id = rutaCodigoRuta.id!
+    this.codigoRuta = rutaCodigoRuta.codigoRuta!
+  }
 
   @hasMany (() => TblRutas, {
     localKey: 'codigoRuta',

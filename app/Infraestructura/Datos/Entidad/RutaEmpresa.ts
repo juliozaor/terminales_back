@@ -1,6 +1,7 @@
 import { BaseModel, column, HasOne, hasOne} from '@ioc:Adonis/Lucid/Orm';
 import { DateTime } from 'luxon';
 import TblRutaCodigoRutas from './RutaCodigoRutas';
+import { RutaEmpresa } from 'App/Dominio/Datos/Entidades/RutaEmpresa';
 
 export default class TblRutaEmpresas extends BaseModel {
 
@@ -15,6 +16,11 @@ export default class TblRutaEmpresas extends BaseModel {
   @column.dateTime({ autoCreate: true , columnName: 'tre_creacion'}) public createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true, columnName: 'tre_actualizacion' }) public updatedAt: DateTime
+
+  public establecerRutaEmpresa (rutaEmpresa: RutaEmpresa) {
+    this.idUsuario = rutaEmpresa.idUsuario!
+    this.idRuta = rutaEmpresa.idRuta!
+  }
 
   @hasOne (() => TblRutaCodigoRutas, {
     localKey: 'idRuta',

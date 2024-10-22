@@ -52,6 +52,25 @@ export default class ControladorTerminales {
     } catch (error) {
       return response.badRequest(error.messages)
     }
+  }
+
+  public async guardarRuta({ response, request }: HttpContextContract) {
+    const { id } = await request.obtenerPayloadJWT()
+    try {
+      const rutadb = request.all()
+      if (!rutadb || Object.keys(rutadb).length === 0) {
+        return response.badRequest({ message: 'La ruta no puede estar vacío.' });
+      }
+      const camposRequeridos = ['centroPobladoOrigen', 'centroPobladoDestino', 'direccion', 'resolucionActual', 'via', 'direccionTerritorial'];
+      const camposFaltantes = camposRequeridos.filter(field => !rutadb[field]);
+      if (camposFaltantes.length > 0) {
+        return response.badRequest({ message: `Faltan campos requeridos: ${camposFaltantes.join(', ')}` });
+      }
+      const ruta = await this.service.guardarRuta(rutadb, parseInt(id))
+      return response.status(200).send(ruta);
+    } catch (error) {
+      return response.badRequest(error.messages)
+    }
     }
 
   // public async guardarRutas({ response, request }: HttpContextContract) {

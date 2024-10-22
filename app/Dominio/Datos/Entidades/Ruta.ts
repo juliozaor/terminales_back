@@ -1,15 +1,15 @@
 export class Ruta{
-  public id: number
+  public id?: number
 
-  public codigoRuta: number
+  public codigoRuta?: number
 
-  public codigoCpOrigen: number
+  public codigoCpOrigen?: string
 
-  public codigoCpDestino: number
+  public codigoCpDestino?: string
 
-  public idaaVuelta: string
+  public idaaVuelta?: string
 
-  public directo: number
+  public directo?: number
 
-  public estado: boolean
+  public estado?: boolean
 }

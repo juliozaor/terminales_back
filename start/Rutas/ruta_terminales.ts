@@ -10,4 +10,5 @@ Route.group(() => {
   Route.get('/visualizar-paradas', accion_path + '.visualizarParadasPorRuta')
   Route.get('/visualizar-clases', accion_path + '.visualizarClasesPorRuta')
   Route.post('/crear-direccion', accion_path + '.guardarDireccion')
+  Route.post('/guardar-ruta', accion_path + '.guardarRuta')
 }).prefix('api/v1/terminales').middleware('autenticacionJwt')

@@ -1,4 +1,5 @@
 import { BaseModel, column} from '@ioc:Adonis/Lucid/Orm';
+import { RutaEmpresaVia } from 'App/Dominio/Datos/Entidades/RutaEmpresaVia';
 import { DateTime } from 'luxon';
 
 export default class TblRutaEmpresaVias extends BaseModel {
@@ -14,4 +15,10 @@ export default class TblRutaEmpresaVias extends BaseModel {
   @column.dateTime({ autoCreate: true , columnName: 'rev_creacion'}) public createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true, columnName: 'rev_actualizacion' }) public updatedAt: DateTime
+
+  public establecerRutaEmpresaVia(rutaEmpresaVia: RutaEmpresaVia) {
+    this.codigoRuta = rutaEmpresaVia.codigoRuta!
+    this.codigoVia = rutaEmpresaVia.codigoVia!
+    this.via = rutaEmpresaVia.via!
+  }
 }

@@ -8,6 +8,18 @@ import { RespuestaParadas } from 'App/Dominio/Dto/RespuestaParadas';
 import { RespuestaClases } from 'App/Dominio/Dto/RespuestaClases';
 import { Nodo } from 'App/Dominio/Datos/Entidades/Nodo';
 import TblNodos from 'App/Infraestructura/Datos/Entidad/Nodos';
+import { log } from 'console';
+import TblRutaCodigoRutas from 'App/Infraestructura/Datos/Entidad/RutaCodigoRutas';
+import TblRutas from 'App/Infraestructura/Datos/Entidad/Rutas';
+import { RutaCodigoRuta } from 'App/Dominio/Datos/Entidades/RutaCodigoRuta';
+import { RutaEmpresa } from 'App/Dominio/Datos/Entidades/RutaEmpresa';
+import { Ruta } from 'App/Dominio/Datos/Entidades/Ruta';
+import TblRutaEmpresaVias from 'App/Infraestructura/Datos/Entidad/RutaEmpresaVia';
+import { RutaEmpresaVia } from 'App/Dominio/Datos/Entidades/RutaEmpresaVia';
+import TblRutaHabilitadas from 'App/Infraestructura/Datos/Entidad/RutaHabilitadas';
+import { RutaHabilitada } from 'App/Dominio/Datos/Entidades/RutaHabilitada';
+import { RutaDireccion } from 'App/Dominio/Datos/Entidades/RutaDireccion';
+import TblRutasDirecciones from 'App/Infraestructura/Datos/Entidad/RutaDireccion';
 
 export class RepositorioTerminalesDB implements RepositorioTerminales {
 
@@ -318,7 +330,6 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       if (!existe) {
         nodoDb.establecerNodoDb(nodo)
         await nodoDb.save()
-        // return nodoDb
       }
     } catch (error) {
       throw new Error(error);
@@ -337,6 +348,131 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
     return { respuestaDirecciones };
   }
 
+  async guardarRuta(ruta: RespuestaRutas, id: number): Promise<any> {
+    try {
+      const ultimoIdCodigoRuta = await TblRutaCodigoRutas.query().orderBy('id', 'desc').first()
+      const ultimoIdRuta = await TblRutas.query().orderBy('codigoRuta', 'desc').first()
+      const nuevoIdCodigoRuta = ultimoIdCodigoRuta ? ultimoIdCodigoRuta.id + 1 : 1;
+      const nuevoIdRuta = ultimoIdRuta ? ultimoIdRuta.codigoRuta + 1 : 1;
+
+      const rutaCodigoRuta = {
+        id: nuevoIdCodigoRuta,
+        codigoRuta:  nuevoIdRuta
+      }
+      const rutaEmpresa = {
+        idUsuario: id,
+        idRuta: nuevoIdCodigoRuta
+      }
+      const rutaIda = {
+        codigoRuta: nuevoIdRuta,
+        codigoCpOrigen: ruta.centroPobladoOrigen,
+        codigoCpDestino: ruta.centroPobladoDestino,
+        idaaVuelta: 'A',
+        estado: ruta.rutaHabilitada
+      }
+      const rutaVuelta = {
+        codigoRuta: nuevoIdRuta,
+        codigoCpOrigen: ruta.centroPobladoDestino,
+        codigoCpDestino: ruta.centroPobladoOrigen,
+        idaaVuelta: 'B',
+        estado: ruta.rutaHabilitada
+      }
+
+      const rutaEmpresaVia = {
+        codigoRuta: nuevoIdCodigoRuta,
+        via: ruta.via,
+      }
+
+      const rutaHabilitada = {
+        idRuta: nuevoIdCodigoRuta,
+        resolucion: ruta.resolucion,
+        resolucionActual: ruta.resolucionActual,
+        direccionTerritorial: ruta.direccionTerritorial,
+        documento: ruta.documento,
+        nombreOriginal: ruta.nombreOriginal,
+        rutaArchivo: ruta.rutaArchivo,
+        corresponde: ruta.corresponde
+      }
+
+      const idRutaida = await this.guardarRutas(rutaIda)
+      this.guardarRutas(rutaVuelta)
+      this.guardarRutaCodigoRuta(rutaCodigoRuta)
+      this.guardarRutaEmpresavia(rutaEmpresaVia)
+      this.guardarRutaHabilitada(rutaHabilitada)
+      const rutaDireccion = {
+        idRuta: idRutaida,
+        idNodo: ruta.direccion
+      }
+      this.guardarRutaDireccion(rutaDireccion)
+
+      this.guardarRutaEmpresa(rutaEmpresa)
+
+      return ruta
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async guardarRutas(ruta: Ruta) {
+    try {
+      const rutaDb = new TblRutas()
+      rutaDb.establecerRuta(ruta)
+      await rutaDb.save()
+      return rutaDb.id
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async guardarRutaCodigoRuta(rutaCodigoRuta: RutaCodigoRuta) {
+    try {
+      const rutaCodigoRutaDb = new TblRutaCodigoRutas()
+      rutaCodigoRutaDb.establecerRutaCodigoRuta(rutaCodigoRuta)
+      await rutaCodigoRutaDb.save()
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async guardarRutaEmpresa(rutaEmpresa: RutaEmpresa) {
+    try {
+      const rutaEmpresaDb = new TblRutaEmpresas()
+      rutaEmpresaDb.establecerRutaEmpresa(rutaEmpresa)
+      await rutaEmpresaDb.save()
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async guardarRutaEmpresavia(rutaEmpresavia: RutaEmpresaVia) {
+    try {
+      const rutaEmpresaviaDb = new TblRutaEmpresaVias()
+      rutaEmpresaviaDb.establecerRutaEmpresaVia(rutaEmpresavia)
+      await rutaEmpresaviaDb.save()
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async guardarRutaHabilitada(rutaHabilitada: RutaHabilitada) {
+    try {
+      const rutaHabilitadaDb = new TblRutaHabilitadas()
+      rutaHabilitadaDb.establecerRutaHabilitada(rutaHabilitada)
+      await rutaHabilitadaDb.save()
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async guardarRutaDireccion(rutaDireccion: RutaDireccion) {
+    try {
+      const rutaDireccionDb = new TblRutasDirecciones()
+      rutaDireccionDb.establecerRutaDireccion(rutaDireccion)
+      await rutaDireccionDb.save()
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 
   // async guardarRutas(param: any): Promise<{ rutas: RespuestaClases[] }> {
   //   try {
