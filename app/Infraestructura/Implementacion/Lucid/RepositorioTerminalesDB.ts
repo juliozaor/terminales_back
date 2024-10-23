@@ -91,7 +91,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
           LEFT JOIN tbl_tipo_despachos ttd ON ttd.ttd_id = tn.tnd_despacho_id
           LEFT JOIN tbl_ruta_empresa_vias trev ON trev.rev_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
           LEFT JOIN tbl_ruta_habilitadas trh ON trh.trh_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
-          WHERE tre.tre_id_usuario = ${id}`);
+          WHERE tre.tre_id_usuario = ${id} ORDER By tre.tre_codigo_unico_ruta desc`);
       } else {
         consulta = await Database.rawQuery(`SELECT
 		      tr.trt_codigo_ruta as id_ruta,
@@ -220,7 +220,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
           left join tbl_municipios tm on tm.tms_codigo_municipio = tcp.tcp_codigo_municipio
           left join tbl_departamentos td on td.tdp_codigo_departamento = tm.tms_departamento_codigo
           left join tbl_nodos tn on tn.tnd_id = tp.tps_nodo_id
-          WHERE tre.tre_id_usuario = ${id} and tre.tre_codigo_unico_ruta = ${rutaId}`);
+          WHERE tre.tre_id_usuario = ${id} and tre.tre_codigo_unico_ruta = ${rutaId} ORDER By tp.tps_id desc`);
       } else {
         consulta = await Database.rawQuery(`SELECT
           tp.tps_id as parada_id,
@@ -285,7 +285,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
           left join tbl_ruta_vehiculos trv on trv.trv_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
           left join tbl_clase_vehiculos tcv on tcv.tcv_id = trv.trv_clase_vehiculo_id
           left join tbl_codigo_clase_por_grupos tccpg on tccpg.cpg_id = tcv.tcv_clase_por_grupo_id
-          WHERE tre.tre_id_usuario = ${id} and tre.tre_codigo_unico_ruta = ${rutaId}`);
+          WHERE tre.tre_id_usuario = ${id} and tre.tre_codigo_unico_ruta = ${rutaId} ORDER By tccpg.cpg_id desc`);
       } else {
         consulta = await Database.rawQuery(`SELECT
           tccpg.cpg_descripcion as clase,
@@ -395,17 +395,17 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       }
 
       const idRutaida = await this.guardarRutas(rutaIda)
-      this.guardarRutas(rutaVuelta)
-      this.guardarRutaCodigoRuta(rutaCodigoRuta)
-      this.guardarRutaEmpresavia(rutaEmpresaVia)
-      this.guardarRutaHabilitada(rutaHabilitada)
+      await this.guardarRutas(rutaVuelta)
+      await this.guardarRutaCodigoRuta(rutaCodigoRuta)
+      await this.guardarRutaEmpresavia(rutaEmpresaVia)
+      await this.guardarRutaHabilitada(rutaHabilitada)
       const rutaDireccion = {
         idRuta: idRutaida,
         idNodo: ruta.direccion
       }
-      this.guardarRutaDireccion(rutaDireccion)
+      await this.guardarRutaDireccion(rutaDireccion)
 
-      this.guardarRutaEmpresa(rutaEmpresa)
+      await this.guardarRutaEmpresa(rutaEmpresa)
 
       return {
         idUnicoRuta: nuevoIdCodigoRuta,
