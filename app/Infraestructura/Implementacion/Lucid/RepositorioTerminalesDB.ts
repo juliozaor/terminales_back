@@ -453,6 +453,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       rutaEmpresaviaDb.establecerRutaEmpresaVia(rutaEmpresavia)
       await rutaEmpresaviaDb.save()
     } catch (error) {
+      console.log(error);
       throw new Error(error);
     }
   }
