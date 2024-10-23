@@ -49,7 +49,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       let consulta;
       if (!pagina && !limite) {
         consulta = await Database.rawQuery(`SELECT
-          tr.trt_codigo_ruta as id_ruta,
+		    tr.trt_codigo_ruta as id_ruta,
           tre.tre_codigo_unico_ruta as id_unico_ruta,
           td.tdp_nombre as departamento_origen,
           td.tdp_codigo_departamento as departamento_origen_codigo,
@@ -86,15 +86,15 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
           LEFT JOIN tbl_municipios tmd ON tcpd.tcp_codigo_municipio = tmd.tms_codigo_municipio
           LEFT JOIN tbl_departamentos td ON tm.tms_departamento_codigo = td.tdp_codigo_departamento
           LEFT JOIN tbl_departamentos tdd ON tmd.tms_departamento_codigo = tdd.tdp_codigo_departamento
-          LEFT JOIN tbl_nodos_despachos tnd ON tnd.tnd_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
-          LEFT JOIN tbl_nodos tn ON tn.tnd_id = tnd.tnd_codigo_nodo
+          LEFT JOIN tbl_rutas_direcciones trd ON trd.trd_id_ruta  = tr.trt_id
+          LEFT JOIN tbl_nodos tn ON tn.tnd_id = trd.trd_id_nodo
           LEFT JOIN tbl_tipo_despachos ttd ON ttd.ttd_id = tn.tnd_despacho_id
           LEFT JOIN tbl_ruta_empresa_vias trev ON trev.rev_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
           LEFT JOIN tbl_ruta_habilitadas trh ON trh.trh_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
           WHERE tre.tre_id_usuario = ${id}`);
       } else {
         consulta = await Database.rawQuery(`SELECT
-          tr.trt_codigo_ruta as id_ruta,
+		      tr.trt_codigo_ruta as id_ruta,
           tre.tre_codigo_unico_ruta as id_unico_ruta,
           td.tdp_nombre as departamento_origen,
           td.tdp_codigo_departamento as departamento_origen_codigo,
@@ -131,8 +131,8 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
           LEFT JOIN tbl_municipios tmd ON tcpd.tcp_codigo_municipio = tmd.tms_codigo_municipio
           LEFT JOIN tbl_departamentos td ON tm.tms_departamento_codigo = td.tdp_codigo_departamento
           LEFT JOIN tbl_departamentos tdd ON tmd.tms_departamento_codigo = tdd.tdp_codigo_departamento
-          LEFT JOIN tbl_nodos_despachos tnd ON tnd.tnd_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
-          LEFT JOIN tbl_nodos tn ON tn.tnd_id = tnd.tnd_codigo_nodo
+          LEFT JOIN tbl_rutas_direcciones trd ON trd.trd_id_ruta  = tr.trt_id
+          LEFT JOIN tbl_nodos tn ON tn.tnd_id = trd.trd_id_nodo
           LEFT JOIN tbl_tipo_despachos ttd ON ttd.ttd_id = tn.tnd_despacho_id
           LEFT JOIN tbl_ruta_empresa_vias trev ON trev.rev_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
           LEFT JOIN tbl_ruta_habilitadas trh ON trh.trh_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
@@ -407,7 +407,10 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
 
       this.guardarRutaEmpresa(rutaEmpresa)
 
-      return ruta
+      return {
+        idUnicoRuta: nuevoIdCodigoRuta,
+        ruta
+      }
     } catch (error) {
       throw new Error(error);
     }
