@@ -32,6 +32,14 @@ export default class TblRutas extends BaseModel {
     this.estado = ruta.estado!
   }
 
+  public establecerRutaConId(ruta: Ruta) {
+    this.codigoCpOrigen = ruta.codigoCpOrigen!
+    this.codigoCpDestino = ruta.codigoCpDestino!
+    this.idaaVuelta = ruta.idaaVuelta!
+    this.directo = ruta.directo!
+    this.estado = ruta.estado!
+  }
+
   @belongsTo (() => TblCentroPoblados, {
     localKey: 'codigoCentroPoblado',
     foreignKey: 'codigoCpOrigen',

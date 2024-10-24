@@ -21,4 +21,10 @@ export default class TblRutaEmpresaVias extends BaseModel {
     this.codigoVia = rutaEmpresaVia.codigoVia!
     this.via = rutaEmpresaVia.via!
   }
+
+  public establecerRutaEmpresaViaConId(rutaEmpresaVia: RutaEmpresaVia) {
+    this.codigoRuta = rutaEmpresaVia.codigoRuta!
+    this.codigoVia = rutaEmpresaVia.codigoVia!
+    this.via = rutaEmpresaVia.via!
+  }
 }

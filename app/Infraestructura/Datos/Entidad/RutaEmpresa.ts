@@ -22,6 +22,12 @@ export default class TblRutaEmpresas extends BaseModel {
     this.idRuta = rutaEmpresa.idRuta!
   }
 
+  public establecerRutaEmpresaConId (rutaEmpresa: RutaEmpresa) {
+    this.idUsuario = rutaEmpresa.idUsuario!
+    this.idRuta = rutaEmpresa.idRuta!
+    this.estado = rutaEmpresa.estado!
+  }
+
   @hasOne (() => TblRutaCodigoRutas, {
     localKey: 'idRuta',
     foreignKey: 'id',

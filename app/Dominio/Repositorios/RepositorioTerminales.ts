@@ -13,6 +13,7 @@ export interface RepositorioTerminales {
   visualizarClasesPorRuta(param: any, id: number): Promise<{ clases: RespuestaClases[], paginacion: Paginador }>
   numeroTotalRutasPorUsuario(id: number): Promise<any>;
   guardarDireccion(nodo: Nodo): Promise<any>
-  guardarRuta(ruta: RespuestaRutas, id: number): Promise<any>
+  guardarRuta(ruta: RespuestaRutas, id: number): Promise<RespuestaRutas>
+  guardarRutas(rutas: RespuestaRutas[], id: number): Promise<any>
   // actualizarAseguradoraAll(aseguradora:Aseguradora): Promise<Aseguradora>
 }

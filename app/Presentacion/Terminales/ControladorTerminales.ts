@@ -73,9 +73,16 @@ export default class ControladorTerminales {
     }
     }
 
-  // public async guardarRutas({ response, request }: HttpContextContract) {
-
-  // }
+  public async guardarRutas({ response, request }: HttpContextContract) {
+    const { id } = await request.obtenerPayloadJWT()
+    try {
+      const rutasdb = request.all()
+      const rutas = await this.service.guardarRutas(rutasdb, parseInt(id))
+      return response.status(200).send(rutas);
+    } catch (error) {
+      return response.badRequest(error.messages)
+    }
+  }
 
   // public async obtenerAseguradora ({response, params}:HttpContextContract){
   //   const id = params.id

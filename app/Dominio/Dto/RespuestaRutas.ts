@@ -1,6 +1,7 @@
 export class RespuestaRutas {
-  public idRuta?: string
-  public idUnicoRuta? : string
+  public id?: number
+  public idRuta?: number
+  public idUnicoRuta? : number
   public departamentoOrigen?: string
   public municipioOrigen?: string
   public centroPobladoOrigen?: string

@@ -39,4 +39,16 @@ export default class TblRutaHabilitadas extends BaseModel {
     this.rutaArchivo = rutaHabilitada.rutaArchivo!
     this.corresponde = rutaHabilitada.corresponde!
   }
+
+  public establecerRutaHabilitadaConId(rutaHabilitada: RutaHabilitada) {
+    this.idRuta = rutaHabilitada.idRuta!
+    this.resolucion = rutaHabilitada.resolucion!
+    this.resolucionActual = rutaHabilitada.resolucionActual!
+    this.fecha = rutaHabilitada.fecha!
+    this.direccionTerritorial = rutaHabilitada.direccionTerritorial!
+    this.documento = rutaHabilitada.documento!
+    this.nombreOriginal = rutaHabilitada.nombreOriginal!
+    this.rutaArchivo = rutaHabilitada.rutaArchivo!
+    this.corresponde = rutaHabilitada.corresponde!
+  }
 }

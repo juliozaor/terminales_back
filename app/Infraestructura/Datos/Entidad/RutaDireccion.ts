@@ -21,6 +21,11 @@ export default class TblRutasDirecciones extends BaseModel {
     this.idNodo = rutaDireccion.idNodo!
   }
 
+  public establecerRutaDireccionConid(rutaDireccion: RutaDireccion) {
+    this.idRuta = rutaDireccion.idRuta!
+    this.idNodo = rutaDireccion.idNodo!
+  }
+
   @hasOne (() => TblRutas, {
     localKey: 'idRuta',
     foreignKey: 'id',
