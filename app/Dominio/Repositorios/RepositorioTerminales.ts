@@ -14,6 +14,5 @@ export interface RepositorioTerminales {
   numeroTotalRutasPorUsuario(id: number): Promise<any>;
   guardarDireccion(nodo: Nodo): Promise<any>
   guardarRuta(ruta: RespuestaRutas, id: number): Promise<RespuestaRutas>
-  guardarRutas(rutas: RespuestaRutas[], id: number): Promise<any>
-  // actualizarAseguradoraAll(aseguradora:Aseguradora): Promise<Aseguradora>
+  guardar(arregloTerminales: any[], id: number): Promise<any>
 }

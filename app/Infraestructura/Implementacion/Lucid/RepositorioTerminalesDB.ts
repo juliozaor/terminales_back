@@ -88,7 +88,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
           LEFT JOIN tbl_municipios tmd ON tcpd.tcp_codigo_municipio = tmd.tms_codigo_municipio
           LEFT JOIN tbl_departamentos td ON tm.tms_departamento_codigo = td.tdp_codigo_departamento
           LEFT JOIN tbl_departamentos tdd ON tmd.tms_departamento_codigo = tdd.tdp_codigo_departamento
-          LEFT JOIN tbl_rutas_direcciones trd ON trd.trd_id_ruta  = tr.trt_id
+          LEFT JOIN tbl_rutas_direcciones trd ON trd.trd_id_ruta = trcr.rcr_codigo_unico_ruta
           LEFT JOIN tbl_nodos tn ON tn.tnd_id = trd.trd_id_nodo
           LEFT JOIN tbl_tipo_despachos ttd ON ttd.ttd_id = tn.tnd_despacho_id
           LEFT JOIN tbl_ruta_empresa_vias trev ON trev.rev_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
@@ -134,7 +134,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
           LEFT JOIN tbl_municipios tmd ON tcpd.tcp_codigo_municipio = tmd.tms_codigo_municipio
           LEFT JOIN tbl_departamentos td ON tm.tms_departamento_codigo = td.tdp_codigo_departamento
           LEFT JOIN tbl_departamentos tdd ON tmd.tms_departamento_codigo = tdd.tdp_codigo_departamento
-          LEFT JOIN tbl_rutas_direcciones trd ON trd.trd_id_ruta  = tr.trt_id
+          LEFT JOIN tbl_rutas_direcciones trd ON trd.trd_id_ruta = trcr.rcr_codigo_unico_ruta
           LEFT JOIN tbl_nodos tn ON tn.tnd_id = trd.trd_id_nodo
           LEFT JOIN tbl_tipo_despachos ttd ON ttd.ttd_id = tn.tnd_despacho_id
           LEFT JOIN tbl_ruta_empresa_vias trev ON trev.rev_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
@@ -351,12 +351,12 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
   }
 
   // guarda todo
-  async guardarRutas(rutas: any, id: number) {
+  async guardar(arregloTerminales: any, id: number) {
     try {
-      for (let ruta of rutas.Rutas) {
+      for (let ruta of arregloTerminales.Rutas) {
         await this.actualizarRuta(ruta, id)
       }
-      return rutas;
+      return arregloTerminales;
     } catch (error) {
       console.log(error);
       throw new Error(error);
@@ -411,17 +411,11 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
 
   async guardarRuta(ruta: RespuestaRutas, id: number): Promise<RespuestaRutas> {
     try {
-      const ultimoIdCodigoRuta = await TblRutaCodigoRutas.query()
-        .orderBy("id", "desc")
-        .first();
-      const ultimoIdRuta = await TblRutas.query()
-        .orderBy("codigoRuta", "desc")
-        .first();
-      const nuevoIdCodigoRuta = ultimoIdCodigoRuta
-        ? ultimoIdCodigoRuta.id + 1
-        : 1;
+      const ultimoIdCodigoRuta = await TblRutaCodigoRutas.query().orderBy("id", "desc").first();
+      console.log(ultimoIdCodigoRuta);
+      const ultimoIdRuta = await TblRutas.query().orderBy("trt_codigo_ruta", "desc").first();
+      const nuevoIdCodigoRuta = ultimoIdCodigoRuta ? ultimoIdCodigoRuta.id + 1 : 1;
       const nuevoIdRuta = ultimoIdRuta ? ultimoIdRuta.codigoRuta + 1 : 1;
-
       const rutaCodigoRuta = {
         id: nuevoIdCodigoRuta,
         codigoRuta: nuevoIdRuta,
@@ -461,9 +455,12 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         corresponde: ruta.corresponde,
       };
 
-      const idRutaida = await this.guardarTablaRutas(rutaIda);
+      console.log({rutaIda, rutaVuelta});
+
+
+      await this.guardarTablaRutas(rutaIda);
       await this.guardarTablaRutas(rutaVuelta);
-      await this.guardarRutaCodigoRuta(rutaCodigoRuta);
+      const idRutaida = await this.guardarRutaCodigoRuta(rutaCodigoRuta);
       await this.guardarRutaEmpresavia(rutaEmpresaVia);
       await this.guardarRutaHabilitada(rutaHabilitada);
       const rutaDireccion = {
@@ -486,7 +483,6 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         const rutaDb = new TblRutas();
         rutaDb.establecerRuta(ruta);
         await rutaDb.save();
-        return rutaDb.id;
       } else {
         const rutaRetorno = await TblRutas.findOrFail(id)
         rutaRetorno.establecerRutaConId(ruta)
@@ -502,6 +498,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       const rutaCodigoRutaDb = new TblRutaCodigoRutas();
       rutaCodigoRutaDb.establecerRutaCodigoRuta(rutaCodigoRuta);
       await rutaCodigoRutaDb.save();
+      return rutaCodigoRutaDb.id
     } catch (error) {
       throw new Error(error);
     }
@@ -561,20 +558,42 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
 
   async guardarRutaDireccion(rutaDireccion: RutaDireccion, idRuta?: number) {
     try {
-      if (!idRuta || idRuta == undefined || idRuta == 0) {
-        const rutaDireccionDb = new TblRutasDirecciones();
-        rutaDireccionDb.establecerRutaDireccion(rutaDireccion);
-        await rutaDireccionDb.save();
+      const rutaDireccionDb = new TblRutasDirecciones();
+      rutaDireccionDb.establecerRutaDireccion(rutaDireccion);
+      await rutaDireccionDb.save();
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async guardarNodoDespacho(rutaHabilitada: RutaHabilitada, codigoUnicoRuta?: number) {
+    try {
+      if (!codigoUnicoRuta || codigoUnicoRuta == undefined || codigoUnicoRuta == 0) {
+        const rutaHabilitadaDb = new TblRutaHabilitadas();
+        rutaHabilitadaDb.establecerRutaHabilitada(rutaHabilitada);
+        await rutaHabilitadaDb.save();
       } else {
-        const RutaDireccionRetorno = await TblRutasDirecciones.query().where('idRuta', idRuta).first()
-        if (RutaDireccionRetorno) {
-          RutaDireccionRetorno.establecerRutaDireccionConid(rutaDireccion);
-          await RutaDireccionRetorno.save();
-        }else{
-          const rutaDireccionDb = new TblRutasDirecciones();
-          rutaDireccionDb.establecerRutaDireccion(rutaDireccion);
-          await rutaDireccionDb.save();
-        }
+        const rutaHabilitadaRetorno = await TblRutaHabilitadas.query().where('idRuta', codigoUnicoRuta).first()
+        if (!rutaHabilitadaRetorno) {throw new Error(`No se encontró una ruta habilitada con idRuta: ${codigoUnicoRuta}`);}
+        rutaHabilitadaRetorno.establecerRutaHabilitadaConId(rutaHabilitada);
+        await rutaHabilitadaRetorno.save();
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async guardarParada(rutaHabilitada: RutaHabilitada, codigoUnicoRuta?: number) {
+    try {
+      if (!codigoUnicoRuta || codigoUnicoRuta == undefined || codigoUnicoRuta == 0) {
+        const rutaHabilitadaDb = new TblRutaHabilitadas();
+        rutaHabilitadaDb.establecerRutaHabilitada(rutaHabilitada);
+        await rutaHabilitadaDb.save();
+      } else {
+        const rutaHabilitadaRetorno = await TblRutaHabilitadas.query().where('idRuta', codigoUnicoRuta).first()
+        if (!rutaHabilitadaRetorno) {throw new Error(`No se encontró una ruta habilitada con idRuta: ${codigoUnicoRuta}`);}
+        rutaHabilitadaRetorno.establecerRutaHabilitadaConId(rutaHabilitada);
+        await rutaHabilitadaRetorno.save();
       }
     } catch (error) {
       throw new Error(error);

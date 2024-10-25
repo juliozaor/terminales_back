@@ -69,15 +69,16 @@ export default class ControladorTerminales {
       const ruta = await this.service.guardarRuta(rutadb, parseInt(id))
       return response.status(200).send(ruta);
     } catch (error) {
+      console.log(error);
       return response.badRequest(error.messages)
     }
     }
 
-  public async guardarRutas({ response, request }: HttpContextContract) {
+  public async guardar({ response, request }: HttpContextContract) {
     const { id } = await request.obtenerPayloadJWT()
     try {
-      const rutasdb = request.all()
-      const rutas = await this.service.guardarRutas(rutasdb, parseInt(id))
+      const arregloTerminales = request.all()
+      const rutas = await this.service.guardar(arregloTerminales, parseInt(id))
       return response.status(200).send(rutas);
     } catch (error) {
       return response.badRequest(error.messages)
