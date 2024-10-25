@@ -3,6 +3,7 @@ import { DateTime } from 'luxon';
 import TblRutas from './Rutas';
 import TblNodos from './Nodos';
 import { RutaDireccion } from 'App/Dominio/Datos/Entidades/RutaDireccion';
+import TblRutaCodigoRutas from './RutaCodigoRutas';
 
 export default class TblRutasDirecciones extends BaseModel {
 
@@ -26,11 +27,11 @@ export default class TblRutasDirecciones extends BaseModel {
     this.idNodo = rutaDireccion.idNodo!
   }
 
-  @hasOne (() => TblRutas, {
+  @hasOne (() => TblRutaCodigoRutas, {
     localKey: 'idRuta',
     foreignKey: 'id',
   })
-  public idRutas: HasOne<typeof TblRutas>
+  public idRutas: HasOne<typeof TblRutaCodigoRutas>
 
   @hasOne (() => TblNodos, {
     localKey: 'idNodo',

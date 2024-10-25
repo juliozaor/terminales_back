@@ -375,10 +375,10 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         codigoCpDestino: ruta.centroPobladoDestino,
         estado: ruta.rutaHabilitada
       }
-      const rutaEmpresaVia = {
-        codigoRuta: ruta.idUnicoRuta,
-        via: ruta.via,
-      }
+      // const rutaEmpresaVia = {
+      //   codigoRuta: ruta.idUnicoRuta,
+      //   via: ruta.via,
+      // }
       const rutaHabilitada = {
         idRuta: ruta.idUnicoRuta,
         resolucion: ruta.resolucion,
@@ -390,15 +390,15 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         corresponde: ruta.corresponde
       }
 
-      const rutaDireccion = {
-        idRuta: ruta.id,
-        idNodo: ruta.direccion,
-      };
+      // const rutaDireccion = {
+      //   idRuta: ruta.id,
+      //   idNodo: ruta.direccion,
+      // };
 
       await this.guardarTablaRutas(rutaRecibida, ruta.id);
-      await this.guardarRutaEmpresavia(rutaEmpresaVia, ruta.idUnicoRuta);
+      // await this.guardarRutaEmpresavia(rutaEmpresaVia, ruta.idUnicoRuta);
       await this.guardarRutaHabilitada(rutaHabilitada, ruta.idUnicoRuta);
-      await this.guardarRutaDireccion(rutaDireccion, ruta.id);
+      // await this.guardarRutaDireccion(rutaDireccion, ruta.id);
       await this.guardarRutaEmpresa(rutaEmpresa, ruta.idUnicoRuta);
 
       return console.log('ruta actualizada exitosamente');
@@ -567,9 +567,14 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         await rutaDireccionDb.save();
       } else {
         const RutaDireccionRetorno = await TblRutasDirecciones.query().where('idRuta', idRuta).first()
-        if (!RutaDireccionRetorno) {throw new Error(`No se encontró una direccion para la ruta con idRuta: ${idRuta}`);}
-        RutaDireccionRetorno.establecerRutaDireccionConid(rutaDireccion);
-        await RutaDireccionRetorno.save();
+        if (RutaDireccionRetorno) {
+          RutaDireccionRetorno.establecerRutaDireccionConid(rutaDireccion);
+          await RutaDireccionRetorno.save();
+        }else{
+          const rutaDireccionDb = new TblRutasDirecciones();
+          rutaDireccionDb.establecerRutaDireccion(rutaDireccion);
+          await rutaDireccionDb.save();
+        }
       }
     } catch (error) {
       throw new Error(error);
