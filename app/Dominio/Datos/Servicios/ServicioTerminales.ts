@@ -34,4 +34,9 @@ export class ServicioTerminales{
   async guardar(param: any, id: number) {
     return this.repositorio.guardar(param, id)
   }
+
+  async guardarParada(param: any) {
+    return this.repositorio.guardarParadas(param)
+  }
+
 }

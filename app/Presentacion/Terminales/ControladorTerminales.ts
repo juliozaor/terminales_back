@@ -72,6 +72,25 @@ export default class ControladorTerminales {
       console.log(error);
       return response.badRequest(error.messages)
     }
+  }
+
+  public async guardarParada({ response, request }: HttpContextContract) {
+    try {
+      const paradadb = request.all()
+      if (!paradadb || Object.keys(paradadb).length === 0) {
+        return response.badRequest({ message: 'La parada no puede estar vacío.' });
+      }
+      const camposRequeridos = ['idRuta', 'centroPobladoId', 'direccionId'];
+      const camposFaltantes = camposRequeridos.filter(field => !paradadb[field]);
+      if (camposFaltantes.length > 0) {
+        return response.badRequest({ message: `Faltan campos requeridos: ${camposFaltantes.join(', ')}` });
+      }
+      const ruta = await this.service.guardarParada(paradadb)
+      return response.status(200).send(ruta);
+    } catch (error) {
+      console.log(error);
+      return response.badRequest(error.messages)
+    }
     }
 
   public async guardar({ response, request }: HttpContextContract) {

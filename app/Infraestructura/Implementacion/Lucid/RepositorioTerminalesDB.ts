@@ -20,6 +20,10 @@ import TblRutaHabilitadas from "App/Infraestructura/Datos/Entidad/RutaHabilitada
 import { RutaHabilitada } from "App/Dominio/Datos/Entidades/RutaHabilitada";
 import { RutaDireccion } from "App/Dominio/Datos/Entidades/RutaDireccion";
 import TblRutasDirecciones from "App/Infraestructura/Datos/Entidad/RutaDireccion";
+import { Parada } from "App/Dominio/Datos/Entidades/Parada";
+import TblParadas from "App/Infraestructura/Datos/Entidad/Paradas";
+import { NodoDespacho } from "App/Dominio/Datos/Entidades/NodoDespacho";
+import TblNodosDespachos from "App/Infraestructura/Datos/Entidad/NodosDespachos";
 
 export class RepositorioTerminalesDB implements RepositorioTerminales {
   async visualizarRutas(
@@ -412,7 +416,6 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
   async guardarRuta(ruta: RespuestaRutas, id: number): Promise<RespuestaRutas> {
     try {
       const ultimoIdCodigoRuta = await TblRutaCodigoRutas.query().orderBy("id", "desc").first();
-      console.log(ultimoIdCodigoRuta);
       const ultimoIdRuta = await TblRutas.query().orderBy("trt_codigo_ruta", "desc").first();
       const nuevoIdCodigoRuta = ultimoIdCodigoRuta ? ultimoIdCodigoRuta.id + 1 : 1;
       const nuevoIdRuta = ultimoIdRuta ? ultimoIdRuta.codigoRuta + 1 : 1;
@@ -455,8 +458,9 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         corresponde: ruta.corresponde,
       };
 
-      console.log({rutaIda, rutaVuelta});
-
+      if (ultimoIdCodigoRuta == null || ultimoIdRuta == null) {
+        throw new Error(`No se puede guardar con codigo unico de ruta = ${ultimoIdCodigoRuta} y codigo ruta ${ultimoIdRuta}`);
+      }
 
       await this.guardarTablaRutas(rutaIda);
       await this.guardarTablaRutas(rutaVuelta);
@@ -566,34 +570,62 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
     }
   }
 
-  async guardarNodoDespacho(rutaHabilitada: RutaHabilitada, codigoUnicoRuta?: number) {
+  async guardarParadas(parada: RespuestaParadas): Promise<RespuestaParadas>{
     try {
-      if (!codigoUnicoRuta || codigoUnicoRuta == undefined || codigoUnicoRuta == 0) {
-        const rutaHabilitadaDb = new TblRutaHabilitadas();
-        rutaHabilitadaDb.establecerRutaHabilitada(rutaHabilitada);
-        await rutaHabilitadaDb.save();
+      const paradaRecibida = {
+        codigoCp: parada.centroPobladoId,
+        nodoId: parada.direccionId,
+      }
+
+      const idParada = await this.guardarParada(paradaRecibida)
+      const nodoDespacho = {
+        codigoUnicoRuta: parada.idRuta,
+        idNodo: parada.direccionId,
+        idParada: idParada,
+        estado: parada.estado,
+      };
+
+      await this.guardarNodoDespacho(nodoDespacho)
+      return parada
+    } catch (error) {
+      throw new Error(error.message)
+    }
+  }
+
+  async guardarNodoDespacho(nodoDespacho: NodoDespacho) {
+    try {
+      if (!nodoDespacho || nodoDespacho.idParada == 0 || nodoDespacho.codigoUnicoRuta == 0 || !nodoDespacho.codigoUnicoRuta || nodoDespacho.codigoUnicoRuta == undefined || !nodoDespacho.idParada|| nodoDespacho.idParada== undefined) {
+        throw new Error(`Faltan datos para crear o actualizar la parada de esa ruta`);
+      }
+      const nodoDespachoRetorno = await TblNodosDespachos.query().where('idRuta', nodoDespacho.codigoUnicoRuta).andWhere('idParada', nodoDespacho.idParada!).first()
+      if (!nodoDespachoRetorno) {
+        const nodoDespachoDb = new TblNodosDespachos();
+        nodoDespachoDb.establecerNodoDespacho(nodoDespacho);
+        await nodoDespachoDb.save();
       } else {
-        const rutaHabilitadaRetorno = await TblRutaHabilitadas.query().where('idRuta', codigoUnicoRuta).first()
-        if (!rutaHabilitadaRetorno) {throw new Error(`No se encontró una ruta habilitada con idRuta: ${codigoUnicoRuta}`);}
-        rutaHabilitadaRetorno.establecerRutaHabilitadaConId(rutaHabilitada);
-        await rutaHabilitadaRetorno.save();
+        nodoDespachoRetorno.establecerNodoDespacho(nodoDespacho);
+        await nodoDespachoRetorno.save();
       }
     } catch (error) {
       throw new Error(error);
     }
   }
 
-  async guardarParada(rutaHabilitada: RutaHabilitada, codigoUnicoRuta?: number) {
+  async guardarParada(parada: Parada) {
     try {
-      if (!codigoUnicoRuta || codigoUnicoRuta == undefined || codigoUnicoRuta == 0) {
-        const rutaHabilitadaDb = new TblRutaHabilitadas();
-        rutaHabilitadaDb.establecerRutaHabilitada(rutaHabilitada);
-        await rutaHabilitadaDb.save();
+      if (!parada) {
+        throw new Error(`Faltan datos para crear o actualizar la parada`);
+      }
+      if (!parada.id || parada.id == undefined || parada.id == 0) {
+        const paradaDb = new TblParadas();
+        paradaDb.establecerParada(parada);
+        await paradaDb.save();
+        return paradaDb.id
       } else {
-        const rutaHabilitadaRetorno = await TblRutaHabilitadas.query().where('idRuta', codigoUnicoRuta).first()
-        if (!rutaHabilitadaRetorno) {throw new Error(`No se encontró una ruta habilitada con idRuta: ${codigoUnicoRuta}`);}
-        rutaHabilitadaRetorno.establecerRutaHabilitadaConId(rutaHabilitada);
-        await rutaHabilitadaRetorno.save();
+        const paradaRetorno = await TblParadas.query().where('id', parada.id).first()
+        if (!paradaRetorno) {throw new Error(`No se encontró una parada con id: ${parada.id}`);}
+        paradaRetorno.establecerParadaConId(parada);
+        await paradaRetorno.save();
       }
     } catch (error) {
       throw new Error(error);

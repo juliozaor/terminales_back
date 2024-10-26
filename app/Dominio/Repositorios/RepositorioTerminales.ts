@@ -15,4 +15,6 @@ export interface RepositorioTerminales {
   guardarDireccion(nodo: Nodo): Promise<any>
   guardarRuta(ruta: RespuestaRutas, id: number): Promise<RespuestaRutas>
   guardar(arregloTerminales: any[], id: number): Promise<any>
+  guardarParadas(parada: RespuestaParadas): Promise<RespuestaParadas>
+
 }
