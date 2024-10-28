@@ -438,15 +438,29 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       }
 
       const nuevoIdCodigoRuta = ultimoIdCodigoRuta ? ultimoIdCodigoRuta.id + 1 : 1;
+      const nuevoIdCodigoRutaVuelta = nuevoIdCodigoRuta + 1;
       const nuevoIdRuta = ultimoIdRuta ? ultimoIdRuta.codigoRuta + 1 : 1;
+
       const rutaCodigoRuta = {
         id: nuevoIdCodigoRuta,
         codigoRuta: nuevoIdRuta,
       };
+
+      const rutaCodigoRutaVuelta = {
+        id: nuevoIdCodigoRutaVuelta,
+        codigoRuta: nuevoIdRuta,
+      };
+
       const rutaEmpresa = {
         idUsuario: id,
         idRuta: nuevoIdCodigoRuta,
       };
+
+      const rutaEmpresaVuelta = {
+        idUsuario: id,
+        idRuta: nuevoIdCodigoRutaVuelta,
+      };
+
       const rutaIda = {
         codigoRuta: nuevoIdRuta,
         codigoCpOrigen: ruta.centroPobladoOrigen,
@@ -454,6 +468,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         idaaVuelta: "A",
         estado: ruta.rutaHabilitada,
       };
+
       const rutaVuelta = {
         codigoRuta: nuevoIdRuta,
         codigoCpOrigen: ruta.centroPobladoDestino,
@@ -464,6 +479,11 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
 
       const rutaEmpresaVia = {
         codigoRuta: nuevoIdCodigoRuta,
+        via: ruta.via,
+      };
+
+      const rutaEmpresaViaVuelta = {
+        codigoRuta: nuevoIdCodigoRutaVuelta,
         via: ruta.via,
       };
 
@@ -478,19 +498,42 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         corresponde: ruta.corresponde,
       };
 
+      const rutaHabilitadaVuelta = {
+        idRuta: nuevoIdCodigoRutaVuelta,
+        resolucion: ruta.resolucion,
+        resolucionActual: ruta.resolucionActual,
+        direccionTerritorial: ruta.direccionTerritorial,
+        documento: ruta.documento,
+        nombreOriginal: ruta.nombreOriginal,
+        rutaArchivo: ruta.rutaArchivo,
+        corresponde: ruta.corresponde,
+      };
+
       await this.guardarTablaRutas(rutaIda);
       await this.guardarTablaRutas(rutaVuelta);
       const idRutaida = await this.guardarRutaCodigoRuta(rutaCodigoRuta);
       await this.guardarRutaEmpresavia(rutaEmpresaVia);
       await this.guardarRutaHabilitada(rutaHabilitada);
+
+      const idRutaVuelta = await this.guardarRutaCodigoRuta(rutaCodigoRutaVuelta);
+      await this.guardarRutaEmpresavia(rutaEmpresaViaVuelta);
+      await this.guardarRutaHabilitada(rutaHabilitadaVuelta);
+
       const rutaDireccion = {
         idRuta: idRutaida,
         idNodo: ruta.direccion,
       };
+
+      const rutaDireccionVuelta = {
+        idRuta: idRutaVuelta,
+        idNodo: ruta.direccion,
+      };
+
       await this.guardarRutaDireccion(rutaDireccion);
+      await this.guardarRutaDireccion(rutaDireccionVuelta);
 
       await this.guardarRutaEmpresa(rutaEmpresa);
-
+      await this.guardarRutaEmpresa(rutaEmpresaVuelta);
       return ruta;
     } catch (error) {
       throw new Error(error);
