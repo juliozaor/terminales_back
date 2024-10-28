@@ -283,6 +283,8 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       let consulta;
       if (!pagina && !limite) {
         consulta = await Database.rawQuery(`SELECT
+          trv.trv_id as id_ruta_vehiculos,
+          tccpg.cpg_id as clase_id,
           tccpg.cpg_descripcion as clase,
           tcv.tcv_id as tipo_vehiculo_id,
           tcv.tcv_estado as estado
@@ -295,6 +297,8 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
           WHERE tre.tre_id_usuario = ${id} and tre.tre_codigo_unico_ruta = ${rutaId} ORDER By tccpg.cpg_id desc`);
       } else {
         consulta = await Database.rawQuery(`SELECT
+          trv.trv_id as id_ruta_vehiculos,
+          tccpg.cpg_id as clase_id,
           tccpg.cpg_descripcion as clase,
           tcv.tcv_id as tipo_vehiculo_id,
           tcv.tcv_estado as estado
@@ -405,15 +409,15 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         corresponde: ruta.corresponde
       }
 
-      // const rutaDireccion = {
-      //   idRuta: ruta.id,
-      //   idNodo: ruta.direccion,
-      // };
+        const rutaDireccion = {
+          idRuta: ruta.idUnicoRuta,
+          idNodo: ruta.direccion,
+        };
 
       await this.guardarTablaRutas(rutaRecibida, ruta.id);
       // await this.guardarRutaEmpresavia(rutaEmpresaVia, ruta.idUnicoRuta);
       await this.guardarRutaHabilitada(rutaHabilitada, ruta.idUnicoRuta);
-      // await this.guardarRutaDireccion(rutaDireccion, ruta.id);
+      await this.guardarRutaDireccion(rutaDireccion, ruta.idUnicoRuta);
       await this.guardarRutaEmpresa(rutaEmpresa, ruta.idUnicoRuta);
 
       return console.log('ruta actualizada exitosamente');
@@ -428,6 +432,11 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
     try {
       const ultimoIdCodigoRuta = await TblRutaCodigoRutas.query().orderBy("id", "desc").first();
       const ultimoIdRuta = await TblRutas.query().orderBy("trt_codigo_ruta", "desc").first();
+
+      if (ultimoIdCodigoRuta?.id == null || ultimoIdRuta?.codigoRuta == null) {
+        throw new Error(`No se puede guardar con codigo unico de ruta = ${ultimoIdCodigoRuta?.id} y codigo ruta ${ultimoIdRuta?.codigoRuta}, ${ultimoIdRuta?.id}`);
+      }
+
       const nuevoIdCodigoRuta = ultimoIdCodigoRuta ? ultimoIdCodigoRuta.id + 1 : 1;
       const nuevoIdRuta = ultimoIdRuta ? ultimoIdRuta.codigoRuta + 1 : 1;
       const rutaCodigoRuta = {
@@ -468,10 +477,6 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         rutaArchivo: ruta.rutaArchivo,
         corresponde: ruta.corresponde,
       };
-
-      if (ultimoIdCodigoRuta == null || ultimoIdRuta == null) {
-        throw new Error(`No se puede guardar con codigo unico de ruta = ${ultimoIdCodigoRuta} y codigo ruta ${ultimoIdRuta}`);
-      }
 
       await this.guardarTablaRutas(rutaIda);
       await this.guardarTablaRutas(rutaVuelta);
@@ -573,9 +578,24 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
 
   async guardarRutaDireccion(rutaDireccion: RutaDireccion, idRuta?: number) {
     try {
-      const rutaDireccionDb = new TblRutasDirecciones();
-      rutaDireccionDb.establecerRutaDireccion(rutaDireccion);
-      await rutaDireccionDb.save();
+      if (!idRuta) {
+        const rutaDireccionDb = new TblRutasDirecciones();
+        rutaDireccionDb.establecerRutaDireccion(rutaDireccion);
+        await rutaDireccionDb.save();
+      } else {
+        const rutaDireccionRetorno = await TblRutasDirecciones.query().where('idRuta', idRuta).first();
+        console.log({ rutaDireccionRetorno });
+        if (!rutaDireccionRetorno) {
+          console.log(`No se encontró una direccion con idRuta: ${idRuta}`);
+          const rutaDireccionDb = new TblRutasDirecciones();
+          rutaDireccionDb.establecerRutaDireccion(rutaDireccion);
+          await rutaDireccionDb.save();
+        } else {
+          rutaDireccionRetorno.establecerRutaDireccionConid(rutaDireccion);
+          await rutaDireccionRetorno.save();
+        }
+      }
+
     } catch (error) {
       throw new Error(error);
     }
