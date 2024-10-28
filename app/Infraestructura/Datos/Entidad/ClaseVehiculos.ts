@@ -1,5 +1,6 @@
-import { BaseModel, column} from '@ioc:Adonis/Lucid/Orm';
+import { BaseModel, BelongsTo, belongsTo, column} from '@ioc:Adonis/Lucid/Orm';
 import { DateTime } from 'luxon';
+import TblCodigoClasePorGrupos from './CodigoClaseGrupos';
 
 export default class TblClaseVehiculos extends BaseModel {
 
@@ -14,4 +15,10 @@ export default class TblClaseVehiculos extends BaseModel {
   @column.dateTime({ autoCreate: true , columnName: 'tcv_creacion'}) public createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true, columnName: 'tcv_actualizacion' }) public updatedAt: DateTime
+
+  @belongsTo (() => TblCodigoClasePorGrupos, {
+    localKey: 'id',
+    foreignKey: 'idClasePorGrupo',
+  })
+  public clasesPorGrupos: BelongsTo<typeof TblCodigoClasePorGrupos>
 }

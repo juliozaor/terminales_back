@@ -24,6 +24,8 @@ import { Parada } from "App/Dominio/Datos/Entidades/Parada";
 import TblParadas from "App/Infraestructura/Datos/Entidad/Paradas";
 import { NodoDespacho } from "App/Dominio/Datos/Entidades/NodoDespacho";
 import TblNodosDespachos from "App/Infraestructura/Datos/Entidad/NodosDespachos";
+import TblRutaVehiculos from "App/Infraestructura/Datos/Entidad/RutaVehiculo";
+import { ClaseVehiculo } from "App/Dominio/Datos/Entidades/ClaseVehiculo";
 
 export class RepositorioTerminalesDB implements RepositorioTerminales {
   async visualizarRutas(
@@ -360,7 +362,16 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       for (let ruta of arregloTerminales.Rutas) {
         await this.actualizarRuta(ruta, id)
       }
-      return arregloTerminales;
+
+      for (let parada of arregloTerminales.Paradas) {
+        await this.guardarParadas(parada)
+      }
+
+      for (let clase of arregloTerminales.Clases) {
+        await this.guardarClases(clase)
+      }
+
+      return {arregloRecibido: arregloTerminales, editable: false};
     } catch (error) {
       console.log(error);
       throw new Error(error);
@@ -573,6 +584,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
   async guardarParadas(parada: RespuestaParadas): Promise<RespuestaParadas>{
     try {
       const paradaRecibida = {
+        id: parada.idParada,
         codigoCp: parada.centroPobladoId,
         nodoId: parada.direccionId,
       }
@@ -616,21 +628,67 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       if (!parada) {
         throw new Error(`Faltan datos para crear o actualizar la parada`);
       }
-      if (!parada.id || parada.id == undefined || parada.id == 0) {
+      console.log(`ID de parada: ${parada.id}`);
+      if (!parada.id || parada.id === 0) {
         const paradaDb = new TblParadas();
         paradaDb.establecerParada(parada);
         await paradaDb.save();
-        return paradaDb.id
+        return paradaDb.id;
       } else {
-        const paradaRetorno = await TblParadas.query().where('id', parada.id).first()
-        if (!paradaRetorno) {throw new Error(`No se encontró una parada con id: ${parada.id}`);}
+        const paradaRetorno = await TblParadas.query().where('id', parada.id).first();
+        console.log(`Parada encontrada: ${JSON.stringify(paradaRetorno)}`);
+        if (!paradaRetorno) {
+          throw new Error(`No se encontró una parada con id: ${parada.id}`);
+        }
         paradaRetorno.establecerParadaConId(parada);
         await paradaRetorno.save();
+        return paradaRetorno.id;
       }
     } catch (error) {
       throw new Error(error);
     }
   }
+  async guardarClases(clase: ClaseVehiculo): Promise<RespuestaClases>{
+    try {
+      const claseVehiculo = {
+          id: clase.id,
+          idRuta: clase.idRuta,
+          idClaseVehiculo: clase.idClaseVehiculo,
+          estado: clase.estado,
+      };
+      await this.guardarRutaVehiculo(claseVehiculo)
+      return clase
+    } catch (error) {
+      throw new Error(error.message)
+    }
+  }
+
+  async guardarRutaVehiculo(rutaVehiculo: ClaseVehiculo) {
+    try {
+      if (!rutaVehiculo ||
+          !rutaVehiculo.idRuta ||
+          !rutaVehiculo.idClaseVehiculo ||
+          !rutaVehiculo.estado) {
+        throw new Error(`Faltan datos para crear o actualizar la clase de vehículos de esa ruta`);
+      }
+      if (!rutaVehiculo.id) {
+        const rutaVehiculoDb = new TblRutaVehiculos();
+        rutaVehiculoDb.establecerRutaVehiculo(rutaVehiculo);
+        await rutaVehiculoDb.save();
+      } else {
+        const rutaVehiculoRetorno = await TblRutaVehiculos.query().where('id', rutaVehiculo.id).first();
+        console.log(`Resultado de la consulta: ${JSON.stringify(rutaVehiculoRetorno)}`);
+        if (!rutaVehiculoRetorno) {
+          throw new Error(`No se encontró una ruta con clase de vehículo con id: ${rutaVehiculo.id}`);
+        }
+        rutaVehiculoRetorno.establecerRutaVehiculoConId(rutaVehiculo);
+        await rutaVehiculoRetorno.save();
+      }
+    } catch (error) {
+      throw new Error(`Error al guardar la ruta de vehículo: ${error.message}`);
+    }
+  }
+
 
   // async guardarRutas(param: any): Promise<{ rutas: RespuestaClases[] }> {
   //   try {

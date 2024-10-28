@@ -1,5 +1,6 @@
 export class RespuestaClases {
-  public idTipoVehiculo: number
+  public id?: number
+  public idTipoVehiculo?: number
   public estado?: boolean
   public clase?: string
 }

@@ -91,6 +91,25 @@ export default class ControladorTerminales {
       console.log(error);
       return response.badRequest(error.messages)
     }
+  }
+
+  public async guardarClase({ response, request }: HttpContextContract) {
+    try {
+      const clasedb = request.all()
+      if (!clasedb || Object.keys(clasedb).length === 0) {
+        return response.badRequest({ message: 'La clase no puede estar vacío.' });
+      }
+      const camposRequeridos = ['idRuta', 'idClaseVehiculo', 'estado'];
+      const camposFaltantes = camposRequeridos.filter(field => !clasedb[field]);
+      if (camposFaltantes.length > 0) {
+        return response.badRequest({ message: `Faltan campos requeridos: ${camposFaltantes.join(', ')}` });
+      }
+      const ruta = await this.service.guardarClase(clasedb)
+      return response.status(200).send(ruta);
+    } catch (error) {
+      console.log(error);
+      return response.badRequest(error.messages)
+    }
     }
 
   public async guardar({ response, request }: HttpContextContract) {

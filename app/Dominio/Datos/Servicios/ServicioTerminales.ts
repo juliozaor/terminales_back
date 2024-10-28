@@ -39,4 +39,8 @@ export class ServicioTerminales{
     return this.repositorio.guardarParadas(param)
   }
 
+  async guardarClase(param: any) {
+    return this.repositorio.guardarClases(param)
+  }
+
 }
