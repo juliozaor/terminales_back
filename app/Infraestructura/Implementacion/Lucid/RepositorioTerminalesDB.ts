@@ -410,14 +410,14 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       }
 
         const rutaDireccion = {
-          idRuta: ruta.idUnicoRuta,
+          idRuta: ruta.id,
           idNodo: ruta.direccion,
         };
 
       await this.guardarTablaRutas(rutaRecibida, ruta.id);
       // await this.guardarRutaEmpresavia(rutaEmpresaVia, ruta.idUnicoRuta);
       await this.guardarRutaHabilitada(rutaHabilitada, ruta.idUnicoRuta);
-      await this.guardarRutaDireccion(rutaDireccion, ruta.idUnicoRuta);
+      await this.guardarRutaDireccion(rutaDireccion, ruta.id);
       await this.guardarRutaEmpresa(rutaEmpresa, ruta.idUnicoRuta);
 
       return console.log('ruta actualizada exitosamente');
