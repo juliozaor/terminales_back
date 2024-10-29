@@ -495,7 +495,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
 
       const rutaDireccionVuelta = {
         idRuta: idRutaVuelta,
-        idNodo: ruta.direccion,
+        idNodo: undefined,
       };
 
       await this.guardarRutaDireccion(rutaDireccion);
