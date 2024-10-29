@@ -222,7 +222,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
             tbl_ruta_empresas tre
           LEFT JOIN tbl_ruta_codigo_rutas trcr ON trcr.rcr_codigo_unico_ruta = tre.tre_codigo_unico_ruta
           left join tbl_nodos_despachos tnd on tnd.tnd_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
-          left join tbl_paradas tp on tp.tps_id = tnd_paradas_id
+          inner join tbl_paradas tp on tp.tps_id = tnd_paradas_id
           left join tbl_centro_poblados tcp on tcp.tcp_codigo_centro_poblado = tp.tps_codigo_cp
           left join tbl_municipios tm on tm.tms_codigo_municipio = tcp.tcp_codigo_municipio
           left join tbl_departamentos td on td.tdp_codigo_departamento = tm.tms_departamento_codigo
@@ -240,7 +240,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
             tbl_ruta_empresas tre
           LEFT JOIN tbl_ruta_codigo_rutas trcr ON trcr.rcr_codigo_unico_ruta = tre.tre_codigo_unico_ruta
           left join tbl_nodos_despachos tnd on tnd.tnd_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
-          left join tbl_paradas tp on tp.tps_id = tnd_paradas_id
+          inner join tbl_paradas tp on tp.tps_id = tnd_paradas_id
           left join tbl_centro_poblados tcp on tcp.tcp_codigo_centro_poblado = tp.tps_codigo_cp
           left join tbl_municipios tm on tm.tms_codigo_municipio = tcp.tcp_codigo_municipio
           left join tbl_departamentos td on td.tdp_codigo_departamento = tm.tms_departamento_codigo
@@ -291,7 +291,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
           FROM
             tbl_ruta_empresas tre
           LEFT JOIN tbl_ruta_codigo_rutas trcr ON trcr.rcr_codigo_unico_ruta = tre.tre_codigo_unico_ruta
-          left join tbl_ruta_vehiculos trv on trv.trv_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
+          inner join tbl_ruta_vehiculos trv on trv.trv_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
           left join tbl_clase_vehiculos tcv on tcv.tcv_id = trv.trv_clase_vehiculo_id
           left join tbl_codigo_clase_por_grupos tccpg on tccpg.cpg_id = tcv.tcv_clase_por_grupo_id
           WHERE tre.tre_id_usuario = ${id} and tre.tre_codigo_unico_ruta = ${rutaId} ORDER By tccpg.cpg_id desc`);
@@ -305,7 +305,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
           FROM
             tbl_ruta_empresas tre
           LEFT JOIN tbl_ruta_codigo_rutas trcr ON trcr.rcr_codigo_unico_ruta = tre.tre_codigo_unico_ruta
-          left join tbl_ruta_vehiculos trv on trv.trv_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
+          inner join tbl_ruta_vehiculos trv on trv.trv_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
           left join tbl_clase_vehiculos tcv on tcv.tcv_id = trv.trv_clase_vehiculo_id
           left join tbl_codigo_clase_por_grupos tccpg on tccpg.cpg_id = tcv.tcv_clase_por_grupo_id
           WHERE tre.tre_id_usuario = ${id} and tre.tre_codigo_unico_ruta = ${rutaId}
