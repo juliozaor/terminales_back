@@ -56,8 +56,8 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       let consulta;
       if (!pagina && !limite) {
         consulta = await Database.rawQuery(`SELECT
-		  tr.trt_id as id,
-		  tr.trt_codigo_ruta as id_ruta,
+		      tr.trt_id as id,
+		      tr.trt_codigo_ruta as id_ruta,
           tre.tre_codigo_unico_ruta as id_unico_ruta,
           td.tdp_nombre as departamento_origen,
           td.tdp_codigo_departamento as departamento_origen_codigo,
@@ -94,7 +94,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
           LEFT JOIN tbl_municipios tmd ON tcpd.tcp_codigo_municipio = tmd.tms_codigo_municipio
           LEFT JOIN tbl_departamentos td ON tm.tms_departamento_codigo = td.tdp_codigo_departamento
           LEFT JOIN tbl_departamentos tdd ON tmd.tms_departamento_codigo = tdd.tdp_codigo_departamento
-          LEFT JOIN tbl_rutas_direcciones trd ON trd.trd_id_ruta = trcr.rcr_codigo_unico_ruta
+          LEFT JOIN tbl_rutas_direcciones trd ON trd.trd_id_ruta = tr.trt_id
           LEFT JOIN tbl_nodos tn ON tn.tnd_id = trd.trd_id_nodo
           LEFT JOIN tbl_tipo_despachos ttd ON ttd.ttd_id = tn.tnd_despacho_id
           LEFT JOIN tbl_ruta_empresa_vias trev ON trev.rev_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
@@ -140,7 +140,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
           LEFT JOIN tbl_municipios tmd ON tcpd.tcp_codigo_municipio = tmd.tms_codigo_municipio
           LEFT JOIN tbl_departamentos td ON tm.tms_departamento_codigo = td.tdp_codigo_departamento
           LEFT JOIN tbl_departamentos tdd ON tmd.tms_departamento_codigo = tdd.tdp_codigo_departamento
-          LEFT JOIN tbl_rutas_direcciones trd ON trd.trd_id_ruta = trcr.rcr_codigo_unico_ruta
+          LEFT JOIN tbl_rutas_direcciones trd ON trd.trd_id_ruta = tr.trt_id
           LEFT JOIN tbl_nodos tn ON tn.tnd_id = trd.trd_id_nodo
           LEFT JOIN tbl_tipo_despachos ttd ON ttd.ttd_id = tn.tnd_despacho_id
           LEFT JOIN tbl_ruta_empresa_vias trev ON trev.rev_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
@@ -438,7 +438,6 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       }
 
       const nuevoIdCodigoRuta = ultimoIdCodigoRuta ? ultimoIdCodigoRuta.id + 1 : 1;
-      const nuevoIdCodigoRutaVuelta = nuevoIdCodigoRuta + 1;
       const nuevoIdRuta = ultimoIdRuta ? ultimoIdRuta.codigoRuta + 1 : 1;
 
       const rutaCodigoRuta = {
@@ -446,19 +445,9 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         codigoRuta: nuevoIdRuta,
       };
 
-      const rutaCodigoRutaVuelta = {
-        id: nuevoIdCodigoRutaVuelta,
-        codigoRuta: nuevoIdRuta,
-      };
-
       const rutaEmpresa = {
         idUsuario: id,
         idRuta: nuevoIdCodigoRuta,
-      };
-
-      const rutaEmpresaVuelta = {
-        idUsuario: id,
-        idRuta: nuevoIdCodigoRutaVuelta,
       };
 
       const rutaIda = {
@@ -482,11 +471,6 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         via: ruta.via,
       };
 
-      const rutaEmpresaViaVuelta = {
-        codigoRuta: nuevoIdCodigoRutaVuelta,
-        via: ruta.via,
-      };
-
       const rutaHabilitada = {
         idRuta: nuevoIdCodigoRuta,
         resolucion: ruta.resolucion,
@@ -498,26 +482,11 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         corresponde: ruta.corresponde,
       };
 
-      const rutaHabilitadaVuelta = {
-        idRuta: nuevoIdCodigoRutaVuelta,
-        resolucion: ruta.resolucion,
-        resolucionActual: ruta.resolucionActual,
-        direccionTerritorial: ruta.direccionTerritorial,
-        documento: ruta.documento,
-        nombreOriginal: ruta.nombreOriginal,
-        rutaArchivo: ruta.rutaArchivo,
-        corresponde: ruta.corresponde,
-      };
-
-      await this.guardarTablaRutas(rutaIda);
-      await this.guardarTablaRutas(rutaVuelta);
-      const idRutaida = await this.guardarRutaCodigoRuta(rutaCodigoRuta);
+      const idRutaida = await this.guardarTablaRutas(rutaIda);
+      const idRutaVuelta = await this.guardarTablaRutas(rutaVuelta);
+      await this.guardarRutaCodigoRuta(rutaCodigoRuta);
       await this.guardarRutaEmpresavia(rutaEmpresaVia);
       await this.guardarRutaHabilitada(rutaHabilitada);
-
-      const idRutaVuelta = await this.guardarRutaCodigoRuta(rutaCodigoRutaVuelta);
-      await this.guardarRutaEmpresavia(rutaEmpresaViaVuelta);
-      await this.guardarRutaHabilitada(rutaHabilitadaVuelta);
 
       const rutaDireccion = {
         idRuta: idRutaida,
@@ -533,7 +502,6 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       await this.guardarRutaDireccion(rutaDireccionVuelta);
 
       await this.guardarRutaEmpresa(rutaEmpresa);
-      await this.guardarRutaEmpresa(rutaEmpresaVuelta);
       return ruta;
     } catch (error) {
       throw new Error(error);
@@ -546,6 +514,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         const rutaDb = new TblRutas();
         rutaDb.establecerRuta(ruta);
         await rutaDb.save();
+        return rutaDb.id
       } else {
         const rutaRetorno = await TblRutas.findOrFail(id)
         rutaRetorno.establecerRutaConId(ruta)
@@ -561,7 +530,6 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       const rutaCodigoRutaDb = new TblRutaCodigoRutas();
       rutaCodigoRutaDb.establecerRutaCodigoRuta(rutaCodigoRuta);
       await rutaCodigoRutaDb.save();
-      return rutaCodigoRutaDb.id
     } catch (error) {
       throw new Error(error);
     }

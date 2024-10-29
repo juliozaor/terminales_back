@@ -27,11 +27,11 @@ export default class TblRutasDirecciones extends BaseModel {
     this.idNodo = rutaDireccion.idNodo!
   }
 
-  @hasOne (() => TblRutaCodigoRutas, {
+  @hasOne (() => TblRutas, {
     localKey: 'idRuta',
     foreignKey: 'id',
   })
-  public idRutas: HasOne<typeof TblRutaCodigoRutas>
+  public idRutas: HasOne<typeof TblRutas>
 
   @hasOne (() => TblNodos, {
     localKey: 'idNodo',
