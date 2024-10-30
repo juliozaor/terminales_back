@@ -31,7 +31,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
   async visualizarRutas(
     param: any,
     id: number
-  ): Promise<{ rutas: RespuestaRutas[]; paginacion: Paginador }> {
+  ): Promise<{ rutas: any[]; paginacion: Paginador }> {
     const { pagina, limite } = param;
     try {
       const totalCountQuery = `SELECT COUNT(*) as total
@@ -717,6 +717,44 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       }
     } catch (error) {
       throw new Error(`Error al guardar la ruta de vehículo: ${error.message}`);
+    }
+  }
+
+  async enviarSt(
+    param: any,
+    id: number) {
+    try {
+      const { rutas } = await this.visualizarRutas(param, id)
+      let aprobado = true;
+      const faltantes = new Array();
+      for await (const ruta of rutas) {
+        let porLlenar = false;
+        if (ruta.tipo_llegada_id == null || ruta.tipo_llegada_id == '') {
+          porLlenar = true;
+        }
+
+        if (ruta.direccion_id == null || ruta.direccion_id == '') {
+          porLlenar = true;
+        }
+
+        if (ruta.estado) {
+          if (ruta.corresponde == 2) {
+            if (ruta.resolucion_actual == null || ruta.resolucion_actual == '') {
+              porLlenar = true;
+            }
+            if (ruta.documento == null || ruta.documento == '') {
+              porLlenar = true;
+            }
+          }
+        }
+        if (porLlenar) {
+          faltantes.push(ruta.id)
+          aprobado = false
+        }
+      }
+      return {faltantes, aprobado}
+    } catch (error) {
+      throw new Error(`Error al enviar a ST: ${error.message}`);
     }
   }
 

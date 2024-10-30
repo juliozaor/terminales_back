@@ -4,7 +4,6 @@ import TblCentroPoblados from "App/Infraestructura/Datos/Entidad/CentroPoblado";
 import TblClaseVehiculos from "App/Infraestructura/Datos/Entidad/ClaseVehiculos";
 import TblCodigoClasePorGrupos from "App/Infraestructura/Datos/Entidad/CodigoClaseGrupos";
 import TblDepartamentos from "App/Infraestructura/Datos/Entidad/Departamentos";
-import TblModalidades from "App/Infraestructura/Datos/Entidad/Modalidades";
 import TblMunicipios from "App/Infraestructura/Datos/Entidad/Municipios";
 import TblNodos from "App/Infraestructura/Datos/Entidad/Nodos";
 import TblRutaEmpresas from "App/Infraestructura/Datos/Entidad/RutaEmpresa";

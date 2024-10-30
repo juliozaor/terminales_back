@@ -43,4 +43,8 @@ export class ServicioTerminales{
     return this.repositorio.guardarClases(param)
   }
 
+  async enviarSt(param: any, id: number): Promise<any> {
+    return this.repositorio.enviarSt(param, id)
+  }
+
 }

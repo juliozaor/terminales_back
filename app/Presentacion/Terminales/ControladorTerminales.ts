@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { ServicioTerminales } from 'App/Dominio/Datos/Servicios/ServicioTerminales'
-import { RepositorioAseguradoraDB } from 'App/Infraestructura/Implementacion/Lucid/RepositorioAseguradoraDB'
 import { RepositorioTerminalesDB } from 'App/Infraestructura/Implementacion/Lucid/RepositorioTerminalesDB'
 
 export default class ControladorTerminales {
@@ -123,6 +122,16 @@ export default class ControladorTerminales {
     }
   }
 
+  public async enviarSt({ response, request }: HttpContextContract) {
+    const { id } = await request.obtenerPayloadJWT()
+    try {
+      const arregloSt = request.all()
+      const respuestast = await this.service.enviarSt(arregloSt, parseInt(id))
+      return response.status(200).send(respuestast);
+    } catch (error) {
+      return response.badRequest(error.messages)
+    }
+  }
   // public async obtenerAseguradora ({response, params}:HttpContextContract){
   //   const id = params.id
   //   if(!id){

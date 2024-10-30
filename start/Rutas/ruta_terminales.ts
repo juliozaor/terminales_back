@@ -14,4 +14,5 @@ Route.group(() => {
   Route.post('/guardar-parada', accion_path + '.guardarParada')
   Route.post('/guardar-clase', accion_path + '.guardarClase')
   Route.patch('/guardar', accion_path + '.guardar')
+  Route.post('/enviar-st', accion_path + '.enviarSt')
 }).prefix('api/v1/terminales').middleware('autenticacionJwt')

@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/semi */
-import { Aseguradora } from '../Datos/Entidades/Aseguradora';
 import { ClaseVehiculo } from '../Datos/Entidades/ClaseVehiculo';
 import { Nodo } from '../Datos/Entidades/Nodo';
 import { Ruta } from '../Datos/Entidades/Ruta';
@@ -18,4 +17,5 @@ export interface RepositorioTerminales {
   guardar(arregloTerminales: any[], id: number): Promise<any>
   guardarParadas(parada: RespuestaParadas): Promise<RespuestaParadas>
   guardarClases(clase: ClaseVehiculo): Promise<RespuestaClases>
+  enviarSt(param: any, id: number): Promise<any>
 }
