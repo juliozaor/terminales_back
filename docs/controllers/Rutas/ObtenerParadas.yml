@@ -1,0 +1,89 @@
+/api/v1/terminales/visualizar-paradas:
+  get:
+    tags:
+      - Rutas
+    description: Obtener paradas asociadas a una ruta específica con paginación
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: query
+        name: rutaId
+        required: true
+        schema:
+          type: integer
+        description: ID de la ruta para la que se quieren visualizar las paradas
+      - in: query
+        name: pagina
+        required: true
+        schema:
+          type: integer
+        description: Número de página para la paginación
+      - in: query
+        name: limite
+        required: true
+        schema:
+          type: integer
+        description: Límite de resultados por página
+    responses:
+      '200':
+        description: Paradas obtenidas exitosamente
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                paradas:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      parada_id:
+                        type: integer
+                        description: ID de la parada
+                      codigo_departamento:
+                        type: string
+                        description: Código del departamento
+                      codigo_municipio:
+                        type: string
+                        description: Código del municipio
+                      codigo_cp:
+                        type: string
+                        description: Código del centro poblado
+                      tipo_llegada_id:
+                        type: integer
+                        description: ID del tipo de llegada
+                      direccion_id:
+                        type: integer
+                        description: ID de la dirección
+                paginacion:
+                  type: object
+                  properties:
+                    totalRegistros:
+                      type: string
+                      description: Total de registros de paradas
+                    paginaActual:
+                      type: string
+                      description: Número de la página actual
+                    totalPaginas:
+                      type: integer
+                      description: Total de páginas disponibles
+      '401':
+        description: No autorizado
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  description: Mensaje de error de autorización
+      '500':
+        description: Error interno del servidor
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  description: Mensaje de error interno

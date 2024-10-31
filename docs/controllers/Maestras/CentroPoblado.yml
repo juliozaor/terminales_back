@@ -1,0 +1,56 @@
+/api/v1/maestras/centros-poblados:
+  get:
+    tags:
+      - Maestras
+    description: Obtener la lista de centros poblados asociados a un código de municipio específico
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: query
+        name: codigoMunicipio
+        required: true
+        schema:
+          type: string
+        description: Código del municipio para el cual se quieren obtener los centros poblados
+    responses:
+      '200':
+        description: Lista de centros poblados obtenida exitosamente
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                respuestaCentrosPoblados:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        description: Identificador del centro poblado
+                      codigoCentroPoblado:
+                        type: string
+                        description: Código del centro poblado
+                      nombre:
+                        type: string
+                        description: Nombre del centro poblado
+      '401':
+        description: No autorizado
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  description: Mensaje de error de autorización
+      '500':
+        description: Error interno del servidor
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  description: Mensaje de error interno

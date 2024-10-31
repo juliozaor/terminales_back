@@ -1,8 +1,0 @@
-components:
-  schemas:
-      Modalidad:
-        $ref: "#/definitions/modalidad"
-        example:
-          id: 1,
-          nombre: Especial,
-          estado: true

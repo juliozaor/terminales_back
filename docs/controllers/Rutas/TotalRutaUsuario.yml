@@ -1,0 +1,38 @@
+/api/v1/terminales/total-rutas:
+  get:
+    tags:
+      - Rutas
+    description: Obtener el total de rutas disponibles para el usuario autenticado
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Total de rutas obtenidas exitosamente
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                TotalRegistros:
+                  type: string
+                  description: Total de registros de rutas
+      '401':
+        description: No autorizado
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  description: Mensaje de error de autorización
+      '500':
+        description: Error interno del servidor
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  description: Mensaje de error interno
