@@ -8,7 +8,7 @@ import { RespuestaRutas } from '../Dto/RespuestaRutas';
 import { Paginador } from '../Paginador';
 
 export interface RepositorioTerminales {
-  visualizarRutas(param: any, id: number): Promise<{ rutas: RespuestaRutas[], paginacion: Paginador }>
+  visualizarRutas(param: any, id: number): Promise<{ rutas: RespuestaRutas[], paginacion: Paginador, editable:boolean, verificacionVisible:boolean, verificacionEditable:boolean }>
   visualizarParadasPorRuta(param: any, id: number): Promise<{ paradas: RespuestaParadas[], paginacion: Paginador }>
   visualizarClasesPorRuta(param: any, id: number): Promise<{ clases: RespuestaClases[], paginacion: Paginador }>
   numeroTotalRutasPorUsuario(id: number): Promise<any>;
