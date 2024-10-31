@@ -26,14 +26,45 @@ import { NodoDespacho } from "App/Dominio/Datos/Entidades/NodoDespacho";
 import TblNodosDespachos from "App/Infraestructura/Datos/Entidad/NodosDespachos";
 import TblRutaVehiculos from "App/Infraestructura/Datos/Entidad/RutaVehiculo";
 import { ClaseVehiculo } from "App/Dominio/Datos/Entidades/ClaseVehiculo";
+import TblSolicitudes from "App/Infraestructura/Datos/Entidad/Solicitudes";
+import { ServicioEstados } from "App/Dominio/Datos/Servicios/ServicioEstados";
 
 export class RepositorioTerminalesDB implements RepositorioTerminales {
+  private servicioEstados = new ServicioEstados();
   async visualizarRutas(
     param: any,
     id: number
-  ): Promise<{ rutas: any[]; paginacion: Paginador }> {
+  ): Promise<{ rutas: any[]; paginacion: Paginador, editable:boolean, verificacionVisible:boolean, verificacionEditable:boolean }> {
     const { pagina, limite } = param;
+    let editable = false;
+    let verificacionVisible = false;
+    let verificacionEditable = false;
     try {
+
+      const solicitud = await TblSolicitudes.query().where('vigiladoId', id).first();
+if (!solicitud) {  
+  const nuevaSolicitiud = new TblSolicitudes()
+  nuevaSolicitiud.vigiladoId = id;
+  nuevaSolicitiud.estado = 2
+  await nuevaSolicitiud.save()
+
+  const estados = await this.servicioEstados.consultarEditable(2, 3);  
+  editable = estados.editable
+  verificacionVisible = estados.verificacionVisible
+  verificacionEditable = estados.verificacionEditable
+  //solicitudId = nuevaSolicitiud.id
+  
+}else{  
+  const estados = await this.servicioEstados.consultarEditable(solicitud.estado,3, solicitud.estadoVeri);
+  editable = estados.editable
+  verificacionVisible = estados.verificacionVisible
+  verificacionEditable = estados.verificacionEditable
+  //solicitudId = solicitud.id
+}
+this.servicioEstados.Log(id, 2, 1); 
+
+
+
       const totalCountQuery = `SELECT COUNT(*) as total
       FROM tbl_ruta_empresas tre
         LEFT JOIN tbl_ruta_codigo_rutas trcr ON trcr.rcr_codigo_unico_ruta = tre.tre_codigo_unico_ruta
@@ -157,7 +188,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         totalPaginas: totalPages,
       };
 
-      return { rutas, paginacion };
+      return { rutas, paginacion, editable, verificacionVisible, verificacionEditable };
     } catch (error) {
       throw new Error(error);
     }
@@ -362,6 +393,10 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
 
   // guarda todo
   async guardar(arregloTerminales: any, id: number) {
+    const solicitud = await TblSolicitudes.query().where('proveedorId', id).first();
+
+    if(solicitud?.estado== 2 || solicitud?.estado == 7) this.servicioEstados.ActualizarEstado(solicitud?.id!, 1)
+      
     try {
       for (let ruta of arregloTerminales.Rutas) {
         await this.actualizarRuta(ruta, id)
@@ -751,6 +786,11 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
           faltantes.push(ruta.id)
           aprobado = false
         }
+      }
+
+      if(aprobado){
+        const solicitud = await TblSolicitudes.query().where('vigiladoId', id).first();
+      this.servicioEstados.ActualizarEstado(solicitud?.id!, 1)
       }
       return {faltantes, aprobado}
     } catch (error) {
