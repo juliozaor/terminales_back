@@ -1,0 +1,46 @@
+/api/v1/maestras/tipo-llegada:
+  get:
+    tags:
+      - Maestras
+    description: Obtener la lista de tipos de llegada disponibles
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Lista de tipos de llegada obtenida exitosamente
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                respuestaTipoLLegada:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        description: Identificador del tipo de llegada
+                      descripcion:
+                        type: string
+                        description: Descripción del tipo de llegada
+      '401':
+        description: No autorizado
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  description: Mensaje de error de autorización
+      '500':
+        description: Error interno del servidor
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  description: Mensaje de error interno

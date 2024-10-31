@@ -1,0 +1,56 @@
+/api/v1/maestras/municipios:
+  get:
+    tags:
+      - Maestras
+    description: Obtener la lista de municipios asociados a un código de departamento específico
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: query
+        name: codigoDepartamento
+        required: true
+        schema:
+          type: string
+        description: Código del departamento para el cual se quieren obtener los municipios
+    responses:
+      '200':
+        description: Lista de municipios obtenida exitosamente
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                respuestaMunicipios:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        description: Identificador del municipio
+                      codigoMunicipio:
+                        type: string
+                        description: Código del municipio
+                      nombre:
+                        type: string
+                        description: Nombre del municipio
+      '401':
+        description: No autorizado
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  description: Mensaje de error de autorización
+      '500':
+        description: Error interno del servidor
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  description: Mensaje de error interno
