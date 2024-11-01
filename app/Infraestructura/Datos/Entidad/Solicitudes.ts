@@ -5,10 +5,10 @@ import TblUsuarios from './Usuario';
 
 export default class TblSolicitudes extends BaseModel {
   public static table = 'tbl_solicitudes';
-  
+
   @column({ isPrimary: true, columnName: 'sol_id' })
   public id?: number
-  
+
   @column({ columnName: 'sol_vigilado_id' })
   public vigiladoId: number;
 
@@ -21,7 +21,7 @@ export default class TblSolicitudes extends BaseModel {
   @column.dateTime({ columnName: 'sol_fecha_asignacion' })
   public fechaAsignacion: DateTime | null;
 
-  @column({ columnName: 'sol_estado_veri' })
+  @column({ columnName: 'sol_estado_vigilado' })
   public estado: number;
 
   @column.dateTime({ columnName: 'sol_fecha_eviost' })
@@ -67,7 +67,7 @@ export default class TblSolicitudes extends BaseModel {
     foreignKey: 'asignadorId',
   })
   public asignador: BelongsTo<typeof TblUsuarios>
- 
+
   @belongsTo(()=> TblUsuarios, {
     localKey: 'identificacion',
     foreignKey: 'verificadorId',

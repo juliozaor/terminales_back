@@ -42,26 +42,26 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
     try {
 
       const solicitud = await TblSolicitudes.query().where('vigiladoId', id).first();
-if (!solicitud) {  
+if (!solicitud) {
   const nuevaSolicitiud = new TblSolicitudes()
   nuevaSolicitiud.vigiladoId = id;
   nuevaSolicitiud.estado = 2
   await nuevaSolicitiud.save()
 
-  const estados = await this.servicioEstados.consultarEditable(2, 3);  
+  const estados = await this.servicioEstados.consultarEditable(2, 3);
   editable = estados.editable
   verificacionVisible = estados.verificacionVisible
   verificacionEditable = estados.verificacionEditable
   //solicitudId = nuevaSolicitiud.id
-  
-}else{  
+
+}else{
   const estados = await this.servicioEstados.consultarEditable(solicitud.estado,3, solicitud.estadoVeri);
   editable = estados.editable
   verificacionVisible = estados.verificacionVisible
   verificacionEditable = estados.verificacionEditable
   //solicitudId = solicitud.id
 }
-this.servicioEstados.Log(id, 2, 1); 
+this.servicioEstados.Log(id, 2);
 
 
 
@@ -393,10 +393,8 @@ this.servicioEstados.Log(id, 2, 1);
 
   // guarda todo
   async guardar(arregloTerminales: any, id: number) {
-    const solicitud = await TblSolicitudes.query().where('proveedorId', id).first();
-
-    if(solicitud?.estado== 2 || solicitud?.estado == 7) this.servicioEstados.ActualizarEstado(solicitud?.id!, 1)
-      
+    const solicitud = await TblSolicitudes.query().where('vigiladoId', id).first();
+    if(solicitud?.estado== 2 || solicitud?.estado == 7) this.servicioEstados.ActualizarEstado(solicitud?.id!, 3)
     try {
       for (let ruta of arregloTerminales.Rutas) {
         await this.actualizarRuta(ruta, id)
