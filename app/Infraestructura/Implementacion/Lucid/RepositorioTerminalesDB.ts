@@ -449,7 +449,7 @@ this.servicioEstados.Log(id, 2);
           idNodo: ruta.direccion,
         };
 
-      await this.guardarTablaRutas(rutaRecibida, ruta.id);
+      await this.guardarTablaRutas(rutaRecibida, ruta.idRuta);
       // await this.guardarRutaEmpresavia(rutaEmpresaVia, ruta.idUnicoRuta);
       await this.guardarRutaHabilitada(rutaHabilitada, ruta.idUnicoRuta);
       await this.guardarRutaDireccion(rutaDireccion, ruta.id);
@@ -551,9 +551,11 @@ this.servicioEstados.Log(id, 2);
         await rutaDb.save();
         return rutaDb.id
       } else {
-        const rutaRetorno = await TblRutas.findOrFail(id)
-        rutaRetorno.establecerRutaConId(ruta)
-        await rutaRetorno.save()
+        const rutasRetorno = await TblRutas.query().where('codigoRuta', id)
+        await rutasRetorno.forEach(rutaRetorno => {
+          rutaRetorno.establecerRutaConId(ruta)
+          rutaRetorno.save()
+        });
       }
     } catch (error) {
       throw new Error(error);
@@ -798,14 +800,54 @@ this.servicioEstados.Log(id, 2);
     }
   }
 
+//   async visualizarSolicitudes(
+//     param: any,
+//     id: number
+//   ): Promise<{ rutas: any[]; paginacion: Paginador, editable:boolean, verificacionVisible:boolean, verificacionEditable:boolean }> {
+//     const { pagina, limite } = param;
+//     let editable = false;
+//     let verificacionVisible = false;
+//     let verificacionEditable = false;
+//     try {
 
-  // async guardarRutas(param: any): Promise<{ rutas: RespuestaClases[] }> {
-  //   try {
+//       const solicitud = await TblSolicitudes.query().where('vigiladoId', id).first();
+// if (!solicitud) {
+//   const nuevaSolicitiud = new TblSolicitudes()
+//   nuevaSolicitiud.vigiladoId = id;
+//   nuevaSolicitiud.estado = 2
+//   await nuevaSolicitiud.save()
 
-  //   } catch (error) {
-  //     throw new Error(error);
-  //   }
-  // }
+//   const estados = await this.servicioEstados.consultarEditable(2, 3);
+//   editable = estados.editable
+//   verificacionVisible = estados.verificacionVisible
+//   verificacionEditable = estados.verificacionEditable
+//   //solicitudId = nuevaSolicitiud.id
+
+// }else{
+//   const estados = await this.servicioEstados.consultarEditable(solicitud.estado,3, solicitud.estadoVeri);
+//   editable = estados.editable
+//   verificacionVisible = estados.verificacionVisible
+//   verificacionEditable = estados.verificacionEditable
+//   //solicitudId = solicitud.id
+// }
+// this.servicioEstados.Log(id, 2);
+
+//       let consulta;
+//       if (!pagina && !limite) {
+
+//       } else {
+//       }
+
+//       const rutas: RespuestaRutas[] = consulta.rows ?? [];
+
+
+//       return { rutas, editable, verificacionVisible, verificacionEditable };
+//     } catch (error) {
+//       throw new Error(error);
+//     }
+//   }
+
+
 
   // const query = await TblRutaEmpresas.query().preload('codigoUnicoRuta', sqlcodigo => {
   //   sqlcodigo.preload('ruta', sqlruta => {
