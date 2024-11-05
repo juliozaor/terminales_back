@@ -433,6 +433,7 @@ this.servicioEstados.Log(id, 2);
       //   codigoRuta: ruta.idUnicoRuta,
       //   via: ruta.via,
       // }
+
       const rutaHabilitada = {
         idRuta: ruta.idUnicoRuta,
         resolucion: ruta.resolucion,
@@ -449,11 +450,16 @@ this.servicioEstados.Log(id, 2);
           idNodo: ruta.direccion,
         };
 
-      await this.guardarTablaRutas(rutaRecibida, ruta.idRuta);
+      if (ruta.idaOVuelta == "A") {
+        await this.guardarRutaHabilitada(rutaHabilitada, ruta.idUnicoRuta);
+        await this.guardarRutaEmpresa(rutaEmpresa, ruta.idUnicoRuta);
+        await this.guardarTablaRutas(rutaRecibida, ruta.idRuta);
+      } else {
+        console.log('no puede actualizar estos aspectos en la ruta de vuelta B');
+        }
       // await this.guardarRutaEmpresavia(rutaEmpresaVia, ruta.idUnicoRuta);
-      await this.guardarRutaHabilitada(rutaHabilitada, ruta.idUnicoRuta);
       await this.guardarRutaDireccion(rutaDireccion, ruta.id);
-      await this.guardarRutaEmpresa(rutaEmpresa, ruta.idUnicoRuta);
+
 
       return console.log('ruta actualizada exitosamente');
 
