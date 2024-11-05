@@ -132,41 +132,16 @@ export default class ControladorTerminales {
       return response.badRequest(error.messages)
     }
   }
-  // public async obtenerAseguradora ({response, params}:HttpContextContract){
-  //   const id = params.id
-  //   if(!id){
-  //     return response.status(400).send({message:'El id es necesario'});
-  //   }
-  //   const aseguradora = await this.service.obtenerAseguradora(id)
-  //     return response.status(200).send(aseguradora);
-  // }
 
-  // public async crearAseguradora ({response, request}:HttpContextContract){
-  //   try {
-  //     const aseguradoraIn:any  = request.all()
-  //     const aseguradora = await this.service.crearAseguradora(aseguradoraIn)
-  //     return response.created(aseguradora)
-  //   } catch (error) {
-  //     return response.badRequest(error.messages)
-  //   }
+  public async visualizarSolicitudes({ response, request }: HttpContextContract) {
+      const solicitudes = await this.service.visualizarSolicitudes(request.all())
+      return response.status(200).send(solicitudes);
+  }
 
-  // }
-  // public async actualizarAseguradoraAll ({response, request}:HttpContextContract){
-  //   try {
-  //     const aseguradoraIn: any = request.all()
-  //     const aseguradora = await this.service.actualizarAseguradoraAll(aseguradoraIn)
-  //     return response.created(aseguradora)
-  //   } catch (error) {
-  //     return response.badRequest(error.messages)
-  //   }
-  // }
-  // public async eliminarAseguradora ({response, params}:HttpContextContract){
-  //   const id = params.id
-  //   if(!id){
-  //     return response.status(400).send({message:'El Id es necesario'});
-  //   }
-  //   await this.service.eliminarAseguradora(id)
-  //   return response.status(400).send({message:'Eliminada correctamente'});
-  // }
+  public async visualizarRutasVigilado({ response, request }: HttpContextContract) {
+    const rutasVigilado = await this.service.visualizarRutasVigilado(request.all())
+    return response.status(200).send(rutasVigilado);
+}
+
 
 }

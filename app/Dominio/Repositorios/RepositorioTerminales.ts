@@ -18,4 +18,6 @@ export interface RepositorioTerminales {
   guardarParadas(parada: RespuestaParadas): Promise<RespuestaParadas>
   guardarClases(clase: ClaseVehiculo): Promise<RespuestaClases>
   enviarSt(param: any, id: number): Promise<any>
+  visualizarSolicitudes(param: any): Promise<{ solicitudes: any[], paginacion: Paginador, editable: boolean, verificacionVisible: boolean, verificacionEditable: boolean }>
+  visualizarRutasVigilado(param: any): Promise<{rutasVigilado: RespuestaRutas[], paginacion: Paginador, editable:boolean, verificacionVisible:boolean, verificacionEditable:boolean}>
 }
