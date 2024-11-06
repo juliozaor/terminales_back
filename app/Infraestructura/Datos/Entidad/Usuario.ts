@@ -2,6 +2,7 @@ import { DateTime } from 'luxon';
 import { BaseModel, BelongsTo, HasMany, HasOne, ManyToMany, belongsTo, column, hasMany, hasOne, manyToMany} from '@ioc:Adonis/Lucid/Orm';
 import { Usuario } from 'App/Dominio/Datos/Entidades/Usuario';
 import TblRoles from './Autorizacion/Rol';
+import TblRutaEmpresas from './RutaEmpresa';
 
 
 export default class TblUsuarios extends BaseModel {
@@ -92,6 +93,10 @@ export default class TblUsuarios extends BaseModel {
   })
   public rol: BelongsTo<typeof TblRoles>
 
-
+  @hasMany(() => TblRutaEmpresas, {
+    localKey: 'id',
+    foreignKey: 'idUsuario',
+  })
+  public empresas: HasMany<typeof TblRutaEmpresas>
 
 }

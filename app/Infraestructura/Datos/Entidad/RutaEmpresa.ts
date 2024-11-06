@@ -2,6 +2,7 @@ import { BaseModel, column, HasOne, hasOne} from '@ioc:Adonis/Lucid/Orm';
 import { DateTime } from 'luxon';
 import TblRutaCodigoRutas from './RutaCodigoRutas';
 import { RutaEmpresa } from 'App/Dominio/Datos/Entidades/RutaEmpresa';
+import TblUsuarios from './Usuario';
 
 export default class TblRutaEmpresas extends BaseModel {
 
@@ -33,5 +34,11 @@ export default class TblRutaEmpresas extends BaseModel {
     foreignKey: 'id',
   })
   public codigoUnicoRuta: HasOne<typeof TblRutaCodigoRutas>
+
+  @hasOne (() => TblUsuarios, {
+    localKey: 'idUsuario',
+    foreignKey: 'id',
+  })
+  public usuarios: HasOne<typeof TblUsuarios>
 }
 

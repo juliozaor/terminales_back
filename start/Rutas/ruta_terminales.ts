@@ -15,5 +15,5 @@ Route.group(() => {
   Route.post('/guardar-clase', accion_path + '.guardarClase')
   Route.patch('/guardar', accion_path + '.guardar')
   Route.post('/enviar-st', accion_path + '.enviarSt')
-  Route.get('/visualizar-solicitudes', accion_path + '.visualizarSolicitudes')
+  Route.get('/visualizar-rutas-vigilado', accion_path + '.visualizarRutasVigilado')
 }).prefix('api/v1/terminales').middleware('autenticacionJwt')

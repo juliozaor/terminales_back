@@ -9,4 +9,8 @@ Route.group(() => {
   Route.get('tipo-vehiculo', accion_path + '.tipovehiculo')
   Route.get('clase-grupo', accion_path + '.clasePorGrupo')
   Route.get('direcciones', accion_path + '.nodos')
+  Route.get('listar-direcciones', accion_path + '.listarNodos')
+  Route.get('listar-empresas', accion_path + '.listarEmpresas')
+  Route.get('/rutas-activas-empresa', accion_path + '.rutasActivasPorEmpresa')
+  Route.get('/rutas-empresas', accion_path + '.rutasEmpresas')
 }).prefix('api/v1/maestras').middleware('autenticacionJwt')
