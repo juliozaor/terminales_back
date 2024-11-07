@@ -35,19 +35,19 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
     try {
       const totalCountQuery = `SELECT COUNT(*) as total
       FROM tbl_ruta_empresas tre
-      LEFT JOIN tbl_ruta_codigo_rutas trcr ON trcr.rcr_codigo_unico_ruta = tre.tre_codigo_unico_ruta
-      LEFT JOIN tbl_rutas tr ON tr.trt_codigo_ruta = trcr.rcr_codigo_ruta
-      LEFT JOIN tbl_centro_poblados tcp ON tcp.tcp_codigo_centro_poblado = tr.trt_codigo_cp_origen
-      LEFT JOIN tbl_centro_poblados tcpd ON tcpd.tcp_codigo_centro_poblado = tr.trt_codigo_cp_destino
-      LEFT JOIN tbl_municipios tm ON tcp.tcp_codigo_municipio = tm.tms_codigo_municipio
-      LEFT JOIN tbl_municipios tmd ON tcpd.tcp_codigo_municipio = tmd.tms_codigo_municipio
-      LEFT JOIN tbl_departamentos td ON tm.tms_departamento_codigo = td.tdp_codigo_departamento
-      LEFT JOIN tbl_departamentos tdd ON tmd.tms_departamento_codigo = tdd.tdp_codigo_departamento
-      LEFT JOIN tbl_nodos_despachos tnd ON tnd.tnd_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
-      LEFT JOIN tbl_nodos tn ON tn.tnd_id = tnd.tnd_codigo_nodo
-      LEFT JOIN tbl_tipo_despachos ttd ON ttd.ttd_id = tn.tnd_despacho_id
-      LEFT JOIN tbl_ruta_empresa_vias trev ON trev.rev_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
-      LEFT JOIN tbl_ruta_habilitadas trh ON trh.trh_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
+        LEFT JOIN tbl_ruta_codigo_rutas trcr ON trcr.rcr_codigo_unico_ruta = tre.tre_codigo_unico_ruta
+        LEFT JOIN tbl_rutas tr ON tr.trt_codigo_ruta = trcr.rcr_codigo_ruta
+        LEFT JOIN tbl_centro_poblados tcp ON tcp.tcp_codigo_centro_poblado = tr.trt_codigo_cp_origen
+        LEFT JOIN tbl_centro_poblados tcpd ON tcpd.tcp_codigo_centro_poblado = tr.trt_codigo_cp_destino
+        LEFT JOIN tbl_municipios tm ON tcp.tcp_codigo_municipio = tm.tms_codigo_municipio
+        LEFT JOIN tbl_municipios tmd ON tcpd.tcp_codigo_municipio = tmd.tms_codigo_municipio
+        LEFT JOIN tbl_departamentos td ON tm.tms_departamento_codigo = td.tdp_codigo_departamento
+        LEFT JOIN tbl_departamentos tdd ON tmd.tms_departamento_codigo = tdd.tdp_codigo_departamento
+        LEFT JOIN tbl_rutas_direcciones trd ON trd.trd_id_ruta = tr.trt_id
+        LEFT JOIN tbl_nodos tn ON tn.tnd_id = trd.trd_id_nodo
+        LEFT JOIN tbl_tipo_despachos ttd ON ttd.ttd_id = tn.tnd_despacho_id
+        LEFT JOIN tbl_ruta_empresa_vias trev ON trev.rev_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
+        LEFT JOIN tbl_ruta_habilitadas trh ON trh.trh_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
       WHERE tre.tre_id_usuario = ${id} and tr.trt_ida_vuelta = 'A'`;
 
       const totalCountResult = await Database.rawQuery(totalCountQuery);
@@ -265,11 +265,6 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
           idNodo: ruta.direccion,
         };
 
-        const rutaEmpresaVia = {
-          codigoRuta: ruta.idUnicoRuta,
-          via: ruta.via,
-        }
-
       if (ruta.idaOVuelta == "A") {
 
         const rutaHabilitada = {
@@ -283,21 +278,23 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
           corresponde: ruta.corresponde
           }
 
-        console.log(rutaHabilitada);
-
         const rutaRecibida = {
           codigoRuta: ruta.idRuta,
           estado: ruta.rutaHabilitada
         }
 
+        const rutaEmpresaVia = {
+          codigoRuta: ruta.idUnicoRuta,
+          via: ruta.via,
+        }
+
       await this.guardarRutaHabilitada(rutaHabilitada, ruta.idUnicoRuta);
       await this.guardarTablaRutas(rutaRecibida, ruta.idRuta);
-
+      await this.guardarRutaEmpresavia(rutaEmpresaVia, ruta.idUnicoRuta);
       } else if(ruta.idaOVuelta == "B"){
         console.log(`no puede actualizar estos aspectos en la ruta de vuelta ${ruta.idaOVuelta}`);
       }
       await this.guardarRutaEmpresa(rutaEmpresa, ruta.idUnicoRuta);
-      await this.guardarRutaEmpresavia(rutaEmpresaVia, ruta.idUnicoRuta);
       await this.guardarRutaDireccion(rutaDireccion, ruta.id);
       return console.log('ruta actualizada exitosamente');
 
