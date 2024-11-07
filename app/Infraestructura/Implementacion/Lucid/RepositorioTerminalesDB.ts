@@ -430,10 +430,10 @@ this.servicioEstados.Log(id, 2);
           idNodo: ruta.direccion,
         };
 
-        // const rutaEmpresaVia = {
-        //   codigoRuta: ruta.idUnicoRuta,
-        //   via: ruta.via,
-        // }
+        const rutaEmpresaVia = {
+          codigoRuta: ruta.idUnicoRuta,
+          via: ruta.via,
+        }
 
       if (ruta.idaOVuelta == "A") {
 
@@ -462,7 +462,7 @@ this.servicioEstados.Log(id, 2);
         console.log(`no puede actualizar estos aspectos en la ruta de vuelta ${ruta.idaOVuelta}`);
       }
       await this.guardarRutaEmpresa(rutaEmpresa, ruta.idUnicoRuta);
-      // await this.guardarRutaEmpresavia(rutaEmpresaVia, ruta.idUnicoRuta);
+      await this.guardarRutaEmpresavia(rutaEmpresaVia, ruta.idUnicoRuta);
       await this.guardarRutaDireccion(rutaDireccion, ruta.id);
       return console.log('ruta actualizada exitosamente');
 
@@ -1055,7 +1055,7 @@ this.servicioEstados.Log(id, 2);
         LEFT JOIN tbl_tipo_despachos ttd ON ttd.ttd_id = tn.tnd_despacho_id
         LEFT JOIN tbl_ruta_empresa_vias trev ON trev.rev_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
         LEFT JOIN tbl_ruta_habilitadas trh ON trh.trh_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
-        WHERE tre.tre_id_usuario = ${vigiladoId} ORDER By tre.tre_codigo_unico_ruta desc`);
+        WHERE tre.tre_id_usuario = ${vigiladoId} and tr.trt_ida_vuelta = 'A' ORDER By tre.tre_codigo_unico_ruta desc`);
     } else {
       consulta = await Database.rawQuery(`SELECT
         tr.trt_id as id,
@@ -1102,7 +1102,7 @@ this.servicioEstados.Log(id, 2);
         LEFT JOIN tbl_tipo_despachos ttd ON ttd.ttd_id = tn.tnd_despacho_id
         LEFT JOIN tbl_ruta_empresa_vias trev ON trev.rev_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
         LEFT JOIN tbl_ruta_habilitadas trh ON trh.trh_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
-        WHERE tre.tre_id_usuario = ${vigiladoId} LIMIT ${limite} OFFSET ${(pagina - 1) * limite}`);
+        WHERE tre.tre_id_usuario = ${vigiladoId} and tr.trt_ida_vuelta = 'A' LIMIT ${limite} OFFSET ${(pagina - 1) * limite}`);
     }
 
       const rutasVigilado: RespuestaRutas[] = consulta.rows ?? [];
