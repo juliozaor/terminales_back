@@ -9,13 +9,6 @@ export default class ControladorTerminales {
     this.service = new ServicioTerminales(new RepositorioTerminalesDB())
   }
 
-
-  public async visualizarRutas({ response, request }: HttpContextContract) {
-    const { id } = await request.obtenerPayloadJWT()
-      const rutas = await this.service.visualizarRutas(request.all(), parseInt(id))
-      return response.status(200).send(rutas);
-  }
-
   public async visualizarParadasPorRuta({ response, request }: HttpContextContract) {
     const { id } = await request.obtenerPayloadJWT()
       const paradas = await this.service.visualizarParadasPorRuta(request.all(), parseInt(id))

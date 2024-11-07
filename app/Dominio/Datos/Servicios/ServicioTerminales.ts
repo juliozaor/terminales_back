@@ -7,10 +7,6 @@ import { RespuestaClases } from 'App/Dominio/Dto/RespuestaClases';
 export class ServicioTerminales{
   constructor (private repositorio: RepositorioTerminales) { }
 
-  async visualizarRutas(param: any, id: number): Promise<{rutas: RespuestaRutas[], paginacion: Paginador, editable:boolean, verificacionVisible:boolean, verificacionEditable:boolean}>{
-    return this.repositorio.visualizarRutas(param, id)
-  }
-
   async visualizarParadasPorRuta(param: any, id: number): Promise<{paradas: RespuestaParadas[], paginacion: Paginador}>{
     return this.repositorio.visualizarParadasPorRuta(param, id)
   }
