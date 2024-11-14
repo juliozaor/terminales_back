@@ -682,7 +682,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
             sqlmunicipioDesti.preload('departamento')
           })
         }).where('idaaVuelta', 'A')
-      })
+      }).preload('rutaVias')
     }).where('idUsuario', vigiladoId)
 
       const consultaDb = await consulta.paginate(pagina, limite)
@@ -690,8 +690,10 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       const rutasVigilado = consultaDb.all().map(sqlRuta => {
         let rutas = new Object();
         const idRuta = sqlRuta.codigoUnicoRuta.id
+        const numeroVias = sqlRuta.codigoUnicoRuta.rutaVias.length
         sqlRuta.codigoUnicoRuta.ruta.forEach((ruta) => {
           rutas = {
+            numeroVias: numeroVias,
             idCodigoUnicoRuta: idRuta,
             idCodigoRuta: sqlRuta.codigoUnicoRuta.codigoRuta,
             idRuta: ruta.id,
@@ -720,22 +722,4 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
     }
   }
 
-  // const query = await TblRutaEmpresas.query().preload('codigoUnicoRuta', sqlcodigo => {
-  //   sqlcodigo.preload('ruta', sqlruta => {
-  //     sqlruta.preload('cpOrigen').preload('cpDestino')
-  //   })
-
-  //   sqlcodigo.preload('nodosDespacho', sqlnodoDespacho => {
-  //     sqlnodoDespacho.preload('nodos', sqlnodo => {
-  //       sqlnodo.preload('tipoDespacho')
-  //     })
-  //   })
-
-  //   sqlcodigo.preload('rutaVias')
-
-  //   sqlcodigo.preload('rutasHabilitada')
-
-  // }).where('idUsuario', id).first()
-
-  // return query
 }
