@@ -126,11 +126,6 @@ export default class ControladorTerminales {
     }
   }
 
-  public async visualizarSolicitudes({ response, request }: HttpContextContract) {
-      const solicitudes = await this.service.visualizarSolicitudes(request.all())
-      return response.status(200).send(solicitudes);
-  }
-
   public async visualizarRutasVigilado({ response, request }: HttpContextContract) {
     const rutasVigilado = await this.service.visualizarRutasVigilado(request.all())
     return response.status(200).send(rutasVigilado);

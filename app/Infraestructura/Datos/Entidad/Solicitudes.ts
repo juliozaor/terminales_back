@@ -57,7 +57,7 @@ export default class TblSolicitudes extends BaseModel {
   public estadosVerificador: BelongsTo<typeof TblEstados>
 
   @belongsTo(()=> TblUsuarios, {
-    localKey: 'identificacion',
+    localKey: 'id',
     foreignKey: 'vigiladoId',
   })
   public vigilado: BelongsTo<typeof TblUsuarios>

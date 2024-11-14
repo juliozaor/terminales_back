@@ -32,7 +32,8 @@
     "./start/Rutas/ruta_estados",
     "./start/Rutas/ruta_informes",
     "./start/Rutas/ruta_usuario",
-    "./start/Rutas/ruta_terminales"
+    "./start/Rutas/ruta_terminales",
+    "./start/Rutas/ruta_verificador"
   ],
   "providers": [
     "./providers/AppProvider",

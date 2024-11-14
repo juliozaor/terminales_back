@@ -640,155 +640,6 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
     }
   }
 
-  async visualizarSolicitudes(
-    param: any
-  ): Promise<{ solicitudes: any[]; paginacion: Paginador, editable:boolean, verificacionVisible:boolean, verificacionEditable:boolean }> {
-    const { pagina, limite, vigiladoId } = param;
-    let editable = false;
-    let verificacionVisible = false;
-    let verificacionEditable = false;
-    try {
-
-      const solicitud = await TblSolicitudes.query().where('vigiladoId', vigiladoId).first();
-      if (!solicitud) {
-      const nuevaSolicitiud = new TblSolicitudes()
-      nuevaSolicitiud.vigiladoId = vigiladoId;
-      nuevaSolicitiud.estado = 2
-      await nuevaSolicitiud.save()
-
-      const estados = await this.servicioEstados.consultarEditable(2, 3);
-      editable = estados.editable
-      verificacionVisible = estados.verificacionVisible
-      verificacionEditable = estados.verificacionEditable
-      //solicitudId = nuevaSolicitiud.id
-
-  }else{
-      const estados = await this.servicioEstados.consultarEditable(solicitud.estado,3, solicitud.estadoVeri);
-      editable = estados.editable
-      verificacionVisible = estados.verificacionVisible
-      verificacionEditable = estados.verificacionEditable
-      //solicitudId = solicitud.id
-    }
-    this.servicioEstados.Log(vigiladoId, 2);
-
-    const totalCountQuery = await TblSolicitudes.query().where('vigiladoId', vigiladoId).count('* as total');
-
-      const totalCountResult = await Database.from('sol_vigilado_id').where('vigiladoId', vigiladoId).count('* as total');
-      log(totalCountResult)
-      const totalRecords = 1;
-      // totalCountResult.rows[0].total
-    let consulta;
-    if (!pagina && !limite) {
-      consulta = await Database.rawQuery(`SELECT
-        tr.trt_id as id,
-        tr.trt_codigo_ruta as id_ruta,
-        tre.tre_codigo_unico_ruta as id_unico_ruta,
-        tr.trt_ida_vuelta as ida_o_vuelta,
-        td.tdp_nombre as departamento_origen,
-        td.tdp_codigo_departamento as departamento_origen_codigo,
-        tm.tms_nombre as municipio_origen,
-        tm.tms_codigo_municipio as municipio_origen_codigo,
-        tcp.tcp_nombre as cp_origen,
-        tr.trt_codigo_cp_origen as cp_origen_codigo,
-        tdd.tdp_nombre as departamento_destino,
-        tdd.tdp_codigo_departamento as departamento_destino_codigo,
-        tmd.tms_nombre as municipio_destino,
-        tmd.tms_codigo_municipio as municipio_destino_codigo,
-        tcpd.tcp_nombre as cp_destino,
-        tr.trt_codigo_cp_destino as cp_destino_codigo,
-        ttd.ttd_descripcion as tipo_llegada,
-        ttd.ttd_id as tipo_llegada_id,
-        tn.tnd_descripcion as direccion,
-        tn.tnd_id as direccion_id,
-        trev.rev_via as via,
-        tr.trt_estado as estado,
-        trh.trh_resolucion as resolucion,
-        trh.corresponde as corresponde,
-        trh.trh_resolucion_actual as resolucion_actual,
-        trh.trh_direccion_territorial as direccion_territorial,
-        trh.trh_documento as documento,
-        trh.trh_nombre_original as nombre_original,
-        trh.trh_ruta_archivo as ruta_archivo
-        FROM
-          tbl_ruta_empresas tre
-        LEFT JOIN tbl_ruta_codigo_rutas trcr ON trcr.rcr_codigo_unico_ruta = tre.tre_codigo_unico_ruta
-        LEFT JOIN tbl_rutas tr ON tr.trt_codigo_ruta = trcr.rcr_codigo_ruta
-        LEFT JOIN tbl_centro_poblados tcp ON tcp.tcp_codigo_centro_poblado = tr.trt_codigo_cp_origen
-        LEFT JOIN tbl_centro_poblados tcpd ON tcpd.tcp_codigo_centro_poblado = tr.trt_codigo_cp_destino
-        LEFT JOIN tbl_municipios tm ON tcp.tcp_codigo_municipio = tm.tms_codigo_municipio
-        LEFT JOIN tbl_municipios tmd ON tcpd.tcp_codigo_municipio = tmd.tms_codigo_municipio
-        LEFT JOIN tbl_departamentos td ON tm.tms_departamento_codigo = td.tdp_codigo_departamento
-        LEFT JOIN tbl_departamentos tdd ON tmd.tms_departamento_codigo = tdd.tdp_codigo_departamento
-        LEFT JOIN tbl_rutas_direcciones trd ON trd.trd_id_ruta = tr.trt_id
-        LEFT JOIN tbl_nodos tn ON tn.tnd_id = trd.trd_id_nodo
-        LEFT JOIN tbl_tipo_despachos ttd ON ttd.ttd_id = tn.tnd_despacho_id
-        LEFT JOIN tbl_ruta_empresa_vias trev ON trev.rev_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
-        LEFT JOIN tbl_ruta_habilitadas trh ON trh.trh_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
-        WHERE tre.tre_id_usuario = ${vigiladoId} ORDER By tre.tre_codigo_unico_ruta desc`);
-    } else {
-      consulta = await Database.rawQuery(`SELECT
-        tr.trt_id as id,
-        tr.trt_codigo_ruta as id_ruta,
-        tre.tre_codigo_unico_ruta as id_unico_ruta,
-        tr.trt_ida_vuelta as ida_o_vuelta,
-        td.tdp_nombre as departamento_origen,
-        td.tdp_codigo_departamento as departamento_origen_codigo,
-        tm.tms_nombre as municipio_origen,
-        tm.tms_codigo_municipio as municipio_origen_codigo,
-        tcp.tcp_nombre as cp_origen,
-        tr.trt_codigo_cp_origen as cp_origen_codigo,
-        tdd.tdp_nombre as departamento_destino,
-        tdd.tdp_codigo_departamento as departamento_destino_codigo,
-        tmd.tms_nombre as municipio_destino,
-        tmd.tms_codigo_municipio as municipio_destino_codigo,
-        tcpd.tcp_nombre as cp_destino,
-        tr.trt_codigo_cp_destino as cp_destino_codigo,
-        ttd.ttd_descripcion as tipo_llegada,
-        ttd.ttd_id as tipo_llegada_id,
-        tn.tnd_descripcion as direccion,
-        tn.tnd_id as direccion_id,
-        trev.rev_via as via,
-        tr.trt_estado as estado,
-        trh.trh_resolucion as resolucion,
-        trh.corresponde as corresponde,
-        trh.trh_resolucion_actual as resolucion_actual,
-        trh.trh_direccion_territorial as direccion_territorial,
-        trh.trh_documento as documento,
-        trh.trh_nombre_original as nombre_original,
-        trh.trh_ruta_archivo as ruta_archivo
-        FROM
-          tbl_ruta_empresas tre
-        LEFT JOIN tbl_ruta_codigo_rutas trcr ON trcr.rcr_codigo_unico_ruta = tre.tre_codigo_unico_ruta
-        LEFT JOIN tbl_rutas tr ON tr.trt_codigo_ruta = trcr.rcr_codigo_ruta
-        LEFT JOIN tbl_centro_poblados tcp ON tcp.tcp_codigo_centro_poblado = tr.trt_codigo_cp_origen
-        LEFT JOIN tbl_centro_poblados tcpd ON tcpd.tcp_codigo_centro_poblado = tr.trt_codigo_cp_destino
-        LEFT JOIN tbl_municipios tm ON tcp.tcp_codigo_municipio = tm.tms_codigo_municipio
-        LEFT JOIN tbl_municipios tmd ON tcpd.tcp_codigo_municipio = tmd.tms_codigo_municipio
-        LEFT JOIN tbl_departamentos td ON tm.tms_departamento_codigo = td.tdp_codigo_departamento
-        LEFT JOIN tbl_departamentos tdd ON tmd.tms_departamento_codigo = tdd.tdp_codigo_departamento
-        LEFT JOIN tbl_rutas_direcciones trd ON trd.trd_id_ruta = tr.trt_id
-        LEFT JOIN tbl_nodos tn ON tn.tnd_id = trd.trd_id_nodo
-        LEFT JOIN tbl_tipo_despachos ttd ON ttd.ttd_id = tn.tnd_despacho_id
-        LEFT JOIN tbl_ruta_empresa_vias trev ON trev.rev_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
-        LEFT JOIN tbl_ruta_habilitadas trh ON trh.trh_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
-        WHERE tre.tre_id_usuario = ${vigiladoId} LIMIT ${limite} OFFSET ${(pagina - 1) * limite}`);
-    }
-
-      const solicitudes: any[] = consulta.rows ?? [];
-      const totalPages = Math.ceil(totalRecords / limite);
-      const paginacion = {
-        totalRegistros: totalRecords,
-        paginaActual: pagina,
-        totalPaginas: totalPages,
-      };
-
-      return { solicitudes, paginacion, editable, verificacionVisible, verificacionEditable };
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-
   async visualizarRutasVigilado(
     param: any
   ): Promise<{ rutasVigilado: any[]; paginacion: Paginador, editable:boolean, verificacionVisible:boolean, verificacionEditable:boolean }> {
@@ -820,132 +671,50 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
     }
     this.servicioEstados.Log(vigiladoId, 2);
 
+    const consulta = TblRutaEmpresas.query().preload('codigoUnicoRuta', sqlcodigoRuta => {
+      sqlcodigoRuta.preload('ruta', sqlruta => {
+        sqlruta.preload('cpOrigen', sqlCentroOrigen => {
+          sqlCentroOrigen.preload('municipio', sqlmunicipioOri => {
+            sqlmunicipioOri.preload('departamento')
+          })
+        }).preload('cpDestino', sqlCentroDestino => {
+          sqlCentroDestino.preload('municipio', sqlmunicipioDesti => {
+            sqlmunicipioDesti.preload('departamento')
+          })
+        }).where('idaaVuelta', 'A')
+      })
+    }).where('idUsuario', vigiladoId)
 
-    const totalCountQuery = `SELECT COUNT(*) as total
-    FROM tbl_ruta_empresas tre
-      LEFT JOIN tbl_ruta_codigo_rutas trcr ON trcr.rcr_codigo_unico_ruta = tre.tre_codigo_unico_ruta
-      LEFT JOIN tbl_rutas tr ON tr.trt_codigo_ruta = trcr.rcr_codigo_ruta
-      LEFT JOIN tbl_centro_poblados tcp ON tcp.tcp_codigo_centro_poblado = tr.trt_codigo_cp_origen
-      LEFT JOIN tbl_centro_poblados tcpd ON tcpd.tcp_codigo_centro_poblado = tr.trt_codigo_cp_destino
-      LEFT JOIN tbl_municipios tm ON tcp.tcp_codigo_municipio = tm.tms_codigo_municipio
-      LEFT JOIN tbl_municipios tmd ON tcpd.tcp_codigo_municipio = tmd.tms_codigo_municipio
-      LEFT JOIN tbl_departamentos td ON tm.tms_departamento_codigo = td.tdp_codigo_departamento
-      LEFT JOIN tbl_departamentos tdd ON tmd.tms_departamento_codigo = tdd.tdp_codigo_departamento
-      LEFT JOIN tbl_rutas_direcciones trd ON trd.trd_id_ruta  = tr.trt_id
-      LEFT JOIN tbl_nodos tn ON tn.tnd_id = trd.trd_id_nodo
-      LEFT JOIN tbl_tipo_despachos ttd ON ttd.ttd_id = tn.tnd_despacho_id
-      LEFT JOIN tbl_ruta_empresa_vias trev ON trev.rev_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
-      LEFT JOIN tbl_ruta_habilitadas trh ON trh.trh_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
-    WHERE tre.tre_id_usuario = ${vigiladoId}`;
+      const consultaDb = await consulta.paginate(pagina, limite)
 
-    const totalCountResult = await Database.rawQuery(totalCountQuery);
-    const totalRecords = totalCountResult.rows[0].total;
-    let consulta;
-    if (!pagina && !limite) {
-      consulta = await Database.rawQuery(`SELECT
-        tr.trt_id as id,
-        tr.trt_codigo_ruta as id_ruta,
-        tre.tre_codigo_unico_ruta as id_unico_ruta,
-        tr.trt_ida_vuelta as ida_o_vuelta,
-        td.tdp_nombre as departamento_origen,
-        td.tdp_codigo_departamento as departamento_origen_codigo,
-        tm.tms_nombre as municipio_origen,
-        tm.tms_codigo_municipio as municipio_origen_codigo,
-        tcp.tcp_nombre as cp_origen,
-        tr.trt_codigo_cp_origen as cp_origen_codigo,
-        tdd.tdp_nombre as departamento_destino,
-        tdd.tdp_codigo_departamento as departamento_destino_codigo,
-        tmd.tms_nombre as municipio_destino,
-        tmd.tms_codigo_municipio as municipio_destino_codigo,
-        tcpd.tcp_nombre as cp_destino,
-        tr.trt_codigo_cp_destino as cp_destino_codigo,
-        ttd.ttd_descripcion as tipo_llegada,
-        ttd.ttd_id as tipo_llegada_id,
-        tn.tnd_descripcion as direccion,
-        tn.tnd_id as direccion_id,
-        trev.rev_via as via,
-        tr.trt_estado as estado,
-        trh.trh_resolucion as resolucion,
-        trh.corresponde as corresponde,
-        trh.trh_resolucion_actual as resolucion_actual,
-        trh.trh_direccion_territorial as direccion_territorial,
-        trh.trh_documento as documento,
-        trh.trh_nombre_original as nombre_original,
-        trh.trh_ruta_archivo as ruta_archivo
-        FROM
-          tbl_ruta_empresas tre
-        LEFT JOIN tbl_ruta_codigo_rutas trcr ON trcr.rcr_codigo_unico_ruta = tre.tre_codigo_unico_ruta
-        LEFT JOIN tbl_rutas tr ON tr.trt_codigo_ruta = trcr.rcr_codigo_ruta
-        LEFT JOIN tbl_centro_poblados tcp ON tcp.tcp_codigo_centro_poblado = tr.trt_codigo_cp_origen
-        LEFT JOIN tbl_centro_poblados tcpd ON tcpd.tcp_codigo_centro_poblado = tr.trt_codigo_cp_destino
-        LEFT JOIN tbl_municipios tm ON tcp.tcp_codigo_municipio = tm.tms_codigo_municipio
-        LEFT JOIN tbl_municipios tmd ON tcpd.tcp_codigo_municipio = tmd.tms_codigo_municipio
-        LEFT JOIN tbl_departamentos td ON tm.tms_departamento_codigo = td.tdp_codigo_departamento
-        LEFT JOIN tbl_departamentos tdd ON tmd.tms_departamento_codigo = tdd.tdp_codigo_departamento
-        LEFT JOIN tbl_rutas_direcciones trd ON trd.trd_id_ruta = tr.trt_id
-        LEFT JOIN tbl_nodos tn ON tn.tnd_id = trd.trd_id_nodo
-        LEFT JOIN tbl_tipo_despachos ttd ON ttd.ttd_id = tn.tnd_despacho_id
-        LEFT JOIN tbl_ruta_empresa_vias trev ON trev.rev_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
-        LEFT JOIN tbl_ruta_habilitadas trh ON trh.trh_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
-        WHERE tre.tre_id_usuario = ${vigiladoId} and tr.trt_ida_vuelta = 'A' ORDER By tre.tre_codigo_unico_ruta desc`);
-    } else {
-      consulta = await Database.rawQuery(`SELECT
-        tr.trt_id as id,
-        tr.trt_codigo_ruta as id_ruta,
-        tre.tre_codigo_unico_ruta as id_unico_ruta,
-        tr.trt_ida_vuelta as ida_o_vuelta,
-        td.tdp_nombre as departamento_origen,
-        td.tdp_codigo_departamento as departamento_origen_codigo,
-        tm.tms_nombre as municipio_origen,
-        tm.tms_codigo_municipio as municipio_origen_codigo,
-        tcp.tcp_nombre as cp_origen,
-        tr.trt_codigo_cp_origen as cp_origen_codigo,
-        tdd.tdp_nombre as departamento_destino,
-        tdd.tdp_codigo_departamento as departamento_destino_codigo,
-        tmd.tms_nombre as municipio_destino,
-        tmd.tms_codigo_municipio as municipio_destino_codigo,
-        tcpd.tcp_nombre as cp_destino,
-        tr.trt_codigo_cp_destino as cp_destino_codigo,
-        ttd.ttd_descripcion as tipo_llegada,
-        ttd.ttd_id as tipo_llegada_id,
-        tn.tnd_descripcion as direccion,
-        tn.tnd_id as direccion_id,
-        trev.rev_via as via,
-        tr.trt_estado as estado,
-        trh.trh_resolucion as resolucion,
-        trh.corresponde as corresponde,
-        trh.trh_resolucion_actual as resolucion_actual,
-        trh.trh_direccion_territorial as direccion_territorial,
-        trh.trh_documento as documento,
-        trh.trh_nombre_original as nombre_original,
-        trh.trh_ruta_archivo as ruta_archivo
-        FROM
-          tbl_ruta_empresas tre
-        LEFT JOIN tbl_ruta_codigo_rutas trcr ON trcr.rcr_codigo_unico_ruta = tre.tre_codigo_unico_ruta
-        LEFT JOIN tbl_rutas tr ON tr.trt_codigo_ruta = trcr.rcr_codigo_ruta
-        LEFT JOIN tbl_centro_poblados tcp ON tcp.tcp_codigo_centro_poblado = tr.trt_codigo_cp_origen
-        LEFT JOIN tbl_centro_poblados tcpd ON tcpd.tcp_codigo_centro_poblado = tr.trt_codigo_cp_destino
-        LEFT JOIN tbl_municipios tm ON tcp.tcp_codigo_municipio = tm.tms_codigo_municipio
-        LEFT JOIN tbl_municipios tmd ON tcpd.tcp_codigo_municipio = tmd.tms_codigo_municipio
-        LEFT JOIN tbl_departamentos td ON tm.tms_departamento_codigo = td.tdp_codigo_departamento
-        LEFT JOIN tbl_departamentos tdd ON tmd.tms_departamento_codigo = tdd.tdp_codigo_departamento
-        LEFT JOIN tbl_rutas_direcciones trd ON trd.trd_id_ruta = tr.trt_id
-        LEFT JOIN tbl_nodos tn ON tn.tnd_id = trd.trd_id_nodo
-        LEFT JOIN tbl_tipo_despachos ttd ON ttd.ttd_id = tn.tnd_despacho_id
-        LEFT JOIN tbl_ruta_empresa_vias trev ON trev.rev_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
-        LEFT JOIN tbl_ruta_habilitadas trh ON trh.trh_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
-        WHERE tre.tre_id_usuario = ${vigiladoId} and tr.trt_ida_vuelta = 'A' LIMIT ${limite} OFFSET ${(pagina - 1) * limite}`);
-    }
-
-      const rutasVigilado: RespuestaRutas[] = consulta.rows ?? [];
-      const totalPages = Math.ceil(totalRecords / limite);
-      const paginacion = {
-        totalRegistros: totalRecords,
-        paginaActual: pagina,
-        totalPaginas: totalPages,
-      };
-
-      return { rutasVigilado, paginacion, editable, verificacionVisible, verificacionEditable };
+      const rutasVigilado = consultaDb.all().map(sqlRuta => {
+        const rutas = new Array();
+        const idRuta = sqlRuta.codigoUnicoRuta.id
+        sqlRuta.codigoUnicoRuta.ruta.forEach((ruta) => {
+          rutas.push({
+            idRuta: ruta.id,
+            codCpOrigen: ruta.codigoCpOrigen,
+            descripcionOrigen: ruta.cpOrigen.nombre,
+            CoddepartamentoOrigen: ruta.cpOrigen.municipio.departamento.codigoDepartamento,
+            departamentoOrigen: ruta.cpOrigen.municipio.departamento.nombre,
+            CodmunicipioOrigen: ruta.cpOrigen.municipio.codigoMunicipio,
+            municipioOrigen: ruta.cpOrigen.municipio.nombre,
+            codCpDestino: ruta.codigoCpDestino,
+            descripcionDestino: ruta.cpDestino.nombre,
+            CoddepartamentoDestino: ruta.cpDestino.municipio.departamento.codigoDepartamento,
+            departamentoDestino: ruta.cpDestino.municipio.departamento.nombre,
+            CodmunicipioDestino: ruta.cpDestino.municipio.codigoMunicipio,
+            municipioDestino: ruta.cpDestino.municipio.nombre,
+          })
+        })
+        return {
+          idCodigoUnicoRuta: idRuta,
+          idCodigoRuta: sqlRuta.codigoUnicoRuta.codigoRuta,
+          rutas: rutas
+        }
+      })
+      const paginacion = MapeadorPaginacionDB.obtenerPaginacion(consultaDb)
+      return {rutasVigilado, paginacion, editable, verificacionVisible, verificacionEditable };
     } catch (error) {
       throw new Error(error);
     }
