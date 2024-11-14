@@ -688,10 +688,12 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       const consultaDb = await consulta.paginate(pagina, limite)
 
       const rutasVigilado = consultaDb.all().map(sqlRuta => {
-        const rutas = new Array();
+        let rutas = new Object();
         const idRuta = sqlRuta.codigoUnicoRuta.id
         sqlRuta.codigoUnicoRuta.ruta.forEach((ruta) => {
-          rutas.push({
+          rutas = {
+            idCodigoUnicoRuta: idRuta,
+            idCodigoRuta: sqlRuta.codigoUnicoRuta.codigoRuta,
             idRuta: ruta.id,
             codCpOrigen: ruta.codigoCpOrigen,
             descripcionOrigen: ruta.cpOrigen.nombre,
@@ -705,11 +707,9 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
             departamentoDestino: ruta.cpDestino.municipio.departamento.nombre,
             CodmunicipioDestino: ruta.cpDestino.municipio.codigoMunicipio,
             municipioDestino: ruta.cpDestino.municipio.nombre,
-          })
+          }
         })
         return {
-          idCodigoUnicoRuta: idRuta,
-          idCodigoRuta: sqlRuta.codigoUnicoRuta.codigoRuta,
           rutas: rutas
         }
       })
