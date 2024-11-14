@@ -298,6 +298,67 @@ export default class ControladorMaestra {
       return { message: 'No se pudieron obtener las rutas activas' };
     }
   }
+
+  public async listarRutas({ request }: HttpContextContract) {
+    try {
+      const { terminal } = request.all()
+
+      const query = await TblUsuarios.query().preload('empresas', sqlEmpresa => {
+        sqlEmpresa.preload('codigoUnicoRuta', sqlcodigo => {
+          sqlcodigo.preload('ruta', sqlruta => {
+            sqlruta.preload('cpOrigen', sqlOrigen => {
+              sqlOrigen.preload('municipio', sqlMunicipioO => {
+                sqlMunicipioO.preload('departamento')
+              })
+            }).preload('cpDestino', sqlDestino => {
+              sqlDestino.preload('municipio', sqlMunicipioD => {
+                sqlMunicipioD.preload('departamento')
+              })
+            })
+
+            if (terminal) {
+              sqlruta.where('trt_codigo_cp_origen', terminal)
+            }
+          })
+      })
+      })
+
+      const empresas = new Array();
+
+      const empresasDV = query.map(consulta => {
+        const rutas = new Array();
+        consulta.empresas.forEach((empresa) => {
+          const idRuta = empresa.codigoUnicoRuta.id
+          empresa.codigoUnicoRuta.ruta.forEach((ruta) => {
+            rutas.push({
+              idRuta,
+              codOrigen: ruta.codigoCpOrigen,
+              descripcionOrigen: ruta.cpOrigen.nombre,
+              departamentoOrigen: ruta.cpOrigen.municipio.departamento.nombre,
+              municipioOrigen: ruta.cpOrigen.municipio.nombre,
+              codDestino: ruta.codigoCpDestino,
+              descripcionDestino: ruta.cpDestino.nombre,
+              departamentoDestino: ruta.cpDestino.municipio.departamento.nombre,
+              municipioDestino: ruta.cpDestino.municipio.nombre,
+            })
+          })
+        })
+
+        if(rutas.length > 0) {
+          empresas.push({
+            idEmpresa: consulta.id,
+            nit: consulta.identificacion,
+            razonSocial: consulta.nombre,
+            rutas: rutas
+          })
+        }
+
+      })
+      return { empresas }
+    } catch (error) {
+      return { message: 'No se pudieron obtener las rutas activas' };
+    }
+  }
 }
 
 
