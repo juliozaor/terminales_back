@@ -9,6 +9,8 @@ export default class extends BaseSchema {
       table.integer('rev_codigo_unico_ruta').references('rcr_codigo_unico_ruta').inTable('tbl_ruta_codigo_rutas')
       table.string('rev_codigo_via')
       table.string('rev_via')
+      table.integer('rev_corresponde', 1)
+      table.string('rev_nueva_via')
       table.timestamp('rev_creacion', { useTz: true })
       table.timestamp('rev_actualizacion', { useTz: true })
     })

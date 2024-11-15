@@ -2,6 +2,7 @@ import { BaseModel, belongsTo, BelongsTo, column} from '@ioc:Adonis/Lucid/Orm';
 import { DateTime } from 'luxon';
 import TblCentroPoblados from './CentroPoblado';
 import { Ruta } from 'App/Dominio/Datos/Entidades/Ruta';
+import TblRutasDirecciones from './RutaDireccion';
 
 export default class TblRutas extends BaseModel {
 
@@ -51,6 +52,12 @@ export default class TblRutas extends BaseModel {
     foreignKey: 'codigoCpDestino',
   })
   public cpDestino: BelongsTo<typeof TblCentroPoblados>
+
+  @belongsTo (() => TblRutasDirecciones, {
+    localKey: 'idRuta',
+    foreignKey: 'id',
+  })
+  public rutaDireccion: BelongsTo<typeof TblRutasDirecciones>
 }
 
 

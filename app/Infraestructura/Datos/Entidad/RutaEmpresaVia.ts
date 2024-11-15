@@ -12,6 +12,10 @@ export default class TblRutaEmpresaVias extends BaseModel {
 
   @column({ columnName: 'rev_via' }) public via: string
 
+  @column({ columnName: 'rev_nueva_via' }) public nuevaVia: string
+
+  @column({ columnName: 'rev_corresponde' }) public corresponde: number
+
   @column.dateTime({ autoCreate: true , columnName: 'rev_creacion'}) public createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true, columnName: 'rev_actualizacion' }) public updatedAt: DateTime
@@ -20,11 +24,15 @@ export default class TblRutaEmpresaVias extends BaseModel {
     this.codigoRuta = rutaEmpresaVia.codigoRuta!
     this.codigoVia = rutaEmpresaVia.codigoVia!
     this.via = rutaEmpresaVia.via!
+    this.nuevaVia = rutaEmpresaVia.nuevaVia!
+    this.corresponde = rutaEmpresaVia.corresponde!
   }
 
   public establecerRutaEmpresaViaConId(rutaEmpresaVia: RutaEmpresaVia) {
     this.codigoRuta = rutaEmpresaVia.codigoRuta!
     this.codigoVia = rutaEmpresaVia.codigoVia!
     this.via = rutaEmpresaVia.via!
+    this.nuevaVia = rutaEmpresaVia.nuevaVia!
+    this.corresponde = rutaEmpresaVia.corresponde!
   }
 }

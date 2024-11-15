@@ -727,4 +727,52 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
     }
   }
 
+  async visualizarRuta(param: any): Promise<any> {
+    const { idRuta, codigoUnicoRuta, vigiladoId } = param;
+
+    console.log(idRuta);
+
+    const consulta = TblRutaEmpresas.query().preload('codigoUnicoRuta', sqlCodigoUnico => {
+      sqlCodigoUnico.preload('ruta', sqlRuta => {
+        sqlRuta.preload('rutaDireccion', sqlRutaDireccion => {
+          sqlRutaDireccion.preload('idNodos')
+        })
+        sqlRuta.where('id', idRuta)
+      })
+      sqlCodigoUnico.whereHas('ruta', sqlRuta => {
+        sqlRuta.where('id', idRuta)
+      })
+      sqlCodigoUnico.preload('rutasHabilitada').preload('rutaVias')
+      sqlCodigoUnico.where('id', codigoUnicoRuta)
+    }).where('idUsuario', vigiladoId).where('idRuta', codigoUnicoRuta).first()
+
+    const consultaDb = await consulta;
+    const vias = consultaDb!.codigoUnicoRuta.rutaVias.map(sqlvias => {
+      const vias = new Array()
+      vias.push({
+        id: sqlvias.id,
+        via: sqlvias.via,
+        corresponde: sqlvias.corresponde,
+        viaNueva: sqlvias.nuevaVia
+      })
+
+      return vias
+    })
+    const rutaDb = consultaDb!.codigoUnicoRuta.ruta[0]
+
+    const ruta = {
+      rutaActiva: rutaDb.estado,
+      idTipoLlegada:rutaDb.rutaDireccion.idNodos.idDespacho,
+      Iddireccion: rutaDb.rutaDireccion.idNodo,
+      resolucion: consultaDb!.codigoUnicoRuta.rutasHabilitada.resolucion,
+      corresponde: consultaDb!.codigoUnicoRuta.rutasHabilitada.corresponde,
+      resolucionActual: consultaDb!.codigoUnicoRuta.rutasHabilitada.resolucionActual,
+      documento: consultaDb!.codigoUnicoRuta.rutasHabilitada.documento,
+      nombreOriginal: consultaDb!.codigoUnicoRuta.rutasHabilitada.nombreOriginal,
+      rutaDocumento: consultaDb!.codigoUnicoRuta.rutasHabilitada.rutaArchivo,
+      vias: vias
+    }
+    return ruta
+  }
+
 }

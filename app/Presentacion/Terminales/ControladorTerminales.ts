@@ -129,7 +129,11 @@ export default class ControladorTerminales {
   public async visualizarRutasVigilado({ response, request }: HttpContextContract) {
     const rutasVigilado = await this.service.visualizarRutasVigilado(request.all())
     return response.status(200).send(rutasVigilado);
-}
+  }
 
+  public async visualizarRuta({ response, request }: HttpContextContract) {
+    const rutaVigilado = await this.service.visualizarRuta(request.all())
+    return response.status(200).send(rutaVigilado);
+}
 
 }

@@ -11,6 +11,8 @@ export default class TblParadas extends BaseModel {
 
   @column({ columnName: 'tps_nodo_id' }) public idNodo: number
 
+  @column({ columnName: 'tps_via_id' }) public idVia: number
+
   @column.dateTime({ autoCreate: true , columnName: 'tps_creacion'}) public createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true, columnName: 'tps_actualizacion' }) public updatedAt: DateTime
@@ -18,11 +20,13 @@ export default class TblParadas extends BaseModel {
   public establecerParada(parada: Parada) {
     this.codigoCp = parada.codigoCp!
     this.idNodo = parada.nodoId!
+    this.idVia = parada.idVia!
   }
 
   public establecerParadaConId(parada: Parada) {
     this.codigoCp = parada.codigoCp!
     this.idNodo = parada.nodoId!
+    this.idVia = parada.idVia!
   }
 
   @belongsTo (() => TblNodos, {

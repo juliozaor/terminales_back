@@ -6,4 +6,8 @@ export class RutaEmpresaVia{
   public codigoVia?: string
 
   public via?: string
+
+  public nuevaVia?: string
+
+  public corresponde?: number
 }

@@ -46,4 +46,9 @@ export class ServicioTerminales{
   async visualizarRutasVigilado(param: any): Promise<{rutasVigilado: RespuestaRutas[], paginacion: Paginador, editable:boolean, verificacionVisible:boolean, verificacionEditable:boolean}>{
     return this.repositorio.visualizarRutasVigilado(param)
   }
+
+  async visualizarRuta(param: any): Promise<{ ruta: any }>{
+    return this.repositorio.visualizarRuta(param)
+  }
+
 }
