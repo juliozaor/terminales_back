@@ -43,10 +43,6 @@ export class ServicioTerminales{
     return this.repositorio.enviarSt(param, id)
   }
 
-  async visualizarSolicitudes(param: any): Promise<{solicitudes: any[], paginacion: Paginador, editable:boolean, verificacionVisible:boolean, verificacionEditable:boolean}>{
-    return this.repositorio.visualizarSolicitudes(param)
-  }
-
   async visualizarRutasVigilado(param: any): Promise<{rutasVigilado: RespuestaRutas[], paginacion: Paginador, editable:boolean, verificacionVisible:boolean, verificacionEditable:boolean}>{
     return this.repositorio.visualizarRutasVigilado(param)
   }
