@@ -68,11 +68,12 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       FROM tbl_ruta_empresas tre
       LEFT JOIN tbl_ruta_codigo_rutas trcr ON trcr.rcr_codigo_unico_ruta = tre.tre_codigo_unico_ruta
       left join tbl_nodos_despachos tnd on tnd.tnd_codigo_unico_ruta = trcr.rcr_codigo_unico_ruta
-      left join tbl_paradas tp on tp.tps_id = tnd_paradas_id
+      inner join tbl_paradas tp on tp.tps_id = tnd_paradas_id
       left join tbl_centro_poblados tcp on tcp.tcp_codigo_centro_poblado = tp.tps_codigo_cp
       left join tbl_municipios tm on tm.tms_codigo_municipio = tcp.tcp_codigo_municipio
       left join tbl_departamentos td on td.tdp_codigo_departamento = tm.tms_departamento_codigo
       left join tbl_nodos tn on tn.tnd_id = tp.tps_nodo_id
+      left join tbl_ruta_empresa_vias trev on trev.rev_id = tp.tps_via_id
       WHERE tre.tre_id_usuario = ${id} and tre.tre_codigo_unico_ruta = ${rutaId}`;
 
       const totalCountResult = await Database.rawQuery(totalCountQuery);
@@ -80,12 +81,13 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       let consulta;
       if (!pagina && !limite) {
         consulta = await Database.rawQuery(`SELECT
-          tp.tps_id as parada_id,
-          td.tdp_codigo_departamento as codigo_departamento,
-          tm.tms_codigo_municipio as codigo_municipio,
-          tp.tps_codigo_cp as codigo_cp,
-          tn.tnd_despacho_id as tipo_llegada_id,
-          tn.tnd_id as direccion_id
+          tp.tps_id as parada_Id,
+          td.tdp_codigo_departamento as codigo_Departamento,
+          tm.tms_codigo_municipio as codigo_Municipio,
+          tp.tps_codigo_cp as codigo_Cp,
+          tn.tnd_despacho_id as tipoLlegada_Id,
+          tn.tnd_id as direccion_Id,
+          trev.rev_via as via
             FROM
             tbl_ruta_empresas tre
           LEFT JOIN tbl_ruta_codigo_rutas trcr ON trcr.rcr_codigo_unico_ruta = tre.tre_codigo_unico_ruta
@@ -95,15 +97,17 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
           left join tbl_municipios tm on tm.tms_codigo_municipio = tcp.tcp_codigo_municipio
           left join tbl_departamentos td on td.tdp_codigo_departamento = tm.tms_departamento_codigo
           left join tbl_nodos tn on tn.tnd_id = tp.tps_nodo_id
+          left join tbl_ruta_empresa_vias trev on trev.rev_id = tp.tps_via_id
           WHERE tre.tre_id_usuario = ${id} and tre.tre_codigo_unico_ruta = ${rutaId} ORDER By tp.tps_id desc`);
       } else {
         consulta = await Database.rawQuery(`SELECT
-          tp.tps_id as parada_id,
-          td.tdp_codigo_departamento as codigo_departamento,
-          tm.tms_codigo_municipio as codigo_municipio,
-          tp.tps_codigo_cp as codigo_cp,
-          tn.tnd_despacho_id as tipo_llegada_id,
-          tn.tnd_id as direccion_id
+          tp.tps_id as parada_Id,
+          td.tdp_codigo_departamento as codigo_Departamento,
+          tm.tms_codigo_municipio as codigo_Municipio,
+          tp.tps_codigo_cp as codigo_Cp,
+          tn.tnd_despacho_id as tipoLlegada_Id,
+          tn.tnd_id as direccion_Id,
+          trev.rev_via as via
             FROM
             tbl_ruta_empresas tre
           LEFT JOIN tbl_ruta_codigo_rutas trcr ON trcr.rcr_codigo_unico_ruta = tre.tre_codigo_unico_ruta
@@ -113,6 +117,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
           left join tbl_municipios tm on tm.tms_codigo_municipio = tcp.tcp_codigo_municipio
           left join tbl_departamentos td on td.tdp_codigo_departamento = tm.tms_departamento_codigo
           left join tbl_nodos tn on tn.tnd_id = tp.tps_nodo_id
+          left join tbl_ruta_empresa_vias trev on trev.rev_id = tp.tps_via_id
           WHERE tre.tre_id_usuario = ${id} and tre.tre_codigo_unico_ruta = ${rutaId}
             LIMIT ${limite} OFFSET ${(pagina - 1) * limite}`);
       }
@@ -747,16 +752,14 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
     }).where('idUsuario', vigiladoId).where('idRuta', codigoUnicoRuta).first()
 
     const consultaDb = await consulta;
-    const vias = consultaDb!.codigoUnicoRuta.rutaVias.map(sqlvias => {
-      const vias = new Array()
+    const vias = new Array()
+    consultaDb!.codigoUnicoRuta.rutaVias.forEach((via) => {
       vias.push({
-        id: sqlvias.id,
-        via: sqlvias.via,
-        corresponde: sqlvias.corresponde,
-        viaNueva: sqlvias.nuevaVia
+        id: via.id,
+        via: via.via,
+        corresponde: via.corresponde,
+        viaNueva: via.nuevaVia
       })
-
-      return vias
     })
     const rutaDb = consultaDb!.codigoUnicoRuta.ruta[0]
 
