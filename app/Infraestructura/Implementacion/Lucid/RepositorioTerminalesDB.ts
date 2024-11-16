@@ -82,9 +82,9 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       if (!pagina && !limite) {
         consulta = await Database.rawQuery(`SELECT
           tp.tps_id as parada_Id,
-          td.tdp_codigo_departamento as codigo_Departamento,
-          tm.tms_codigo_municipio as codigo_Municipio,
-          tp.tps_codigo_cp as codigo_Cp,
+          td.tdp_nombre as departamento,
+          tm.tms_nombre as municipio,
+          tcp.tcp_nombre as centro_Poblado,
           tn.tnd_despacho_id as tipoLlegada_Id,
           tn.tnd_id as direccion_Id,
           trev.rev_id as via_id
@@ -102,9 +102,9 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       } else {
         consulta = await Database.rawQuery(`SELECT
           tp.tps_id as parada_Id,
-          td.tdp_codigo_departamento as codigo_Departamento,
-          tm.tms_codigo_municipio as codigo_Municipio,
-          tp.tps_codigo_cp as codigo_Cp,
+          td.tdp_nombre as departamento,
+          tm.tms_nombre as municipio,
+          tcp.tcp_nombre as centro_Poblado,
           tn.tnd_despacho_id as tipoLlegada_Id,
           tn.tnd_id as direccion_Id,
           trev.rev_id as via_id
