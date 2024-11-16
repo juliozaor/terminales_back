@@ -87,7 +87,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
           tp.tps_codigo_cp as codigo_Cp,
           tn.tnd_despacho_id as tipoLlegada_Id,
           tn.tnd_id as direccion_Id,
-          trev.rev_via as via
+          trev.rev_id as via_id
             FROM
             tbl_ruta_empresas tre
           LEFT JOIN tbl_ruta_codigo_rutas trcr ON trcr.rcr_codigo_unico_ruta = tre.tre_codigo_unico_ruta
@@ -107,7 +107,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
           tp.tps_codigo_cp as codigo_Cp,
           tn.tnd_despacho_id as tipoLlegada_Id,
           tn.tnd_id as direccion_Id,
-          trev.rev_via as via
+          trev.rev_id as via_id
             FROM
             tbl_ruta_empresas tre
           LEFT JOIN tbl_ruta_codigo_rutas trcr ON trcr.rcr_codigo_unico_ruta = tre.tre_codigo_unico_ruta
