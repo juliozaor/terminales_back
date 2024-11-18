@@ -359,6 +359,52 @@ export default class ControladorMaestra {
       return { message: 'No se pudieron obtener las rutas activas' };
     }
   }
+
+  async ConsultarRuta({ request }: HttpContextContract): Promise<any> {
+    const { idRuta, codigoUnicoRuta} = request.all();
+
+    const consulta = TblRutaEmpresas.query().preload('codigoUnicoRuta', sqlCodigoUnico => {
+      sqlCodigoUnico.preload('ruta', sqlRuta => {
+        sqlRuta.preload('cpOrigen', sqlCporigen => {
+          sqlCporigen.preload('municipio', sqlMunicipioO => {
+            sqlMunicipioO.preload('departamento')
+          })
+        })
+        sqlRuta.preload('cpDestino', sqlCpDestino => {
+          sqlCpDestino.preload('municipio', sqlMunicipioD => {
+            sqlMunicipioD.preload('departamento')
+          })
+        })
+        sqlRuta.preload('rutaDireccion', sqlRutaDireccion => {
+          sqlRutaDireccion.preload('idNodos')
+        })
+        sqlRuta.where('id', idRuta)
+      })
+      sqlCodigoUnico.whereHas('ruta', sqlRuta => {
+        sqlRuta.where('id', idRuta)
+      })
+      sqlCodigoUnico.where('id', codigoUnicoRuta)
+    }).where('idRuta', codigoUnicoRuta).first()
+
+    const consultaDb = await consulta;
+
+    const rutaDb = consultaDb!.codigoUnicoRuta.ruta[0]
+
+    const ruta = {
+      idRuta: consultaDb!.codigoUnicoRuta.id,
+      codOrigen: rutaDb.codigoCpOrigen,
+      descripcionOrigen: rutaDb.cpOrigen.nombre,
+      departamentoOrigen: rutaDb.cpOrigen.municipio.departamento.nombre,
+      municipioOrigen: rutaDb.cpOrigen.municipio.nombre,
+      codDestino: rutaDb.codigoCpDestino,
+      descripcionDestino: rutaDb.cpDestino.nombre,
+      departamentoDestino: rutaDb.cpDestino.municipio.departamento.nombre,
+      municipioDestino: rutaDb.cpDestino.municipio.nombre,
+      codigoTerminal:rutaDb.rutaDireccion.idNodo,
+      nombreTerminal:rutaDb.rutaDireccion.idNodos.descripcion
+    }
+    return ruta
+  }
 }
 
 
