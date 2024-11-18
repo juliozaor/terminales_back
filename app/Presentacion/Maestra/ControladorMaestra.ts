@@ -273,7 +273,8 @@ export default class ControladorMaestra {
           const idRuta = empresa.codigoUnicoRuta.id
           empresa.codigoUnicoRuta.ruta.forEach((ruta) => {
             rutas.push({
-              idRuta,
+              idRuta: ruta.id,
+              codigoUnicoRuta: idRuta,
               codOrigen: ruta.codigoCpOrigen,
               descripcionOrigen: ruta.cpOrigen.nombre,
               departamentoOrigen: ruta.cpOrigen.municipio.departamento.nombre,
