@@ -740,7 +740,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
     const consulta = TblRutaEmpresas.query().preload('codigoUnicoRuta', sqlCodigoUnico => {
       sqlCodigoUnico.preload('ruta', sqlRuta => {
         sqlRuta.preload('rutaDireccion', sqlRutaDireccion => {
-          sqlRutaDireccion.preload('idNodos')
+          sqlRutaDireccion.has('idNodos')
         })
         sqlRuta.where('id', idRuta)
       })
@@ -765,8 +765,8 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
 
     const ruta = {
       rutaActiva: rutaDb.estado,
-      idTipoLlegada:rutaDb.rutaDireccion.idNodos.idDespacho,
-      Iddireccion: rutaDb.rutaDireccion.idNodo,
+      idTipoLlegada:rutaDb.rutaDireccion?.idNodos.idDespacho,
+      Iddireccion: rutaDb.rutaDireccion?.idNodo,
       resolucion: consultaDb!.codigoUnicoRuta.rutasHabilitada.resolucion,
       corresponde: consultaDb!.codigoUnicoRuta.rutasHabilitada.corresponde,
       resolucionActual: consultaDb!.codigoUnicoRuta.rutasHabilitada.resolucionActual,
