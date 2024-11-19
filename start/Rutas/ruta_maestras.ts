@@ -19,4 +19,7 @@ Route.group(() => {
   Route.get('/rutas-activas-empresa', accion_path + '.rutasActivasPorEmpresa')
   Route.get('/rutas-empresas', accion_path + '.rutasEmpresas')
   Route.get('/consultar-ruta', accion_path + '.ConsultarRuta')
+  Route.get('/empresas', accion_path + '.listarEmpresasPorRuta')
+  Route.get('/rutas-codigo', accion_path + '.rutasPorCodigo')
+
 }).prefix('api/v1/maestras').middleware('autorizacion')
