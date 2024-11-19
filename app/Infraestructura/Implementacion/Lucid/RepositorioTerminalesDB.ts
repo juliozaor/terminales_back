@@ -735,13 +735,9 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
   async visualizarRuta(param: any): Promise<any> {
     const { idRuta, codigoUnicoRuta, vigiladoId } = param;
 
-    console.log(idRuta);
-
     const consulta = TblRutaEmpresas.query().preload('codigoUnicoRuta', sqlCodigoUnico => {
       sqlCodigoUnico.preload('ruta', sqlRuta => {
-        sqlRuta.preload('rutaDireccion', sqlRutaDireccion => {
-          sqlRutaDireccion.has('idNodos')
-        })
+        sqlRuta.preload('rutaDireccion')
         sqlRuta.where('id', idRuta)
       })
       sqlCodigoUnico.whereHas('ruta', sqlRuta => {
@@ -762,10 +758,13 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       })
     })
     const rutaDb = consultaDb!.codigoUnicoRuta.ruta[0]
-
+    let nodos;
+    if (rutaDb.rutaDireccion.idNodo) {
+      nodos = await TblNodos.query().where('id', rutaDb.rutaDireccion.idNodo).first()
+    }
     const ruta = {
       rutaActiva: rutaDb.estado,
-      idTipoLlegada:rutaDb.rutaDireccion?.idNodos?.idDespacho ?? null,
+      idTipoLlegada:nodos?.idDespacho ?? null,
       Iddireccion: rutaDb.rutaDireccion?.idNodo ?? null,
       resolucion: consultaDb!.codigoUnicoRuta.rutasHabilitada.resolucion,
       corresponde: consultaDb!.codigoUnicoRuta.rutasHabilitada.corresponde,
