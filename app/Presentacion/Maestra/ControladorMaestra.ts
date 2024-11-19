@@ -542,7 +542,7 @@ return  {rutas} ;
     
       
     } catch (error) {
-      return { message: "No se pudieron obtener las empresas" };
+      return { message: "No se pudieron obtener las rutas" };
     }
   }
 }
