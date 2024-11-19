@@ -765,8 +765,8 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
 
     const ruta = {
       rutaActiva: rutaDb.estado,
-      idTipoLlegada:rutaDb.rutaDireccion?.idNodos.idDespacho,
-      Iddireccion: rutaDb.rutaDireccion?.idNodo,
+      idTipoLlegada:rutaDb.rutaDireccion?.idNodos?.idDespacho ?? null,
+      Iddireccion: rutaDb.rutaDireccion?.idNodo ?? null,
       resolucion: consultaDb!.codigoUnicoRuta.rutasHabilitada.resolucion,
       corresponde: consultaDb!.codigoUnicoRuta.rutasHabilitada.corresponde,
       resolucionActual: consultaDb!.codigoUnicoRuta.rutasHabilitada.resolucionActual,
