@@ -293,14 +293,8 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
           estado: ruta.rutaHabilitada
         }
 
-        const rutaEmpresaVia = {
-          codigoRuta: ruta.idUnicoRuta,
-          via: ruta.via,
-        }
-
         await this.guardarRutaHabilitada(rutaHabilitada, ruta.idUnicoRuta);
         await this.guardarTablaRutas(rutaRecibida, ruta.idRuta);
-        await this.guardarRutaEmpresavia(rutaEmpresaVia, ruta.idUnicoRuta);
       } else if (ruta.idaOVuelta == "B") {
         console.log(`no puede actualizar estos aspectos en la ruta de vuelta ${ruta.idaOVuelta}`);
       }
@@ -433,15 +427,35 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
     }
   }
 
-  async guardarRutaEmpresavia(rutaEmpresavia: RutaEmpresaVia, codigoUnicoRuta?: number) {
+  async guardarVia(via: RutaEmpresaVia): Promise<{via:RutaEmpresaVia}>{
     try {
-      if (!codigoUnicoRuta || codigoUnicoRuta == undefined || codigoUnicoRuta == 0) {
+      const viaRecibida = {
+        id: via.id,
+        codigoRuta: via.codigoRuta,
+        via: via.via,
+        codigoVia: via.codigoVia,
+        corresponde: via.corresponde,
+        nuevaVia: via.nuevaVia
+      }
+      await this.guardarRutaEmpresavia(viaRecibida)
+      return {via: via}
+    } catch (error) {
+      return error
+    }
+  }
+
+  async guardarRutaEmpresavia(rutaEmpresavia: RutaEmpresaVia) {
+    try {
+          if (!rutaEmpresavia) {
+      throw new Error(`Faltan datos para crear o actualizar la via`);
+        }
+      if (!rutaEmpresavia.id || rutaEmpresavia.id  == 0) {
         const rutaEmpresaviaDb = new TblRutaEmpresaVias();
         rutaEmpresaviaDb.establecerRutaEmpresaVia(rutaEmpresavia);
         await rutaEmpresaviaDb.save();
       } else {
-        const rutaEmpresaviaRetorno = await TblRutaEmpresaVias.query().where('codigoRuta', codigoUnicoRuta).first()
-        if (!rutaEmpresaviaRetorno) { throw new Error(`No se encontró una via con codigo Ruta: ${codigoUnicoRuta}`); }
+        const rutaEmpresaviaRetorno = await TblRutaEmpresaVias.findBy('id', rutaEmpresavia.id)
+        if (!rutaEmpresaviaRetorno) { throw new Error(`No se encontró una via con Id: ${rutaEmpresavia.id}`); }
         rutaEmpresaviaRetorno.establecerRutaEmpresaViaConId(rutaEmpresavia);
         await rutaEmpresaviaRetorno.save();
       }
@@ -797,13 +811,18 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
     }
   }
 
-  async eliminarParada(id: number): Promise<any>{
+  async eliminarParada(param: any): Promise<any>{
+    const {idParada, nodoDespachoId } = param
     try {
-
-      const parada = await TblParadas.findBy('id', id)
-      if(!parada){
-        throw new error(`no existe la parada con id ${id}`);
+      if (!idParada || !nodoDespachoId) {
+        throw new error('faltan dato para eliminar la parada');
       }
+      const parada = await TblParadas.findBy('id', idParada)
+      const nodoDespacho = await TblNodosDespachos.findBy('id', nodoDespachoId)
+      if(!parada || !nodoDespacho){
+        throw new error(`error al validar los registros de parada = ${parada} y nodos despacho = ${nodoDespacho}`);
+      }
+      nodoDespacho?.delete()
       parada?.delete()
       return {message: 'Parada eliminada exitosamente', parada}
     } catch (error) {
@@ -811,16 +830,28 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
     }
   }
 
-  async eliminarVia(id: number): Promise<any>{
+  async eliminarVia(param: any): Promise<any>{
+    const { idVia, idParada, nodoDespachoId } = param
     try {
-      const clase = await TblRutaVehiculos.findBy('id', id)
-      if(!clase){
-        console.log('no existe esa clase de vehiculo');
+      if (!idVia) {
+        throw new error('faltan dato para eliminar la via');
       }
-      clase?.delete()
-      return {message: 'Clase eliminada exitosamente', clase}
+      if (idParada && nodoDespachoId) {
+        const objetoParada = {
+          idParada,
+          nodoDespachoId
+        }
+        this.eliminarParada(objetoParada)
+      }
+      const via = await TblRutaEmpresaVias.findBy('id', idVia)
+      if(!via){
+        console.log(`no existe esa via ${via}`);
+      }
+      via?.delete()
+      return {message: 'Via eliminada exitosamente', via}
     } catch (error) {
       return error
     }
   }
+
 }

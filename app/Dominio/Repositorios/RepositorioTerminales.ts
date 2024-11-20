@@ -2,6 +2,7 @@
 import { ClaseVehiculo } from '../Datos/Entidades/ClaseVehiculo';
 import { Nodo } from '../Datos/Entidades/Nodo';
 import { Ruta } from '../Datos/Entidades/Ruta';
+import { RutaEmpresaVia } from '../Datos/Entidades/RutaEmpresaVia';
 import { RespuestaClases } from '../Dto/RespuestaClases';
 import { RespuestaParadas } from '../Dto/RespuestaParadas';
 import { RespuestaRutas } from '../Dto/RespuestaRutas';
@@ -20,6 +21,7 @@ export interface RepositorioTerminales {
   visualizarRutasVigilado(param: any): Promise<{ rutasVigilado: RespuestaRutas[], paginacion: Paginador, editable: boolean, verificacionVisible: boolean, verificacionEditable: boolean }>
   visualizarRuta(param: any): Promise<{ ruta: any }>
   eliminarClase(id: number): Promise<any>
-  eliminarParada(id:number): Promise<any>
-  eliminarVia(param : any): Promise<any>
+  eliminarParada(param : any): Promise<any>
+  eliminarVia(param: any): Promise<any>
+  guardarVia(via: RutaEmpresaVia): Promise<{via:RutaEmpresaVia}>
 }

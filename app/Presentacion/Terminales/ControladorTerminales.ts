@@ -143,9 +143,18 @@ export default class ControladorTerminales {
   }
 
   public async eliminarParada({ response, request }: HttpContextContract) {
-    const {paradaId} = request.all()
-    const parada = await this.service.eliminarParada(paradaId)
+    const parada = await this.service.eliminarParada(request.all())
     return response.status(200).send(parada);
-}
+  }
+
+  public async eliminarVia({ response, request }: HttpContextContract) {
+    const parada = await this.service.eliminarVia(request.all())
+    return response.status(200).send(parada);
+  }
+
+  public async guardarVia({ response, request }: HttpContextContract) {
+    const via = await this.service.guardarVia(request.all())
+    return response.status(200).send(via);
+  }
 
 }
