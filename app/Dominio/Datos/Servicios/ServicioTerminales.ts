@@ -51,4 +51,16 @@ export class ServicioTerminales{
     return this.repositorio.visualizarRuta(param)
   }
 
+  async eliminarClase(id: number): Promise<any>{
+    return this.repositorio.eliminarClase(id)
+  }
+
+  async eliminarParada(id: number): Promise<any>{
+    return this.repositorio.eliminarParada(id)
+  }
+
+  async eliminarVia(param: any): Promise<any>{
+    return this.repositorio.eliminarVia(param)
+  }
+
 }

@@ -8,7 +8,7 @@ import { RespuestaParadas } from "App/Dominio/Dto/RespuestaParadas";
 import { RespuestaClases } from "App/Dominio/Dto/RespuestaClases";
 import { Nodo } from "App/Dominio/Datos/Entidades/Nodo";
 import TblNodos from "App/Infraestructura/Datos/Entidad/Nodos";
-import { log } from "console";
+import { error, log } from "console";
 import TblRutaCodigoRutas from "App/Infraestructura/Datos/Entidad/RutaCodigoRutas";
 import TblRutas from "App/Infraestructura/Datos/Entidad/Rutas";
 import { RutaCodigoRuta } from "App/Dominio/Datos/Entidades/RutaCodigoRuta";
@@ -28,6 +28,7 @@ import TblRutaVehiculos from "App/Infraestructura/Datos/Entidad/RutaVehiculo";
 import { ClaseVehiculo } from "App/Dominio/Datos/Entidades/ClaseVehiculo";
 import TblSolicitudes from "App/Infraestructura/Datos/Entidad/Solicitudes";
 import { ServicioEstados } from "App/Dominio/Datos/Servicios/ServicioEstados";
+import TblClaseVehiculos from "App/Infraestructura/Datos/Entidad/ClaseVehiculos";
 
 export class RepositorioTerminalesDB implements RepositorioTerminales {
   private servicioEstados = new ServicioEstados();
@@ -236,7 +237,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
   // guarda todo
   async guardar(arregloTerminales: any, id: number) {
     const solicitud = await TblSolicitudes.query().where('vigiladoId', id).first();
-    if(solicitud?.estado== 2 || solicitud?.estado == 7) this.servicioEstados.ActualizarEstado(solicitud?.id!, 3)
+    if (solicitud?.estado == 2 || solicitud?.estado == 7) this.servicioEstados.ActualizarEstado(solicitud?.id!, 3)
     try {
       for (let ruta of arregloTerminales.Rutas) {
         await this.actualizarRuta(ruta, id)
@@ -250,7 +251,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         await this.guardarClases(clase)
       }
 
-      return {arregloRecibido: arregloTerminales, editable: false};
+      return { arregloRecibido: arregloTerminales, editable: false };
     } catch (error) {
       console.log(error);
       throw new Error(error);
@@ -265,10 +266,10 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         idRuta: ruta.idUnicoRuta
       }
 
-        const rutaDireccion = {
-          idRuta: ruta.id,
-          idNodo: ruta.direccion,
-        };
+      const rutaDireccion = {
+        idRuta: ruta.id,
+        idNodo: ruta.direccion,
+      };
 
       if (ruta.idaOVuelta == "A") {
 
@@ -281,7 +282,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
           nombreOriginal: ruta.nombreOriginal,
           rutaArchivo: ruta.rutaArchivo,
           corresponde: ruta.corresponde
-          }
+        }
 
         const rutaRecibida = {
           codigoRuta: ruta.idRuta,
@@ -293,10 +294,10 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
           via: ruta.via,
         }
 
-      await this.guardarRutaHabilitada(rutaHabilitada, ruta.idUnicoRuta);
-      await this.guardarTablaRutas(rutaRecibida, ruta.idRuta);
-      await this.guardarRutaEmpresavia(rutaEmpresaVia, ruta.idUnicoRuta);
-      } else if(ruta.idaOVuelta == "B"){
+        await this.guardarRutaHabilitada(rutaHabilitada, ruta.idUnicoRuta);
+        await this.guardarTablaRutas(rutaRecibida, ruta.idRuta);
+        await this.guardarRutaEmpresavia(rutaEmpresaVia, ruta.idUnicoRuta);
+      } else if (ruta.idaOVuelta == "B") {
         console.log(`no puede actualizar estos aspectos en la ruta de vuelta ${ruta.idaOVuelta}`);
       }
       await this.guardarRutaEmpresa(rutaEmpresa, ruta.idUnicoRuta);
@@ -346,12 +347,6 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         idaaVuelta: "B",
         estado: ruta.rutaHabilitada,
       };
-
-      const rutaEmpresaVia = {
-        codigoRuta: nuevoIdCodigoRuta,
-        via: ruta.via,
-      };
-
       const rutaHabilitada = {
         idRuta: nuevoIdCodigoRuta,
         resolucion: ruta.resolucion,
@@ -366,7 +361,6 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       const idRutaida = await this.guardarTablaRutas(rutaIda);
       const idRutaVuelta = await this.guardarTablaRutas(rutaVuelta);
       await this.guardarRutaCodigoRuta(rutaCodigoRuta);
-      await this.guardarRutaEmpresavia(rutaEmpresaVia);
       await this.guardarRutaHabilitada(rutaHabilitada);
 
       const rutaDireccion = {
@@ -426,7 +420,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         await rutaEmpresaDb.save();
       } else {
         const rutaEmpresaRetorno = await TblRutaEmpresas.query().where('idRuta', codigoUnicoRuta).first()
-        if (!rutaEmpresaRetorno) {throw new Error(`No se encontró una ruta empresa con idRuta: ${codigoUnicoRuta}`);}
+        if (!rutaEmpresaRetorno) { throw new Error(`No se encontró una ruta empresa con idRuta: ${codigoUnicoRuta}`); }
         rutaEmpresaRetorno.establecerRutaEmpresaConId(rutaEmpresa);
         await rutaEmpresaRetorno.save();
       }
@@ -443,7 +437,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         await rutaEmpresaviaDb.save();
       } else {
         const rutaEmpresaviaRetorno = await TblRutaEmpresaVias.query().where('codigoRuta', codigoUnicoRuta).first()
-        if (!rutaEmpresaviaRetorno) {throw new Error(`No se encontró una via con codigo Ruta: ${codigoUnicoRuta}`);}
+        if (!rutaEmpresaviaRetorno) { throw new Error(`No se encontró una via con codigo Ruta: ${codigoUnicoRuta}`); }
         rutaEmpresaviaRetorno.establecerRutaEmpresaViaConId(rutaEmpresavia);
         await rutaEmpresaviaRetorno.save();
       }
@@ -461,7 +455,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         await rutaHabilitadaDb.save();
       } else {
         const rutaHabilitadaRetorno = await TblRutaHabilitadas.query().where('idRuta', codigoUnicoRuta).first()
-        if (!rutaHabilitadaRetorno) {throw new Error(`No se encontró una ruta habilitada con idRuta: ${codigoUnicoRuta}`);}
+        if (!rutaHabilitadaRetorno) { throw new Error(`No se encontró una ruta habilitada con idRuta: ${codigoUnicoRuta}`); }
         rutaHabilitadaRetorno.establecerRutaHabilitadaConId(rutaHabilitada);
         await rutaHabilitadaRetorno.save();
       }
@@ -494,12 +488,13 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
     }
   }
 
-  async guardarParadas(parada: RespuestaParadas): Promise<RespuestaParadas>{
+  async guardarParadas(parada: RespuestaParadas): Promise<{parada: RespuestaParadas, nodoDespachoId: number}>{
     try {
       const paradaRecibida = {
         id: parada.idParada,
         codigoCp: parada.centroPobladoId,
         nodoId: parada.direccionId,
+        idVia: parada.idVia
       }
 
       const idParada = await this.guardarParada(paradaRecibida)
@@ -510,8 +505,8 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         estado: parada.estado,
       };
 
-      await this.guardarNodoDespacho(nodoDespacho)
-      return parada
+      const nodoDespachoId = await this.guardarNodoDespacho(nodoDespacho)
+      return {parada, nodoDespachoId: nodoDespachoId!}
     } catch (error) {
       throw new Error(error.message)
     }
@@ -522,13 +517,14 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       if (!nodoDespacho || nodoDespacho.idParada == 0 || nodoDespacho.codigoUnicoRuta == 0 || !nodoDespacho.codigoUnicoRuta || nodoDespacho.codigoUnicoRuta == undefined || !nodoDespacho.idParada|| nodoDespacho.idParada== undefined) {
         throw new Error(`Faltan datos para crear o actualizar la parada de esa ruta`);
       }
-      const nodoDespachoRetorno = await TblNodosDespachos.query().where('idRuta', nodoDespacho.codigoUnicoRuta).andWhere('idParada', nodoDespacho.idParada!).first()
+      const nodoDespachoRetorno = await TblNodosDespachos.findBy('id', nodoDespacho.id)
       if (!nodoDespachoRetorno) {
         const nodoDespachoDb = new TblNodosDespachos();
         nodoDespachoDb.establecerNodoDespacho(nodoDespacho);
         await nodoDespachoDb.save();
+        return nodoDespachoDb.id
       } else {
-        nodoDespachoRetorno.establecerNodoDespacho(nodoDespacho);
+        nodoDespachoRetorno.establecerNodoDespachoConId(nodoDespacho);
         await nodoDespachoRetorno.save();
       }
     } catch (error) {
@@ -777,4 +773,43 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
     return ruta
   }
 
+  async eliminarClase(id: number): Promise<any>{
+    try {
+      const clase = await TblRutaVehiculos.findBy('id', id)
+      if(!clase){
+        console.log('no existe esa clase de vehiculo');
+      }
+      clase?.delete()
+      return {message: 'Clase eliminada exitosamente', clase}
+    } catch (error) {
+      return error
+    }
+  }
+
+  async eliminarParada(id: number): Promise<any>{
+    try {
+
+      const parada = await TblParadas.findBy('id', id)
+      if(!parada){
+        throw new error(`no existe la parada con id ${id}`);
+      }
+      parada?.delete()
+      return {message: 'Parada eliminada exitosamente', parada}
+    } catch (error) {
+      return error
+    }
+  }
+
+  async eliminarVia(id: number): Promise<any>{
+    try {
+      const clase = await TblRutaVehiculos.findBy('id', id)
+      if(!clase){
+        console.log('no existe esa clase de vehiculo');
+      }
+      clase?.delete()
+      return {message: 'Clase eliminada exitosamente', clase}
+    } catch (error) {
+      return error
+    }
+  }
 }

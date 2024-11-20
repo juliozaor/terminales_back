@@ -134,6 +134,18 @@ export default class ControladorTerminales {
   public async visualizarRuta({ response, request }: HttpContextContract) {
     const rutaVigilado = await this.service.visualizarRuta(request.all())
     return response.status(200).send(rutaVigilado);
+  }
+
+  public async eliminarClase({ response, request }: HttpContextContract) {
+    const {claseId} = request.all()
+    const clase = await this.service.eliminarClase(claseId)
+    return response.status(200).send(clase);
+  }
+
+  public async eliminarParada({ response, request }: HttpContextContract) {
+    const {paradaId} = request.all()
+    const parada = await this.service.eliminarParada(paradaId)
+    return response.status(200).send(parada);
 }
 
 }

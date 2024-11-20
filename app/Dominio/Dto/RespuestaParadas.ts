@@ -7,4 +7,5 @@ export class RespuestaParadas {
   public direccionId?: number
   public tipoLLegada?: number
   public estado?: boolean
+  public idVia?: number
 }

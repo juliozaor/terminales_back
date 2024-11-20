@@ -14,9 +14,12 @@ export interface RepositorioTerminales {
   guardarDireccion(nodo: Nodo): Promise<any>
   guardarRuta(ruta: RespuestaRutas, id: number): Promise<RespuestaRutas>
   guardar(arregloTerminales: any[], id: number): Promise<any>
-  guardarParadas(parada: RespuestaParadas): Promise<RespuestaParadas>
+  guardarParadas(parada: RespuestaParadas): Promise<{parada: RespuestaParadas, nodoDespachoId: number}>
   guardarClases(clase: ClaseVehiculo): Promise<RespuestaClases>
   enviarSt(param: any, id: number): Promise<any>
   visualizarRutasVigilado(param: any): Promise<{ rutasVigilado: RespuestaRutas[], paginacion: Paginador, editable: boolean, verificacionVisible: boolean, verificacionEditable: boolean }>
-  visualizarRuta(param: any): Promise<{ruta: any}>
+  visualizarRuta(param: any): Promise<{ ruta: any }>
+  eliminarClase(id: number): Promise<any>
+  eliminarParada(id:number): Promise<any>
+  eliminarVia(param : any): Promise<any>
 }
