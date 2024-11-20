@@ -83,9 +83,11 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       if (!pagina && !limite) {
         consulta = await Database.rawQuery(`SELECT
           tp.tps_id as parada_Id,
+          tnd.tnd_id  as nodo_despacho_id,
           td.tdp_nombre as departamento,
           tm.tms_nombre as municipio,
           tcp.tcp_nombre as centro_Poblado,
+          tcp.tcp_codigo_centro_poblado  as codigo_cp,
           tn.tnd_despacho_id as tipoLlegada_Id,
           tn.tnd_id as direccion_Id,
           trev.rev_id as via_id
@@ -103,9 +105,11 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       } else {
         consulta = await Database.rawQuery(`SELECT
           tp.tps_id as parada_Id,
+          tnd.tnd_id  as nodo_despacho_id,
           td.tdp_nombre as departamento,
           tm.tms_nombre as municipio,
           tcp.tcp_nombre as centro_Poblado,
+          tcp.tcp_codigo_centro_poblado  as codigo_cp,
           tn.tnd_despacho_id as tipoLlegada_Id,
           tn.tnd_id as direccion_Id,
           trev.rev_id as via_id
@@ -498,23 +502,14 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       }
 
       const idParada = await this.guardarParada(paradaRecibida)
-      let nodoDespacho
-      if (parada.nodoDespachoId) {
-        nodoDespacho = {
-          id:parada.nodoDespachoId,
-          codigoUnicoRuta: parada.idRuta,
-          idNodo: parada.direccionId,
-          idParada: idParada,
-          estado: parada.estado,
-        }
-      } else {
-        nodoDespacho = {
-          codigoUnicoRuta: parada.idRuta,
-          idNodo: parada.direccionId,
-          idParada: idParada,
-          estado: parada.estado,
-        }
-      }
+
+      const nodoDespacho = {
+        id: parada.nodoDespachoId,
+        codigoUnicoRuta: parada.idRuta,
+        idNodo: parada.direccionId,
+        idParada: idParada,
+        estado: parada.estado,
+      };
 
       const nodoDespachoId = await this.guardarNodoDespacho(nodoDespacho)
       return {parada, nodoDespachoId: nodoDespachoId!}
@@ -528,17 +523,20 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       if (!nodoDespacho || nodoDespacho.idParada == 0 || nodoDespacho.codigoUnicoRuta == 0 || !nodoDespacho.codigoUnicoRuta || nodoDespacho.codigoUnicoRuta == undefined || !nodoDespacho.idParada|| nodoDespacho.idParada== undefined) {
         throw new Error(`Faltan datos para crear o actualizar la parada de esa ruta`);
       }
-      if (nodoDespacho.id) {
-        const nodoDespachoRetorno = await TblNodosDespachos.findBy('id', nodoDespacho.id)
+      if (!nodoDespacho.id || nodoDespacho.id === 0) {
+        const nodoDespachoDb = new TblNodosDespachos();
+        nodoDespachoDb.establecerNodoDespacho(nodoDespacho);
+        await nodoDespachoDb.save();
+        return nodoDespachoDb.id
+      } else {
+        const nodoDespachoRetorno = await TblNodosDespachos.query().where('id', nodoDespacho.id!).first();
+        console.log(`Nodo despacho encontrado: ${JSON.stringify(nodoDespachoRetorno)}`);
         if (!nodoDespachoRetorno) {
-          const nodoDespachoDb = new TblNodosDespachos();
-          nodoDespachoDb.establecerNodoDespacho(nodoDespacho);
-          await nodoDespachoDb.save();
-          return nodoDespachoDb.id
-        } else {
-          nodoDespachoRetorno.establecerNodoDespachoConId(nodoDespacho);
-          await nodoDespachoRetorno.save();
+          throw new Error(`No se encontró una parada con id: ${nodoDespacho.id}`);
         }
+        nodoDespachoRetorno.establecerNodoDespachoConId(nodoDespacho);
+        await nodoDespachoRetorno.save();
+        return nodoDespachoRetorno.id;
       }
     } catch (error) {
       throw new Error(error);
