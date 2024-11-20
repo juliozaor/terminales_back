@@ -498,12 +498,23 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       }
 
       const idParada = await this.guardarParada(paradaRecibida)
-      const nodoDespacho = {
-        codigoUnicoRuta: parada.idRuta,
-        idNodo: parada.direccionId,
-        idParada: idParada,
-        estado: parada.estado,
-      };
+      let nodoDespacho
+      if (parada.nodoDespachoId) {
+        nodoDespacho = {
+          id:parada.nodoDespachoId,
+          codigoUnicoRuta: parada.idRuta,
+          idNodo: parada.direccionId,
+          idParada: idParada,
+          estado: parada.estado,
+        }
+      } else {
+        nodoDespacho = {
+          codigoUnicoRuta: parada.idRuta,
+          idNodo: parada.direccionId,
+          idParada: idParada,
+          estado: parada.estado,
+        }
+      }
 
       const nodoDespachoId = await this.guardarNodoDespacho(nodoDespacho)
       return {parada, nodoDespachoId: nodoDespachoId!}
@@ -517,15 +528,17 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       if (!nodoDespacho || nodoDespacho.idParada == 0 || nodoDespacho.codigoUnicoRuta == 0 || !nodoDespacho.codigoUnicoRuta || nodoDespacho.codigoUnicoRuta == undefined || !nodoDespacho.idParada|| nodoDespacho.idParada== undefined) {
         throw new Error(`Faltan datos para crear o actualizar la parada de esa ruta`);
       }
-      const nodoDespachoRetorno = await TblNodosDespachos.findBy('id', nodoDespacho.id)
-      if (!nodoDespachoRetorno) {
-        const nodoDespachoDb = new TblNodosDespachos();
-        nodoDespachoDb.establecerNodoDespacho(nodoDespacho);
-        await nodoDespachoDb.save();
-        return nodoDespachoDb.id
-      } else {
-        nodoDespachoRetorno.establecerNodoDespachoConId(nodoDespacho);
-        await nodoDespachoRetorno.save();
+      if (nodoDespacho.id) {
+        const nodoDespachoRetorno = await TblNodosDespachos.findBy('id', nodoDespacho.id)
+        if (!nodoDespachoRetorno) {
+          const nodoDespachoDb = new TblNodosDespachos();
+          nodoDespachoDb.establecerNodoDespacho(nodoDespacho);
+          await nodoDespachoDb.save();
+          return nodoDespachoDb.id
+        } else {
+          nodoDespachoRetorno.establecerNodoDespachoConId(nodoDespacho);
+          await nodoDespachoRetorno.save();
+        }
       }
     } catch (error) {
       throw new Error(error);
