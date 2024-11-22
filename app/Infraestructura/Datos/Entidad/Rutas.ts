@@ -1,8 +1,9 @@
-import { BaseModel, belongsTo, BelongsTo, column} from '@ioc:Adonis/Lucid/Orm';
+import { BaseModel, belongsTo, BelongsTo, column, hasMany, HasMany} from '@ioc:Adonis/Lucid/Orm';
 import { DateTime } from 'luxon';
 import TblCentroPoblados from './CentroPoblado';
 import { Ruta } from 'App/Dominio/Datos/Entidades/Ruta';
 import TblRutasDirecciones from './RutaDireccion';
+import TblRutaCodigoRutas from './RutaCodigoRutas';
 
 export default class TblRutas extends BaseModel {
 
@@ -58,6 +59,12 @@ export default class TblRutas extends BaseModel {
     foreignKey: 'id',
   })
   public rutaDireccion: BelongsTo<typeof TblRutasDirecciones>
+
+  @hasMany (() => TblRutaCodigoRutas, {
+    localKey: 'codigoRuta',
+    foreignKey: 'codigoRuta',
+    })
+    public codigoRutas: HasMany<typeof TblRutaCodigoRutas>
 }
 
 
