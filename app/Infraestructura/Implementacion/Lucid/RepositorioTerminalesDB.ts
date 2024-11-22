@@ -277,7 +277,8 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
             centroPobladoId: parada.centroPobladoId,
             direccionId: parada.direccionId,
             estado: parada.estado,
-            idVia: via.id
+            idVia: via.id,
+            nodoDespachoId: parada.nodoDespachoId
           }
           await this.guardarParadas(paradaRecibida)
         }
@@ -551,12 +552,11 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
   async guardarParadas(parada: RespuestaParadas): Promise<{ parada: RespuestaParadas, nodoDespachoId: number }> {
     try {
       const paradaRecibida = {
-        id: parada.idParada,
+        id: parada.id,
         codigoCp: parada.centroPobladoId,
         nodoId: parada.direccionId,
         idVia: parada.idVia
       }
-
       const idParada = await this.guardarParada(paradaRecibida)
 
       const nodoDespacho = {
@@ -566,7 +566,6 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         idParada: idParada,
         estado: parada.estado,
       };
-
       const nodoDespachoId = await this.guardarNodoDespacho(nodoDespacho)
       return { parada, nodoDespachoId: nodoDespachoId! }
     } catch (error) {

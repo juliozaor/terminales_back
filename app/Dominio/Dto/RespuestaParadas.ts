@@ -1,5 +1,5 @@
 export class RespuestaParadas {
-  public idParada?: number
+  public id?: number
   public idRuta?: number
   public centroPobladoId?: string
   public municipioId?: string
