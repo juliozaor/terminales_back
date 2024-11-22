@@ -53,7 +53,7 @@ export default class ControladorTerminales {
       if (!rutadb || Object.keys(rutadb).length === 0) {
         return response.badRequest({ message: 'La ruta no puede estar vacío.' });
       }
-      const camposRequeridos = ['centroPobladoOrigen', 'centroPobladoDestino', 'direccion', 'resolucionActual', 'via', 'direccionTerritorial'];
+      const camposRequeridos = ['centroPobladoOrigen', 'centroPobladoDestino', 'direccion', 'resolucionActual'];
       const camposFaltantes = camposRequeridos.filter(field => !rutadb[field]);
       if (camposFaltantes.length > 0) {
         return response.badRequest({ message: `Faltan campos requeridos: ${camposFaltantes.join(', ')}` });
@@ -107,8 +107,8 @@ export default class ControladorTerminales {
   public async guardar({ response, request }: HttpContextContract) {
     const { id } = await request.obtenerPayloadJWT()
     try {
-      const arregloTerminales = request.all()
-      const rutas = await this.service.guardar(arregloTerminales, parseInt(id))
+      const RutaInfo = request.all()
+      const rutas = await this.service.guardar(RutaInfo, parseInt(id))
       return response.status(200).send(rutas);
     } catch (error) {
       return response.badRequest(error.messages)
