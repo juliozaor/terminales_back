@@ -800,6 +800,16 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
     const consulta = TblRutaEmpresas.query().preload('codigoUnicoRuta', sqlCodigoUnico => {
       sqlCodigoUnico.preload('ruta', sqlRuta => {
         sqlRuta.preload('rutaDireccion')
+        sqlRuta.preload('cpOrigen', sqlCpOrigen => {
+          sqlCpOrigen.preload('municipio', sqlMunicipio => {
+            sqlMunicipio.preload('departamento')
+          })
+        })
+        sqlRuta.preload('cpDestino', sqlDestino => {
+          sqlDestino.preload('municipio', sqlMunicipioDestino => {
+            sqlMunicipioDestino.preload('departamento')
+          })
+        })
         sqlRuta.where('id', idRuta)
       })
       sqlCodigoUnico.whereHas('ruta', sqlRuta => {
@@ -825,8 +835,17 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       nodos = await TblNodos.query().where('id', rutaDb.rutaDireccion.idNodo).first()
     }
     const ruta = {
+      idRuta:rutaDb.id,
+      idCodigoRuta:rutaDb.codigoRuta,
+      idCodigoUnicoRuta:consultaDb!.idRuta,
       rutaActiva: rutaDb.estado,
       idTipoLlegada: nodos?.idDespacho ?? null,
+      CoddepartamentoOrigen: rutaDb.cpOrigen.municipio.departamento.codigoDepartamento,
+      CoddepartamentoDestino: rutaDb.cpDestino.municipio.departamento.codigoDepartamento,
+      CodmunicipioOrigen: rutaDb.cpOrigen.municipio.codigoMunicipio,
+      CodmunicipioDestino: rutaDb.cpDestino.municipio.codigoMunicipio,
+      codCpOrigen: rutaDb.codigoCpOrigen,
+      codCpDestino: rutaDb.codigoCpDestino,
       Iddireccion: rutaDb.rutaDireccion?.idNodo ?? null,
       resolucion: consultaDb!.codigoUnicoRuta.rutasHabilitada.resolucion,
       corresponde: consultaDb!.codigoUnicoRuta.rutasHabilitada.corresponde,
