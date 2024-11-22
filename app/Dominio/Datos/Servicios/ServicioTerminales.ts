@@ -39,8 +39,8 @@ export class ServicioTerminales{
     return this.repositorio.guardarClases(param)
   }
 
-  async enviarSt(param: any, id: number): Promise<any> {
-    return this.repositorio.enviarSt(param, id)
+  async enviarSt(param: any): Promise<any> {
+    return this.repositorio.enviarSt(param)
   }
 
   async visualizarRutasVigilado(param: any): Promise<{rutasVigilado: RespuestaRutas[], paginacion: Paginador, editable:boolean, verificacionVisible:boolean, verificacionEditable:boolean}>{

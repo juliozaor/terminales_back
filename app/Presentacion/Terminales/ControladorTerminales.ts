@@ -116,10 +116,9 @@ export default class ControladorTerminales {
   }
 
   public async enviarSt({ response, request }: HttpContextContract) {
-    const { id } = await request.obtenerPayloadJWT()
     try {
       const arregloSt = request.all()
-      const respuestast = await this.service.enviarSt(arregloSt, parseInt(id))
+      const respuestast = await this.service.enviarSt(arregloSt)
       return response.status(200).send(respuestast);
     } catch (error) {
       return response.badRequest(error.messages)

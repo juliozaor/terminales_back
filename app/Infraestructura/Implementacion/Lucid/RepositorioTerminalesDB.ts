@@ -665,40 +665,67 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
   }
 
   async enviarSt(
-    param: any,
-    id: number) {
+    param: any) {
     try {
+      const {vigiladoId} = param
       const { rutasVigilado } = await this.visualizarRutasVigilado(param)
       let aprobado = true;
       const faltantes = new Array();
       for await (const ruta of rutasVigilado) {
+        const { clases } = await this.visualizarClasesPorRuta({ rutaId: ruta.rutas.idCodigoUnicoRuta }, vigiladoId)
+        const params = {
+          idRuta:ruta.rutas.idRuta, codigoUnicoRuta:ruta.rutas.idCodigoUnicoRuta, vigiladoId
+        }
+        const rutaVigilado  = await this.visualizarRuta(params)
+
         let porLlenar = false;
-        if (ruta.tipo_llegada_id == null || ruta.tipo_llegada_id == '') {
+        let clasesFaltantes = false;
+        let viasFaltantes = false;
+        let rutasFaltantes = false;
+
+        if (clases.length === 0) {
+          clasesFaltantes = true;
+          porLlenar = true;
+        }
+        if (ruta.rutas.numeroVias === 0) {
+          viasFaltantes = true;
           porLlenar = true;
         }
 
-        if (ruta.direccion_id == null || ruta.direccion_id == '') {
+        if (rutaVigilado.idTipoLlegada == null || rutaVigilado.idTipoLlegada == '') {
           porLlenar = true;
+          rutasFaltantes = true;
         }
 
-        if (ruta.estado) {
-          if (ruta.corresponde == 2) {
-            if (ruta.resolucion_actual == null || ruta.resolucion_actual == '') {
+        if (rutaVigilado.Iddireccion == null || rutaVigilado.Iddireccion == '') {
+          porLlenar = true;
+          rutasFaltantes = true;
+        }
+
+        if (rutaVigilado.rutaActiva) {
+          if (rutaVigilado.corresponde == 2) {
+            if (rutaVigilado.resolucionActual == null || rutaVigilado.resolucionActual == '') {
               porLlenar = true;
+              rutasFaltantes = true;
             }
-            if (ruta.documento == null || ruta.documento == '') {
+            if (rutaVigilado.documento == null || rutaVigilado.documento == '') {
               porLlenar = true;
+              rutasFaltantes = true;
             }
           }
         }
         if (porLlenar) {
-          faltantes.push(ruta.id)
+          faltantes.push({
+            idRuta: ruta.rutas.idRuta,
+            clasesFaltantes,
+            viasFaltantes,
+            rutasFaltantes
+          })
           aprobado = false
         }
       }
-
       if (aprobado) {
-        const solicitud = await TblSolicitudes.query().where('vigiladoId', id).first();
+        const solicitud = await TblSolicitudes.query().where('vigiladoId', vigiladoId).first();
         this.servicioEstados.ActualizarEstado(solicitud?.id!, 1)
       }
       return { faltantes, aprobado }

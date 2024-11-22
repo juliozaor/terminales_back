@@ -17,7 +17,7 @@ export interface RepositorioTerminales {
   guardar(arregloTerminales: any[], id: number): Promise<any>
   guardarParadas(parada: RespuestaParadas): Promise<{parada: RespuestaParadas, nodoDespachoId: number}>
   guardarClases(clase: ClaseVehiculo): Promise<RespuestaClases>
-  enviarSt(param: any, id: number): Promise<any>
+  enviarSt(param: any): Promise<any>
   visualizarRutasVigilado(param: any): Promise<{ rutasVigilado: RespuestaRutas[], paginacion: Paginador, editable: boolean, verificacionVisible: boolean, verificacionEditable: boolean }>
   visualizarRuta(param: any): Promise<{ ruta: any }>
   eliminarClase(id: number): Promise<any>
