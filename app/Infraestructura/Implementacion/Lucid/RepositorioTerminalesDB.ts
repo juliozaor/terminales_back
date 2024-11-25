@@ -777,7 +777,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
             })
           }).where('idaaVuelta', 'A')
         }).preload('rutaVias')
-      }).where('idUsuario', vigiladoId).orderBy('id', 'asc')
+      }).where('idUsuario', vigiladoId).orderBy('id', 'desc')
 
       let consultaDb;
       if (pagina && limite) {
