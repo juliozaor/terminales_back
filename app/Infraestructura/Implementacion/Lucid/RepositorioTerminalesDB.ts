@@ -284,7 +284,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         }
       }
 
-      for (let clase of rutaInfo.clases){
+      for (let clase of rutaInfo.clases) {
         const claseRecibida = {
           id: clase.id,
           idRuta: rutaInfo.idUnicoRuta,
@@ -294,7 +294,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         await this.guardarClases(claseRecibida)
       }
 
-      return {Message:"Ruta actualizada correctamente", Ruta: rutaInfo, editable: false };
+      return { Message: "Ruta actualizada correctamente", Ruta: rutaInfo, editable: false };
     } catch (error) {
       console.log(error);
       throw new Error(error);
@@ -344,7 +344,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
     }
   }
 
-  async guardarRuta(ruta: RespuestaRutas, id: number): Promise<{rutaCreada: RespuestaRutas, ids: object}> {
+  async guardarRuta(ruta: RespuestaRutas, id: number): Promise<{ rutaCreada: RespuestaRutas, ids: object }> {
     try {
       const ultimoIdCodigoRuta = await TblRutaCodigoRutas.query().orderBy("id", "desc").first();
       const ultimoIdRuta = await TblRutas.query().orderBy("trt_codigo_ruta", "desc").first();
@@ -415,10 +415,10 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       const ids = {
         id: idRutaida,
         idRuta: nuevoIdRuta,
-        idUnicoRuta:nuevoIdCodigoRuta
+        idUnicoRuta: nuevoIdCodigoRuta
       }
 
-      return {rutaCreada: ruta, ids: ids};
+      return { rutaCreada: ruta, ids: ids };
     } catch (error) {
       throw new Error(error);
     }
@@ -672,56 +672,58 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
       let aprobado = true;
       const faltantes = new Array();
       for await (const ruta of rutasVigilado) {
-        const { clases } = await this.visualizarClasesPorRuta({ rutaId: ruta.rutas.idCodigoUnicoRuta }, vigiladoId)
-        const params = {
-          idRuta:ruta.rutas.idRuta, codigoUnicoRuta:ruta.rutas.idCodigoUnicoRuta, vigiladoId
-        }
-        const rutaVigilado = await this.visualizarRuta(params)
+        if (ruta.rutas.idCodigoUnicoRuta) {
+          // console.log({ CodigoUnicoRuta: ruta.rutas.idCodigoUnicoRuta , idRuta: ruta.rutas?.idRuta, codigoRuta: ruta.rutas?.idCodigoRuta});
+          const { clases } = await this.visualizarClasesPorRuta({ rutaId: ruta.rutas.idCodigoUnicoRuta }, vigiladoId)
+          const params = {
+            idRuta: ruta.rutas.idRuta, codigoUnicoRuta: ruta.rutas.idCodigoUnicoRuta, vigiladoId
+          }
+          const rutaVigilado = await this.visualizarRuta(params)
+          let porLlenar = false;
+          let clasesFaltantes = false;
+          let viasFaltantes = false;
+          let rutasFaltantes = false;
+          if (clases.length === 0) {
+            clasesFaltantes = true;
+            porLlenar = true;
+          }
 
-        let porLlenar = false;
-        let clasesFaltantes = false;
-        let viasFaltantes = false;
-        let rutasFaltantes = false;
+          if (rutaVigilado.vias.length === 0) {
+            viasFaltantes = true;
+            porLlenar = true;
+          }
 
-        if (clases.length === 0) {
-          clasesFaltantes = true;
-          porLlenar = true;
-        }
-        if (ruta.rutas?.numeroVias === 0) {
-          viasFaltantes = true;
-          porLlenar = true;
-        }
+          if (rutaVigilado.idTipoLlegada == null || rutaVigilado.idTipoLlegada == '') {
+            porLlenar = true;
+            rutasFaltantes = true;
+          }
 
-        if (rutaVigilado.idTipoLlegada == null || rutaVigilado.idTipoLlegada == '') {
-          porLlenar = true;
-          rutasFaltantes = true;
-        }
+          if (rutaVigilado.Iddireccion == null || rutaVigilado.Iddireccion == '') {
+            porLlenar = true;
+            rutasFaltantes = true;
+          }
 
-        if (rutaVigilado.Iddireccion == null || rutaVigilado.Iddireccion == '') {
-          porLlenar = true;
-          rutasFaltantes = true;
-        }
-
-        if (rutaVigilado.rutaActiva) {
-          if (rutaVigilado.corresponde == 2) {
-            if (rutaVigilado.resolucionActual == null || rutaVigilado.resolucionActual == '') {
-              porLlenar = true;
-              rutasFaltantes = true;
-            }
-            if (rutaVigilado.documento == null || rutaVigilado.documento == '') {
-              porLlenar = true;
-              rutasFaltantes = true;
+          if (rutaVigilado.rutaActiva) {
+            if (rutaVigilado.corresponde == 2) {
+              if (rutaVigilado.resolucionActual == null || rutaVigilado.resolucionActual == '') {
+                porLlenar = true;
+                rutasFaltantes = true;
+              }
+              if (rutaVigilado.documento == null || rutaVigilado.documento == '') {
+                porLlenar = true;
+                rutasFaltantes = true;
+              }
             }
           }
-        }
-        if (porLlenar) {
-          faltantes.push({
-            idRuta: ruta.rutas.idRuta,
-            clasesFaltantes,
-            viasFaltantes,
-            rutasFaltantes
-          })
-          aprobado = false
+          if (porLlenar) {
+            faltantes.push({
+              idRuta: ruta.rutas.idRuta,
+              clasesFaltantes,
+              viasFaltantes,
+              rutasFaltantes
+            })
+            aprobado = false
+          }
         }
       }
       if (aprobado) {
@@ -822,67 +824,70 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
   }
 
   async visualizarRuta(param: any): Promise<any> {
-    const { idRuta, codigoUnicoRuta, vigiladoId } = param;
-
-    const consulta = TblRutaEmpresas.query().preload('codigoUnicoRuta', sqlCodigoUnico => {
-      sqlCodigoUnico.preload('ruta', sqlRuta => {
-        sqlRuta.preload('rutaDireccion')
-        sqlRuta.preload('cpOrigen', sqlCpOrigen => {
-          sqlCpOrigen.preload('municipio', sqlMunicipio => {
-            sqlMunicipio.preload('departamento')
+    try {
+      const { idRuta, codigoUnicoRuta, vigiladoId } = param;
+      const consulta = TblRutaEmpresas.query().preload('codigoUnicoRuta', sqlCodigoUnico => {
+        sqlCodigoUnico.preload('ruta', sqlRuta => {
+          sqlRuta.preload('rutaDireccion')
+          sqlRuta.preload('cpOrigen', sqlCpOrigen => {
+            sqlCpOrigen.preload('municipio', sqlMunicipio => {
+              sqlMunicipio.preload('departamento')
+            })
           })
-        })
-        sqlRuta.preload('cpDestino', sqlDestino => {
-          sqlDestino.preload('municipio', sqlMunicipioDestino => {
-            sqlMunicipioDestino.preload('departamento')
+          sqlRuta.preload('cpDestino', sqlDestino => {
+            sqlDestino.preload('municipio', sqlMunicipioDestino => {
+              sqlMunicipioDestino.preload('departamento')
+            })
           })
+          sqlRuta.where('id', idRuta)
         })
-        sqlRuta.where('id', idRuta)
-      })
-      sqlCodigoUnico.whereHas('ruta', sqlRuta => {
-        sqlRuta.where('id', idRuta)
-      })
-      sqlCodigoUnico.preload('rutasHabilitada').preload('rutaVias')
-      sqlCodigoUnico.where('id', codigoUnicoRuta)
-    }).where('idUsuario', vigiladoId).where('idRuta', codigoUnicoRuta).first()
+        sqlCodigoUnico.whereHas('ruta', sqlRuta => {
+          sqlRuta.where('id', idRuta)
+        })
+        sqlCodigoUnico.preload('rutasHabilitada').preload('rutaVias')
+        sqlCodigoUnico.where('id', codigoUnicoRuta)
+      }).where('idUsuario', vigiladoId).where('idRuta', codigoUnicoRuta).first()
 
-    const consultaDb = await consulta;
-    const vias = new Array()
-    consultaDb!.codigoUnicoRuta.rutaVias.forEach((via) => {
-      vias.push({
-        id: via.id,
-        via: via.via,
-        corresponde: via.corresponde,
-        viaNueva: via.nuevaVia
+      const consultaDb = await consulta;
+      const vias = new Array()
+      consultaDb!.codigoUnicoRuta.rutaVias.forEach((via) => {
+        vias.push({
+          id: via.id,
+          via: via.via,
+          corresponde: via.corresponde,
+          viaNueva: via.nuevaVia
+        })
       })
-    })
-    const rutaDb = consultaDb!.codigoUnicoRuta.ruta[0]
-    let nodos;
-    if (rutaDb.rutaDireccion.idNodo) {
-      nodos = await TblNodos.query().where('id', rutaDb.rutaDireccion.idNodo).first()
+      const rutaDb = consultaDb!.codigoUnicoRuta.ruta[0]
+      let nodos;
+      if (rutaDb.rutaDireccion?.idNodo) {
+        nodos = await TblNodos.query().where('id', rutaDb.rutaDireccion.idNodo).first()
+      }
+      const ruta = {
+        idRuta: rutaDb.id,
+        idCodigoRuta: rutaDb.codigoRuta,
+        idCodigoUnicoRuta: consultaDb!.idRuta,
+        rutaActiva: rutaDb.estado,
+        idTipoLlegada: nodos?.idDespacho ?? null,
+        CoddepartamentoOrigen: rutaDb.cpOrigen.municipio.departamento.codigoDepartamento,
+        CoddepartamentoDestino: rutaDb.cpDestino.municipio.departamento.codigoDepartamento,
+        CodmunicipioOrigen: rutaDb.cpOrigen.municipio.codigoMunicipio,
+        CodmunicipioDestino: rutaDb.cpDestino.municipio.codigoMunicipio,
+        codCpOrigen: rutaDb.codigoCpOrigen,
+        codCpDestino: rutaDb.codigoCpDestino,
+        Iddireccion: rutaDb.rutaDireccion?.idNodo ?? null,
+        resolucion: consultaDb!.codigoUnicoRuta.rutasHabilitada.resolucion,
+        corresponde: consultaDb!.codigoUnicoRuta.rutasHabilitada.corresponde,
+        resolucionActual: consultaDb!.codigoUnicoRuta.rutasHabilitada.resolucionActual,
+        documento: consultaDb!.codigoUnicoRuta.rutasHabilitada.documento,
+        nombreOriginal: consultaDb!.codigoUnicoRuta.rutasHabilitada.nombreOriginal,
+        rutaDocumento: consultaDb!.codigoUnicoRuta.rutasHabilitada.rutaArchivo,
+        vias: vias
+      }
+      return ruta
+    } catch (error) {
+      throw new error(error)
     }
-    const ruta = {
-      idRuta:rutaDb.id,
-      idCodigoRuta:rutaDb.codigoRuta,
-      idCodigoUnicoRuta:consultaDb!.idRuta,
-      rutaActiva: rutaDb.estado,
-      idTipoLlegada: nodos?.idDespacho ?? null,
-      CoddepartamentoOrigen: rutaDb.cpOrigen.municipio.departamento.codigoDepartamento,
-      CoddepartamentoDestino: rutaDb.cpDestino.municipio.departamento.codigoDepartamento,
-      CodmunicipioOrigen: rutaDb.cpOrigen.municipio.codigoMunicipio,
-      CodmunicipioDestino: rutaDb.cpDestino.municipio.codigoMunicipio,
-      codCpOrigen: rutaDb.codigoCpOrigen,
-      codCpDestino: rutaDb.codigoCpDestino,
-      Iddireccion: rutaDb.rutaDireccion?.idNodo ?? null,
-      resolucion: consultaDb!.codigoUnicoRuta.rutasHabilitada.resolucion,
-      corresponde: consultaDb!.codigoUnicoRuta.rutasHabilitada.corresponde,
-      resolucionActual: consultaDb!.codigoUnicoRuta.rutasHabilitada.resolucionActual,
-      documento: consultaDb!.codigoUnicoRuta.rutasHabilitada.documento,
-      nombreOriginal: consultaDb!.codigoUnicoRuta.rutasHabilitada.nombreOriginal,
-      rutaDocumento: consultaDb!.codigoUnicoRuta.rutasHabilitada.rutaArchivo,
-      vias: vias
-    }
-    return ruta
   }
 
   async eliminarClase(id: number): Promise<any> {
@@ -928,7 +933,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         throw new Error(`No existe la vía con id ${idVia}`);
       }
       await via.delete();
-      return { message: 'Vía eliminada exitosamente', via};
+      return { message: 'Vía eliminada exitosamente', via };
 
     } catch (error) {
       return { message: 'Error al eliminar la vía', error: error.message };
