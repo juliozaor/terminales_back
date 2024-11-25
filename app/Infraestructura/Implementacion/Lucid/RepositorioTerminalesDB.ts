@@ -667,7 +667,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
   async enviarSt(
     param: any) {
     try {
-      const {vigiladoId} = param
+      const { vigiladoId } = param
       const { rutasVigilado } = await this.visualizarRutasVigilado(param)
       let aprobado = true;
       const faltantes = new Array();
@@ -676,7 +676,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         const params = {
           idRuta:ruta.rutas.idRuta, codigoUnicoRuta:ruta.rutas.idCodigoUnicoRuta, vigiladoId
         }
-        const rutaVigilado  = await this.visualizarRuta(params)
+        const rutaVigilado = await this.visualizarRuta(params)
 
         let porLlenar = false;
         let clasesFaltantes = false;
@@ -687,7 +687,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
           clasesFaltantes = true;
           porLlenar = true;
         }
-        if (ruta.rutas.numeroVias === 0) {
+        if (ruta.rutas?.numeroVias === 0) {
           viasFaltantes = true;
           porLlenar = true;
         }
