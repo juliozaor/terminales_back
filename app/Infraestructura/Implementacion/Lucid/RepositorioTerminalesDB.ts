@@ -683,6 +683,8 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
           let clasesFaltantes = false;
           let viasFaltantes = false;
           let rutasFaltantes = false;
+
+          if (rutaVigilado.rutaActiva) {
           if (clases.length === 0) {
             clasesFaltantes = true;
             porLlenar = true;
@@ -703,7 +705,6 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
             rutasFaltantes = true;
           }
 
-          if (rutaVigilado.rutaActiva) {
             if (rutaVigilado.corresponde == 2) {
               if (rutaVigilado.resolucionActual == null || rutaVigilado.resolucionActual == '') {
                 porLlenar = true;
@@ -714,6 +715,15 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
                 rutasFaltantes = true;
               }
             }
+          } else {
+              if (rutaVigilado.resolucionActual == null || rutaVigilado.resolucionActual == '') {
+                porLlenar = true;
+                rutasFaltantes = true;
+              }
+              if (rutaVigilado.documento == null || rutaVigilado.documento == '') {
+                porLlenar = true;
+                rutasFaltantes = true;
+              }
           }
           if (porLlenar) {
             faltantes.push({
