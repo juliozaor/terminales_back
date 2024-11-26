@@ -21,5 +21,7 @@ Route.group(() => {
   Route.get('/consultar-ruta', accion_path + '.ConsultarRuta')
   Route.get('/empresas', accion_path + '.listarEmpresasPorRuta')
   Route.get('/rutas-codigo', accion_path + '.rutasPorCodigo')
+  Route.get('/terminal-ruta', accion_path + '.terminalRuta')
+  
 
 }).prefix('api/v1/maestras').middleware('autorizacion')
