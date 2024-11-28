@@ -699,7 +699,7 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
                 viasFaltantes = true;
                 porLlenar = true;
               }else if(via.corresponde == 2){
-                  if(via.viaNueva === null){
+                  if(via.viaNueva === ''){
                     viasFaltantes = true;
                     porLlenar = true;
                   }
