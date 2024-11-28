@@ -693,6 +693,18 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
           if (rutaVigilado.vias.length === 0) {
             viasFaltantes = true;
             porLlenar = true;
+          }else{
+            for await (const via of rutaVigilado.vias){
+              if(via.corresponde == null){
+                viasFaltantes = true;
+                porLlenar = true;
+              }else if(via.corresponde == 2){
+                  if(via.viaNueva === null){
+                    viasFaltantes = true;
+                    porLlenar = true;
+                  }
+              }
+            }
           }
 
           if (rutaVigilado.idTipoLlegada == null || rutaVigilado.idTipoLlegada == '') {
@@ -736,10 +748,10 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
           }
         }
       }
-      if (aprobado) {
-        const solicitud = await TblSolicitudes.query().where('vigiladoId', vigiladoId).first();
-        this.servicioEstados.ActualizarEstado(solicitud?.id!, 1)
-      }
+      // if (aprobado) {
+      //   const solicitud = await TblSolicitudes.query().where('vigiladoId', vigiladoId).first();
+      //   this.servicioEstados.ActualizarEstado(solicitud?.id!, 1)
+      // }
       return { faltantes, aprobado }
     } catch (error) {
       throw new Error(`Error al enviar a ST: ${error.message}`);
