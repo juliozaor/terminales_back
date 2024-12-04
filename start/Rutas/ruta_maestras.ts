@@ -22,6 +22,13 @@ Route.group(() => {
   Route.get('/empresas', accion_path + '.listarEmpresasPorRuta')
   Route.get('/rutas-codigo', accion_path + '.rutasPorCodigo')
   Route.get('/terminal-ruta', accion_path + '.terminalRuta')
-  
+
 
 }).prefix('api/v1/maestras').middleware('autorizacion')
+
+
+Route.group(() => {
+  Route.get('listarDepartamentos', accion_path + '.departamentos')
+  Route.get('listarMunicipios', accion_path + '.municipios')
+  Route.get('listarEmpresas', accion_path + '.consultarEmpresas')
+}).prefix('api/v1/maestras')

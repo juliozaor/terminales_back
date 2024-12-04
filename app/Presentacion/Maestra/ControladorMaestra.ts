@@ -223,7 +223,7 @@ export default class ControladorMaestra {
     } catch (error) {
       return { message: "No se pudieron obtener las rutas activas" };
     }
-  
+
   }
 
   public async rutasEmpresas({ request }: HttpContextContract) {
@@ -388,11 +388,11 @@ try {
       });
 
       const empresas = new Array();
-      consulta.forEach((ruta) => {        
+      consulta.forEach((ruta) => {
         ruta.codigoRutas.forEach((codigoRuta) => {
           codigoRuta.rutaEmpresa.forEach((rutaEmpresa) => {
             const empresaExiste = empresas.find((empresaExiste) => empresaExiste.id === rutaEmpresa.usuarios.id);
-            if (!empresaExiste) {         
+            if (!empresaExiste) {
             empresas.push({
               id: rutaEmpresa.usuarios.id,
               nit: rutaEmpresa.usuarios.identificacion,
@@ -406,7 +406,7 @@ try {
       return {empresas};
 
 } catch (error) {
-  
+
 }
 
   }
@@ -452,7 +452,7 @@ try {
       return { rutas };
 
 
-       
+
     } catch (error) {
       return { message: "No se pudieron obtener las rutas" };
     }
@@ -471,7 +471,7 @@ try {
       if (terminal) {
         const respuestaDirecciones = {
           codCpNodo: terminal?.rutaDireccion.idNodos.codigoCp,
-          razonSocial: terminal?.rutaDireccion.idNodos.descripcion 
+          razonSocial: terminal?.rutaDireccion.idNodos.descripcion
         }
         return { respuestaDirecciones };
       }else{
@@ -479,10 +479,53 @@ try {
       }
 
 
-   
-      
+
+
     } catch (error) {
       return { message: "No se pudieron obtener las rutas" };
     }
+  }
+
+  public async consultarEmpresas({ request }: HttpContextContract) {
+    const { nit, razonSocial, departamentoOrigen, municipioOrigen, departamentoDestino, municipioDestino } = request.all();
+    try {
+      const consulta = TblUsuarios.query().preload('empresas', sqlEmpresas => {
+        sqlEmpresas.preload('codigoUnicoRuta', sqlCodigoUnico => {
+          sqlCodigoUnico.preload('ruta', sqlRuta => {
+            // Filtrar por cpOrigen solo si existe el municipioOrigen
+            sqlRuta.whereHas('cpOrigen', sqlCpOrigen => {
+              if (municipioOrigen) {
+                sqlCpOrigen.where('codigoMunicipio', municipioOrigen);
+              }
+              // Filtrar por municipio dentro de cpOrigen solo si existe el departamentoOrigen
+              sqlCpOrigen.whereHas('municipio', sqlMunicipioOrigen => {
+                if (departamentoOrigen) {
+                  sqlMunicipioOrigen.where('codigoDepartamento', departamentoOrigen);
+                }
+              });
+            });
+            // Filtrar por cpDestino solo si existe el municipioDestino
+            sqlRuta.whereHas('cpDestino', sqlCpDestino => {
+              if (municipioDestino) {
+                sqlCpDestino.where('codigoMunicipio', municipioDestino);
+              }
+            });
+          });
+        });
+      })
+
+      if (nit) {
+        consulta.where('identificacion', nit)
+      }
+      if (razonSocial) {
+        consulta.where('nombre', razonSocial)
+      }
+      const consultaDb = await consulta;
+
+      return consultaDb
+    } catch (error) {
+    }
+
+    //nit / razon social / correo
   }
 }
