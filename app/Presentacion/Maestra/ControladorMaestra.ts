@@ -175,35 +175,35 @@ export default class ControladorMaestra {
   }
 
   public async rutasActivasPorEmpresa({ request }: HttpContextContract) {
-  const {nit} = request.all();
+    const { nit } = request.all();
     try {
-      const query = await TblUsuarios.query().preload("empresas",(sqlEmpresa) => {
-          sqlEmpresa.preload("codigoUnicoRuta", (sqlcodigo) => {
-            sqlcodigo.preload("ruta", (sqlruta) => {
-              sqlruta
-                .preload("cpOrigen", (sqlOrigen) => {
-                  sqlOrigen.preload("municipio", (sqlMunicipioO) => {
-                    sqlMunicipioO.preload("departamento");
-                  });
-                })
-                .preload("cpDestino", (sqlDestino) => {
-                  sqlDestino.preload("municipio", (sqlMunicipioD) => {
-                    sqlMunicipioD.preload("departamento");
-                  });
+      const query = await TblUsuarios.query().preload("empresas", (sqlEmpresa) => {
+        sqlEmpresa.preload("codigoUnicoRuta", (sqlcodigo) => {
+          sqlcodigo.preload("ruta", (sqlruta) => {
+            sqlruta
+              .preload("cpOrigen", (sqlOrigen) => {
+                sqlOrigen.preload("municipio", (sqlMunicipioO) => {
+                  sqlMunicipioO.preload("departamento");
                 });
-              sqlruta.where("trt_estado", true);
-              sqlruta.where("trt_ida_vuelta", "A");
-            });
+              })
+              .preload("cpDestino", (sqlDestino) => {
+                sqlDestino.preload("municipio", (sqlMunicipioD) => {
+                  sqlMunicipioD.preload("departamento");
+                });
+              });
+            sqlruta.where("trt_estado", true);
+            sqlruta.where("trt_ida_vuelta", "A");
           });
-        }
+        });
+      }
       ).where("identificacion", nit).first();
 
 
       const rutas = new Array();
-        query?.empresas.forEach((empresa) => {
-          empresa.codigoUnicoRuta.ruta.forEach((ruta) => {
-            const rutaExiste = rutas.find((rutaExiste) => rutaExiste.idRuta === ruta.id);
-            if (!rutaExiste) {
+      query?.empresas.forEach((empresa) => {
+        empresa.codigoUnicoRuta.ruta.forEach((ruta) => {
+          const rutaExiste = rutas.find((rutaExiste) => rutaExiste.idRuta === ruta.id);
+          if (!rutaExiste) {
             rutas.push({
               idRuta: ruta.id,
               codOrigen: ruta.codigoCpOrigen,
@@ -216,10 +216,10 @@ export default class ControladorMaestra {
               municipioDestino: ruta.cpDestino.municipio.nombre,
             });
           }
-          });
         });
+      });
 
-      return {rutas}
+      return { rutas }
     } catch (error) {
       return { message: "No se pudieron obtener las rutas activas" };
     }
@@ -293,11 +293,11 @@ export default class ControladorMaestra {
           sqlMunicipioO.preload("departamento");
         });
       })
-      .preload("cpDestino", (sqlDestino) => {
-        sqlDestino.preload("municipio", (sqlMunicipioD) => {
-          sqlMunicipioD.preload("departamento");
+        .preload("cpDestino", (sqlDestino) => {
+          sqlDestino.preload("municipio", (sqlMunicipioD) => {
+            sqlMunicipioD.preload("departamento");
+          });
         });
-      });
 
       if (terminal) {
         query.where("trt_codigo_cp_origen", terminal);
@@ -309,17 +309,17 @@ export default class ControladorMaestra {
       const paginacion = MapeadorPaginacionDB.obtenerPaginacion(rutasDB);
       const rutas = new Array();
       rutasDB.forEach((ruta) => {
-          rutas.push({
-            idRuta: ruta.id,
-            codOrigen: ruta.codigoCpOrigen,
-            descripcionOrigen: ruta.cpOrigen.nombre,
-            departamentoOrigen: ruta.cpOrigen.municipio.departamento.nombre,
-            municipioOrigen: ruta.cpOrigen.municipio.nombre,
-            codDestino: ruta.codigoCpDestino,
-            descripcionDestino: ruta.cpDestino.nombre,
-            departamentoDestino: ruta.cpDestino.municipio.departamento.nombre,
-            municipioDestino: ruta.cpDestino.municipio.nombre,
-          });
+        rutas.push({
+          idRuta: ruta.id,
+          codOrigen: ruta.codigoCpOrigen,
+          descripcionOrigen: ruta.cpOrigen.nombre,
+          departamentoOrigen: ruta.cpOrigen.municipio.departamento.nombre,
+          municipioOrigen: ruta.cpOrigen.municipio.nombre,
+          codDestino: ruta.codigoCpDestino,
+          descripcionDestino: ruta.cpDestino.nombre,
+          departamentoDestino: ruta.cpDestino.municipio.departamento.nombre,
+          municipioDestino: ruta.cpDestino.municipio.nombre,
+        });
       });
 
 
@@ -380,11 +380,11 @@ export default class ControladorMaestra {
 
   public async listarEmpresasPorRuta({ request }: HttpContextContract) {
     const { idRuta } = request.all();
-try {
-  const consulta = await TblRutas.query().where({"id": idRuta, 'idaaVuelta':'A'}).preload('codigoRutas', (sqlCodigoRutas) => {
-    sqlCodigoRutas.preload('rutaEmpresa', (sqlEmpresa) => {
-      sqlEmpresa.preload('usuarios');
-      });
+    try {
+      const consulta = await TblRutas.query().where({ "id": idRuta, 'idaaVuelta': 'A' }).preload('codigoRutas', (sqlCodigoRutas) => {
+        sqlCodigoRutas.preload('rutaEmpresa', (sqlEmpresa) => {
+          sqlEmpresa.preload('usuarios');
+        });
       });
 
       const empresas = new Array();
@@ -393,21 +393,21 @@ try {
           codigoRuta.rutaEmpresa.forEach((rutaEmpresa) => {
             const empresaExiste = empresas.find((empresaExiste) => empresaExiste.id === rutaEmpresa.usuarios.id);
             if (!empresaExiste) {
-            empresas.push({
-              id: rutaEmpresa.usuarios.id,
-              nit: rutaEmpresa.usuarios.identificacion,
-              razonSocial: rutaEmpresa.usuarios.nombre,
-            });
+              empresas.push({
+                id: rutaEmpresa.usuarios.id,
+                nit: rutaEmpresa.usuarios.identificacion,
+                razonSocial: rutaEmpresa.usuarios.nombre,
+              });
             }
           });
+        })
       })
-    })
 
-      return {empresas};
+      return { empresas };
 
-} catch (error) {
+    } catch (error) {
 
-}
+    }
 
   }
 
@@ -421,11 +421,11 @@ try {
           sqlMunicipioO.preload("departamento");
         });
       })
-      .preload("cpDestino", (sqlDestino) => {
-        sqlDestino.preload("municipio", (sqlMunicipioD) => {
-          sqlMunicipioD.preload("departamento");
+        .preload("cpDestino", (sqlDestino) => {
+          sqlDestino.preload("municipio", (sqlMunicipioD) => {
+            sqlMunicipioD.preload("departamento");
+          });
         });
-      });
 
       if (idRuta) {
         query.where("id", idRuta);
@@ -436,17 +436,17 @@ try {
 
       const rutas = new Array();
       rutasDB.forEach((ruta) => {
-          rutas.push({
-            idRuta: ruta.id,
-            codOrigen: ruta.codigoCpOrigen,
-            descripcionOrigen: ruta.cpOrigen.nombre,
-            departamentoOrigen: ruta.cpOrigen.municipio.departamento.nombre,
-            municipioOrigen: ruta.cpOrigen.municipio.nombre,
-            codDestino: ruta.codigoCpDestino,
-            descripcionDestino: ruta.cpDestino.nombre,
-            departamentoDestino: ruta.cpDestino.municipio.departamento.nombre,
-            municipioDestino: ruta.cpDestino.municipio.nombre,
-          });
+        rutas.push({
+          idRuta: ruta.id,
+          codOrigen: ruta.codigoCpOrigen,
+          descripcionOrigen: ruta.cpOrigen.nombre,
+          departamentoOrigen: ruta.cpOrigen.municipio.departamento.nombre,
+          municipioOrigen: ruta.cpOrigen.municipio.nombre,
+          codDestino: ruta.codigoCpDestino,
+          descripcionDestino: ruta.cpDestino.nombre,
+          departamentoDestino: ruta.cpDestino.municipio.departamento.nombre,
+          municipioDestino: ruta.cpDestino.municipio.nombre,
+        });
       });
 
       return { rutas };
@@ -474,7 +474,7 @@ try {
           razonSocial: terminal?.rutaDireccion.idNodos.descripcion
         }
         return { respuestaDirecciones };
-      }else{
+      } else {
         return { message: "No se encontró la terminal para esta ruta" };
       }
 
@@ -489,43 +489,54 @@ try {
   public async consultarEmpresas({ request }: HttpContextContract) {
     const { nit, razonSocial, departamentoOrigen, municipioOrigen, departamentoDestino, municipioDestino } = request.all();
     try {
-      const consulta = TblUsuarios.query().preload('empresas', sqlEmpresas => {
-        sqlEmpresas.preload('codigoUnicoRuta', sqlCodigoUnico => {
-          sqlCodigoUnico.preload('ruta', sqlRuta => {
-            // Filtrar por cpOrigen solo si existe el municipioOrigen
-            sqlRuta.whereHas('cpOrigen', sqlCpOrigen => {
-              if (municipioOrigen) {
-                sqlCpOrigen.where('codigoMunicipio', municipioOrigen);
-              }
-              // Filtrar por municipio dentro de cpOrigen solo si existe el departamentoOrigen
-              sqlCpOrigen.whereHas('municipio', sqlMunicipioOrigen => {
-                if (departamentoOrigen) {
-                  sqlMunicipioOrigen.where('codigoDepartamento', departamentoOrigen);
-                }
-              });
-            });
-            // Filtrar por cpDestino solo si existe el municipioDestino
-            sqlRuta.whereHas('cpDestino', sqlCpDestino => {
-              if (municipioDestino) {
-                sqlCpDestino.where('codigoMunicipio', municipioDestino);
-              }
-            });
-          });
-        });
-      })
+      let consulta = `
+        select DISTINCT
+		tu.usn_identificacion as nit,
+		tu.usn_nombre as razon_social,
+		tu.usn_correo as correo
+          from
+          tbl_usuarios tu
+          left join tbl_ruta_empresas tre on tre.tre_id_usuario = tu.usn_id
+          LEFT JOIN tbl_ruta_codigo_rutas trcr ON trcr.rcr_codigo_unico_ruta = tre.tre_codigo_unico_ruta
+          LEFT JOIN tbl_rutas tr ON tr.trt_codigo_ruta = trcr.rcr_codigo_ruta
+          LEFT JOIN tbl_centro_poblados tcp ON tcp.tcp_codigo_centro_poblado = tr.trt_codigo_cp_origen
+          LEFT JOIN tbl_centro_poblados tcpd ON tcpd.tcp_codigo_centro_poblado = tr.trt_codigo_cp_destino
+          LEFT JOIN tbl_municipios tm ON tcp.tcp_codigo_municipio = tm.tms_codigo_municipio
+          LEFT JOIN tbl_municipios tmd ON tcpd.tcp_codigo_municipio = tmd.tms_codigo_municipio
+          LEFT JOIN tbl_departamentos td ON tm.tms_departamento_codigo = td.tdp_codigo_departamento
+          LEFT JOIN tbl_departamentos tdd ON tmd.tms_departamento_codigo = tdd.tdp_codigo_departamento
+          where tr.trt_estado = true`
 
       if (nit) {
-        consulta.where('identificacion', nit)
+        consulta += ` AND tu.usn_identificacion = '${nit}'`
       }
+
       if (razonSocial) {
-        consulta.where('nombre', razonSocial)
+        consulta += ` AND tu.usn_nombre LIKE '%${razonSocial}%'`
       }
-      const consultaDb = await consulta;
 
-      return consultaDb
+      if (departamentoOrigen) {
+        consulta += ` AND tm.tms_departamento_codigo = '${departamentoOrigen}'`
+      }
+
+      if (departamentoDestino) {
+        consulta += ` AND tmd.tms_departamento_codigo = '${departamentoDestino}'`
+      }
+
+      if (municipioOrigen) {
+        consulta += ` AND tcp.tcp_codigo_municipio = '${municipioOrigen}'`
+      }
+
+      if (municipioDestino) {
+        consulta += ` AND tcpd.tcp_codigo_municipio = '${municipioDestino}'`
+      }
+
+      const consultaDb = await Database.rawQuery(consulta);
+
+
+      return {empresas: consultaDb.rows}
     } catch (error) {
+      return { message: "No se pudieron obtener las empresas" };
     }
-
-    //nit / razon social / correo
   }
 }
