@@ -487,8 +487,25 @@ export default class ControladorMaestra {
   }
 
   public async consultarEmpresas({ request }: HttpContextContract) {
-    const { nit, razonSocial, departamentoOrigen, municipioOrigen, departamentoDestino, municipioDestino } = request.all();
+    const { nit, razonSocial, departamentoOrigen, municipioOrigen, departamentoDestino, municipioDestino, pagina, limite } = request.all();
     try {
+      const totalCountQuery = `
+      SELECT COUNT(DISTINCT tu.usn_identificacion) as total
+      from
+          tbl_usuarios tu
+          left join tbl_ruta_empresas tre on tre.tre_id_usuario = tu.usn_id
+          LEFT JOIN tbl_ruta_codigo_rutas trcr ON trcr.rcr_codigo_unico_ruta = tre.tre_codigo_unico_ruta
+          LEFT JOIN tbl_rutas tr ON tr.trt_codigo_ruta = trcr.rcr_codigo_ruta
+          LEFT JOIN tbl_centro_poblados tcp ON tcp.tcp_codigo_centro_poblado = tr.trt_codigo_cp_origen
+          LEFT JOIN tbl_centro_poblados tcpd ON tcpd.tcp_codigo_centro_poblado = tr.trt_codigo_cp_destino
+          LEFT JOIN tbl_municipios tm ON tcp.tcp_codigo_municipio = tm.tms_codigo_municipio
+          LEFT JOIN tbl_municipios tmd ON tcpd.tcp_codigo_municipio = tmd.tms_codigo_municipio
+          LEFT JOIN tbl_departamentos td ON tm.tms_departamento_codigo = td.tdp_codigo_departamento
+          LEFT JOIN tbl_departamentos tdd ON tmd.tms_departamento_codigo = tdd.tdp_codigo_departamento
+          where tr.trt_estado = true`
+      const totalCountResult = await Database.rawQuery(totalCountQuery);
+      const totalRecords = totalCountResult.rows[0].total;
+
       let consulta = `
         select DISTINCT
 		tu.usn_identificacion as nit,
@@ -531,10 +548,19 @@ export default class ControladorMaestra {
         consulta += ` AND tcpd.tcp_codigo_municipio = '${municipioDestino}'`
       }
 
+      if (pagina && limite) {
+        consulta += ` LIMIT ${limite} OFFSET ${(pagina - 1) * limite}`
+      }
+
       const consultaDb = await Database.rawQuery(consulta);
+      const totalPages = Math.ceil(totalRecords / limite);
+      const paginacion = {
+        totalRegistros: totalRecords,
+        paginaActual: pagina,
+        totalPaginas: totalPages
+      }
 
-
-      return {empresas: consultaDb.rows}
+      return {empresas: consultaDb.rows, paginacion: paginacion}
     } catch (error) {
       return { message: "No se pudieron obtener las empresas" };
     }
