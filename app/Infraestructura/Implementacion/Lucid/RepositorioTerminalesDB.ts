@@ -252,6 +252,9 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         tipoLLegada: rutaInfo.tipoLLegada,
         idaOVuelta: 'A',
         direccion: rutaInfo.direccion,
+        isAsignada:rutaInfo.isAsignada,
+        isConvenio:rutaInfo.isConvenio,
+        nueva:rutaInfo.nueva,
         rutaHabilitada: rutaInfo.rutaHabilitada,
         corresponde: rutaInfo.corresponde,
         resolucionActual: rutaInfo.resolucionActual,
@@ -318,14 +321,24 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
           resolucion: ruta.resolucion,
           resolucionActual: ruta.resolucionActual,
           direccionTerritorial: ruta.direccionTerritorial,
+          fecha: ruta.fecha,
+          fechaConvenio: ruta.fechaConvenio,
+          convenio: ruta.convenio,
           documento: ruta.documento,
           nombreOriginal: ruta.nombreOriginal,
           rutaArchivo: ruta.rutaArchivo,
+          documentoConvenio: ruta.documentoConvenio,
+          nombreOriginalConvenio: ruta.nombreOriginalConvenio,
+          rutaArchivoConvenio: ruta.rutaArchivoConvenio,
+          observacion: ruta.observacion,
           corresponde: ruta.corresponde
         }
 
         const rutaRecibida = {
           codigoRuta: ruta.idRuta,
+          IsAsignada: ruta.isAsignada,
+          IsConvenio: ruta.isConvenio,
+          nueva: ruta.nueva,
           estado: ruta.rutaHabilitada
         }
 
@@ -371,6 +384,9 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         codigoCpOrigen: ruta.centroPobladoOrigen,
         codigoCpDestino: ruta.centroPobladoDestino,
         idaaVuelta: "A",
+        isAsignada: ruta.isAsignada,
+        isConvenio:ruta.isConvenio,
+        nueva:ruta.nueva,
         estado: ruta.rutaHabilitada,
       };
 
@@ -378,6 +394,9 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         codigoRuta: nuevoIdRuta,
         codigoCpOrigen: ruta.centroPobladoDestino,
         codigoCpDestino: ruta.centroPobladoOrigen,
+        isAsignada: ruta.isAsignada,
+        isConvenio:ruta.isConvenio,
+        nueva:ruta.nueva,
         idaaVuelta: "B",
         estado: ruta.rutaHabilitada,
       };
@@ -386,10 +405,17 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         resolucion: ruta.resolucion,
         resolucionActual: ruta.resolucionActual,
         direccionTerritorial: ruta.direccionTerritorial,
+        fecha: ruta.fecha,
+        fechaConvenio: ruta.fechaConvenio,
+        convenio: ruta.convenio,
         documento: ruta.documento,
         nombreOriginal: ruta.nombreOriginal,
         rutaArchivo: ruta.rutaArchivo,
-        corresponde: ruta.corresponde,
+        documentoConvenio: ruta.documentoConvenio,
+        nombreOriginalConvenio: ruta.nombreOriginalConvenio,
+        rutaArchivoConvenio: ruta.rutaArchivoConvenio,
+        observacion: ruta.observacion,
+        corresponde: ruta.corresponde
       };
 
       const idRutaida = await this.guardarTablaRutas(rutaIda);
@@ -890,6 +916,9 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         idCodigoRuta: rutaDb.codigoRuta,
         idCodigoUnicoRuta: consultaDb!.idRuta,
         rutaActiva: rutaDb.estado,
+        nueva: rutaDb.estado,
+        isAsignada: rutaDb.isAsignada,
+        isConvenio: rutaDb.isConvenio,
         idTipoLlegada: nodos?.idDespacho ?? null,
         CoddepartamentoOrigen: rutaDb.cpOrigen.municipio.departamento.codigoDepartamento,
         CoddepartamentoDestino: rutaDb.cpDestino.municipio.departamento.codigoDepartamento,
@@ -904,6 +933,13 @@ export class RepositorioTerminalesDB implements RepositorioTerminales {
         documento: consultaDb!.codigoUnicoRuta.rutasHabilitada.documento,
         nombreOriginal: consultaDb!.codigoUnicoRuta.rutasHabilitada.nombreOriginal,
         rutaDocumento: consultaDb!.codigoUnicoRuta.rutasHabilitada.rutaArchivo,
+        documentoConvenio: consultaDb!.codigoUnicoRuta.rutasHabilitada.documentoConvenio,
+        nombreOriginalConvenio: consultaDb!.codigoUnicoRuta.rutasHabilitada.nombreOriginalConvenio,
+        rutaArchivoConvenio: consultaDb!.codigoUnicoRuta.rutasHabilitada.rutaArchivoConvenio,
+        convenio: consultaDb!.codigoUnicoRuta.rutasHabilitada.convenio,
+        fecha: consultaDb!.codigoUnicoRuta.rutasHabilitada.fecha,
+        fechaConvenio: consultaDb!.codigoUnicoRuta.rutasHabilitada.fechaConvenio,
+        observacion:consultaDb!.codigoUnicoRuta.rutasHabilitada.observacion,
         vias: vias
       }
       return ruta

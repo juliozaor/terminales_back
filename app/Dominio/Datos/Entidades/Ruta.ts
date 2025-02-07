@@ -11,5 +11,11 @@ export class Ruta{
 
   public directo?: number
 
+  public isAsignada?: boolean
+
+  public isConvenio?: boolean
+
+  public nueva?: boolean
+
   public estado?: boolean
 }

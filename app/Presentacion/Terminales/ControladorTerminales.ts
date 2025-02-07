@@ -53,7 +53,7 @@ export default class ControladorTerminales {
       if (!rutadb || Object.keys(rutadb).length === 0) {
         return response.badRequest({ message: 'La ruta no puede estar vacío.' });
       }
-      const camposRequeridos = ['centroPobladoOrigen', 'centroPobladoDestino', 'direccion', 'resolucionActual'];
+      const camposRequeridos = ['centroPobladoOrigen', 'centroPobladoDestino', 'direccion'];
       const camposFaltantes = camposRequeridos.filter(field => !rutadb[field]);
       if (camposFaltantes.length > 0) {
         return response.badRequest({ message: `Faltan campos requeridos: ${camposFaltantes.join(', ')}` });

@@ -19,6 +19,12 @@ export default class TblRutas extends BaseModel {
 
   @column({ columnName: 'trt_directo' }) public directo: number
 
+  @column({ columnName: 'trt_nueva' }) public nueva: boolean
+
+  @column({ columnName: 'trt_asignada' }) public isAsignada: boolean
+
+  @column({ columnName: 'trt_convenio' }) public isConvenio: boolean
+
   @column({ columnName: 'trt_estado' }) public estado: boolean
 
   @column.dateTime({ autoCreate: true , columnName: 'trt_creacion'}) public createdAt: DateTime
@@ -31,6 +37,9 @@ export default class TblRutas extends BaseModel {
     this.codigoCpDestino = ruta.codigoCpDestino!
     this.idaaVuelta = ruta.idaaVuelta!
     this.directo = ruta.directo!
+    this.nueva = ruta.nueva!
+    this.isAsignada = ruta.isAsignada!
+    this.isConvenio = ruta.isConvenio!
     this.estado = ruta.estado!
   }
 
@@ -39,6 +48,9 @@ export default class TblRutas extends BaseModel {
     this.codigoCpDestino = ruta.codigoCpDestino!
     this.idaaVuelta = ruta.idaaVuelta!
     this.directo = ruta.directo!
+    this.nueva = ruta.nueva!
+    this.isAsignada = ruta.isAsignada!
+    this.isConvenio = ruta.isConvenio!
     this.estado = ruta.estado!
   }
 

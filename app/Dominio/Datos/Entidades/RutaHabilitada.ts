@@ -7,7 +7,11 @@ export class RutaHabilitada{
 
   public resolucionActual?: string
 
+  public convenio?: string
+
   public fecha?: string
+
+  public fechaConvenio?: string
 
   public direccionTerritorial?: string
 
@@ -17,5 +21,13 @@ export class RutaHabilitada{
 
   public rutaArchivo?: string
 
+  public documentoConvenio?: string
+
+  public nombreOriginalConvenio?: string
+
+  public rutaArchivoConvenio?: string
+
   public corresponde?: number
+
+  public observacion?: string
 }

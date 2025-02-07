@@ -14,6 +14,16 @@ export default class TblRutaHabilitadas extends BaseModel {
 
   @column({ columnName: 'trh_fecha' }) public fecha: string
 
+  @column({ columnName: 'trh_convenio' }) public convenio: string
+
+  @column({ columnName: 'trh_fecha_convenio' }) public fechaConvenio: string
+
+  @column({ columnName: 'trh_documento_convenio' }) public documentoConvenio: string
+
+  @column({ columnName: 'trh_nombre_original_convenio' }) public nombreOriginalConvenio: string
+
+  @column({ columnName: 'trh_ruta_archivo_convenio' }) public rutaArchivoConvenio: string
+
   @column({ columnName: 'trh_direccion_territorial' }) public direccionTerritorial: string
 
   @column({ columnName: 'trh_documento' }) public documento: string
@@ -21,6 +31,8 @@ export default class TblRutaHabilitadas extends BaseModel {
   @column({ columnName: 'trh_nombre_original' }) public nombreOriginal: string
 
   @column({ columnName: 'trh_ruta_archivo' }) public rutaArchivo: string
+
+  @column({ columnName: 'trh_observacion' }) public observacion: string
 
   @column({ columnName: 'corresponde' }) public corresponde: number
 
@@ -33,10 +45,16 @@ export default class TblRutaHabilitadas extends BaseModel {
     this.resolucion = rutaHabilitada.resolucion!
     this.resolucionActual = rutaHabilitada.resolucionActual!
     this.fecha = rutaHabilitada.fecha!
+    this.convenio = rutaHabilitada.convenio!
+    this.fechaConvenio = rutaHabilitada.fechaConvenio!
     this.direccionTerritorial = rutaHabilitada.direccionTerritorial!
     this.documento = rutaHabilitada.documento!
     this.nombreOriginal = rutaHabilitada.nombreOriginal!
     this.rutaArchivo = rutaHabilitada.rutaArchivo!
+    this.documentoConvenio = rutaHabilitada.documentoConvenio!
+    this.nombreOriginalConvenio = rutaHabilitada.nombreOriginalConvenio!
+    this.rutaArchivoConvenio = rutaHabilitada.rutaArchivoConvenio!
+    this.observacion = rutaHabilitada.observacion!
     this.corresponde = rutaHabilitada.corresponde!
   }
 
@@ -45,10 +63,16 @@ export default class TblRutaHabilitadas extends BaseModel {
     this.resolucion = rutaHabilitada.resolucion!
     this.resolucionActual = rutaHabilitada.resolucionActual!
     this.fecha = rutaHabilitada.fecha!
+    this.convenio = rutaHabilitada.convenio!
+    this.fechaConvenio = rutaHabilitada.fechaConvenio!
     this.direccionTerritorial = rutaHabilitada.direccionTerritorial!
     this.documento = rutaHabilitada.documento!
     this.nombreOriginal = rutaHabilitada.nombreOriginal!
     this.rutaArchivo = rutaHabilitada.rutaArchivo!
+    this.documentoConvenio = rutaHabilitada.documentoConvenio!
+    this.nombreOriginalConvenio = rutaHabilitada.nombreOriginalConvenio!
+    this.rutaArchivoConvenio = rutaHabilitada.rutaArchivoConvenio!
+    this.observacion = rutaHabilitada.observacion!
     this.corresponde = rutaHabilitada.corresponde!
   }
 }
